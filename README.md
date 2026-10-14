@@ -12,6 +12,6 @@ The aim is to decide how the harness should plan learning, teach, assess underst
 
 ## Research
 
-Findings and primary-source links will be maintained in `docs/research/`.
+Read the [agentic tutoring harness survey](docs/research/agentic-tutoring-harnesses.md) for source-inspected comparisons and design tradeoffs.
 
 Implementation details and feature commitments will follow the requirements interview.
