@@ -7,7 +7,7 @@ python -m unittest discover -s tests -v
 python examples/worked_example.py
 ```
 
-The current local run used Windows and Python 3.13: **45 tests run, 44 passed,
+The current local run used Windows and Python 3.13: **59 tests run, 58 passed,
 1 skipped**. The skipped test attempts to create a Windows directory junction;
 creation was unavailable in the execution environment. The symlink preservation
 test passed. Junction rejection is implemented using Windows lstat reparse tags
@@ -26,6 +26,15 @@ map approval/staleness/prerequisites, supplemental opt-in, material-specific
 transformation approval, private preferences/plans, update conflicts/schema
 compatibility and recovery from injected state/activation write failures.
 
+Flexible-arc tests cover explicit repair of diagnostic failures, preservation of
+guided/failed attempts, unresolved and later failures, cross-objective/forward
+resolution rejection, malformed/mixed annotations, practice-versus-assessment
+evidence, relearning versus cold retention, visual hints, invalid-question
+replacement, duplicate replay and evidence withdrawal. Update checks use mocked
+GitHub responses to verify numeric versions, offline/invalid/oversized responses,
+and unchanged private state. Status remains offline. The standalone worked
+example also exercises diagnostic failure -> guided practice -> fresh repair.
+
 Onboarding tests also cover temporary-archive installation with no source clone,
 a working installed CLI and exported course/material skills, explicit preferences,
 external mailbox ownership, refusal to overwrite existing files, archive traversal
@@ -41,6 +50,8 @@ mailbox reuse, distinguishes assisted understanding from independent work and
 delayed retention, tests a synthetic newer release, and prepares subsequent repair.
 All five SKILL.md files passed the skill-creator frontmatter validator. Whitespace
 checks passed. No real learner records, credentials or source materials were used.
+An independent synthetic forward-test checked novice repair, review relearning,
+and faster pacing for a prepared learner; it did not measure learning outcomes.
 
 The GitHub Actions workflow is configured for Windows and Ubuntu on Python 3.10
 and 3.13. Those CI jobs have not been run from this local implementation session.

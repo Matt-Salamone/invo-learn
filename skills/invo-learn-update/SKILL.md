@@ -11,6 +11,11 @@ Obtain the requested release from https://github.com/Matt-Salamone/invo-learn in
 separate tools/cache checkout. Avoid changing a public checkout with unrelated
 local edits; an independent clone is an appropriate alternative.
 
+Routine study uses `python learn.py check-updates` for a read-only version check
+against GitHub. An available update is a notice, not permission to install it;
+continue normal study unless an update is requested. Network failure must not
+block lessons or be reported as proof that the installed version is current.
+
 From the private workspace run:
 
 ```sh

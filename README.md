@@ -63,6 +63,14 @@ visible file into a fresh chatbot conversation. Ask it to teach `START-HERE.md`
 and return the JSON report. Paste that one report back to your planning agent.
 The agent updates your records and plans the next lesson or review.
 
+Lessons use visuals liberally, including interactive diagrams and charts when
+supported. Teaching stands on its own without slide/page commentary or asking
+you to consult uploads; source links remain in the coverage map for reference.
+The teaching arc branches on your reasoning: diagnose, model/example, attempt,
+targeted feedback, fresh independent check, recall and transfer. Early mistakes
+stay in the record and can be explicitly resolved by later independent work.
+Success after reteaching in a review counts as relearning rather than retention.
+
 The mailbox is the interface in both directions: you drop off resources and pick
 up lesson files there. Originals and lessons are archived elsewhere in your one
 workspace before the agent reuses it. Add new files alongside an unfinished
@@ -95,6 +103,9 @@ belong in this public development checkout or a public fork.
 Updates are explicit: from your learning workspace run `python learn.py upgrade
 --source /path/to/trusted/newer-public-checkout`. Versions are immutable; records
 and preferences are preserved.
+During normal study, the agent runs `python learn.py check-updates` once per
+resumed session. It checks the public GitHub version without sending learner
+data or installing code; unavailable checks do not interrupt study.
 
 Report validation cannot independently verify the chatbot's judgments or unaided
 work. Complex materials require appropriate reading/conversion tools and permission
@@ -102,4 +113,5 @@ before automatic transformation workflows. This version has no automated chatbot
 integration, calendar connector or background scheduler.
 
 Design context: [requirements](docs/design/requirements.md), [build prompt](docs/design/build-prompt.md),
-[source-inspected research](docs/research/agentic-tutoring-harnesses.md).
+[source-inspected research](docs/research/agentic-tutoring-harnesses.md), and
+[teaching-cycle comparison](docs/research/teaching-cycle-comparison.md).

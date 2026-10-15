@@ -9,9 +9,10 @@ import unittest
 from unittest.mock import patch
 
 from invo_learn.contracts import Invalid
+from invo_learn.cli import execute, parser
 from invo_learn.engine import Workspace, atomic, digest, read_json, safe_mailbox
 from invo_learn.install import bootstrap, package, upgrade
-from examples.worked_example import PUBLIC, assessment, call, item, make_report, map_spec, run_example, spec
+from examples.worked_example import PUBLIC, assessment, call, item, make_report, map_spec, phased, run_example, spec
 
 
 class WorkflowTests(unittest.TestCase):
@@ -22,6 +23,9 @@ class WorkflowTests(unittest.TestCase):
         self.root = self.base / "private"
         bootstrap(PUBLIC, self.root, "Synthetic test", git=False)
         self.ws = Workspace(self.root)
+        self.version = read_json(self.root / ".invo-learn/active.json")["version"]
+        major, minor, patch_version = self.version.split(".")
+        self.next_version = f"{major}.{minor}.{int(patch_version) + 1}"
         call(self.ws, "add_track", "math", "Math")
         self.source = self.base / "upload.unknown-extension"
         self.source.write_text("Inverse operations preserve equality. Solve linear equations.\n", encoding="utf-8")
@@ -43,7 +47,8 @@ class WorkflowTests(unittest.TestCase):
     def objective(self):
         return self.ws.track("math")["objectives"]["solve"]
 
-    def future(self, version="0.2.2"):
+    def future(self, version=None):
+        version = version or self.next_version
         _, _, files, _ = package(PUBLIC)
         future = self.base / ("package-" + version)
         for name, data in files.items():
@@ -241,6 +246,168 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(self.objective()["review"]["due_on"], "2026-10-19")
         self.assertEqual(self.objective()["review"]["lapses"], 1)
 
+    def adaptive_attempts(self):
+        return [phased(assessment("diagnose", result="fail"), "diagnostic", True),
+                phased(assessment("guided", assistance="heavy"), "practice"),
+                phased(assessment("final"), resolves=["diagnose"])]
+
+    def test_explicit_fresh_repair_resolves_failure_and_preserves_all_attempts(self):
+        r = self.report(self.prepare())
+        r["objectives"][0]["assessments"] = self.adaptive_attempts()
+        self.ingest(r)
+        self.assertEqual(self.objective()["understanding"], "demonstrated")
+        self.assertEqual(self.objective()["retention"], "unassessed")
+        self.assertEqual(self.objective()["evidence"][0]["assessments"], r["objectives"][0]["assessments"])
+        before = copy.deepcopy(self.ws.state)
+        self.assertEqual(self.ingest(r)["status"], "duplicate")
+        self.assertEqual(self.ws.state, before)
+        call(self.ws, "set_policy", [1, 2, 4])
+        self.assertEqual(self.objective()["understanding"], "demonstrated")
+        call(self.ws, "dispute", r["report_id"], "Synthetic bad final question")
+        self.assertEqual(self.objective()["understanding"], "unassessed")
+        self.assertTrue(self.objective()["evidence"][0]["invalidated"])
+
+    def test_unresolved_later_and_unrelated_failures_still_prevent_demonstration(self):
+        variants = []
+        unresolved = self.adaptive_attempts()
+        unresolved[-1]["resolves"] = []
+        variants.append(unresolved)
+        later = self.adaptive_attempts() + [phased(assessment("later", result="fail"))]
+        variants.append(later)
+        different_kind = self.adaptive_attempts()
+        different_kind[0]["kind"] = "explain-back"
+        different_kind[-1]["resolves"] = []
+        variants.append(different_kind)
+        variants.append([assessment("legacy-fail", result="fail"), assessment("legacy-pass")])
+        for index, attempts in enumerate(variants):
+            with self.subTest(index=index):
+                r = self.report(self.prepare(), rid=f"unresolved-{index}")
+                r["objectives"][0]["assessments"] = attempts
+                self.ingest(r)
+                self.assertEqual(self.objective()["understanding"], "uncertain")
+
+    def test_each_failure_requires_its_own_explicit_resolution(self):
+        attempts = self.adaptive_attempts()
+        attempts.insert(1, phased(assessment("second-gap", result="fail"), "diagnostic", True))
+        r = self.report(self.prepare())
+        r["objectives"][0]["assessments"] = attempts
+        self.ingest(r)
+        self.assertEqual(self.objective()["understanding"], "uncertain")
+
+    def test_resolution_cannot_reference_another_objectives_failure(self):
+        mapping = copy.deepcopy(self.mapping)
+        other = copy.deepcopy(mapping["objectives"][0])
+        other.update(id="other", title="Another skill")
+        mapping["objectives"].append(other)
+        proposal = call(self.ws, "propose_map", "math", mapping)
+        call(self.ws, "accept_map", "math", proposal["proposal_id"], "Synthetic second objective")
+        result = call(self.ws, "prepare", "math", spec(["solve", "other"]), "2026-10-14")
+        lesson = self.ws.state["lessons"][result["lesson_id"]]
+        r = make_report(lesson, "2026-10-14", [item("solve", phased(assessment("failed", result="fail"), "diagnostic", True)),
+            item("other", phased(assessment("other-pass"), before_teaching=True, resolves=["failed"]))])
+        with self.assertRaisesRegex(Invalid, "same objective"):
+            self.ingest(r)
+        self.assertFalse(self.ws.state["reports"])
+
+    def test_diagnostic_and_practice_passes_are_not_independent_demonstration(self):
+        for phase in ("diagnostic", "practice"):
+            r = self.report(self.prepare(), phased(assessment(), phase), rid=f"only-{phase}")
+            self.ingest(r)
+            self.assertNotEqual(self.objective()["understanding"], "demonstrated")
+
+    def test_invalid_attempt_annotations_add_no_evidence(self):
+        r = self.report(self.prepare())
+        r["objectives"][0]["assessments"] = self.adaptive_attempts()
+        variants = []
+        for changes in ({"resolves": ["missing"]}, {"resolves": ["final"]},
+                        {"resolves": ["diagnose", "diagnose"]}, {"phase": "practice"},
+                        {"assistance": "light"}, {"assistance_details": "Hidden hint"},
+                        {"fresh": False}, {"independent": False}, {"valid": False},
+                        {"kind": "recall"}, {"before_teaching": True},
+                        {"resolves": "diagnose"}, {"before_teaching": "false"},
+                        {"phase": "unknown"}):
+            changed = copy.deepcopy(r)
+            changed["objectives"][0]["assessments"][-1].update(changes)
+            variants.append(changed)
+        partial = copy.deepcopy(r)
+        del partial["objectives"][0]["assessments"][-1]["before_teaching"]
+        variants.append(partial)
+        mixed = copy.deepcopy(r)
+        mixed["objectives"][0]["assessments"][1] = assessment("guided", assistance="heavy")
+        variants.append(mixed)
+        invalid_target = copy.deepcopy(r)
+        invalid_target["objectives"][0]["assessments"][0]["valid"] = False
+        variants.append(invalid_target)
+        for index, changed in enumerate(variants):
+            with self.subTest(index=index), self.assertRaises(Invalid):
+                self.ingest(changed)
+        self.assertFalse(self.ws.state["reports"])
+        self.assertEqual(self.objective()["evidence"], [])
+        self.assertEqual(len(list((self.root / "inbox/reports").iterdir())), len(variants))
+
+    def test_review_relearning_resets_retention_then_cold_review_can_restore_it(self):
+        self.ingest(self.report(self.prepare()))
+        cold = self.prepare("review", "2026-10-15")
+        self.ingest(self.report(cold, phased(assessment(), before_teaching=True), "2026-10-15", "cold"), "2026-10-15")
+        self.assertEqual(self.objective()["review"]["step"], 1)
+        repair = self.report(self.prepare("review", "2026-10-18"), day="2026-10-18", rid="repair")
+        repair["objectives"][0]["assessments"] = self.adaptive_attempts()
+        self.ingest(repair, "2026-10-18")
+        self.assertEqual(self.objective()["understanding"], "demonstrated")
+        self.assertEqual(self.objective()["retention"], "needs-review")
+        self.assertEqual(self.objective()["review"]["step"], 0)
+        self.assertEqual(self.objective()["review"]["due_on"], "2026-10-19")
+        self.assertEqual(self.objective()["review"]["lapses"], 1)
+        restored = self.prepare("review", "2026-10-19")
+        self.ingest(self.report(restored, phased(assessment(), before_teaching=True), "2026-10-19", "restored"), "2026-10-19")
+        self.assertEqual(self.objective()["retention"], "demonstrated")
+        self.assertEqual(self.objective()["review"]["step"], 1)
+
+    def test_review_after_explanation_without_recorded_hint_does_not_prove_retention(self):
+        self.ingest(self.report(self.prepare()))
+        review = self.prepare("review", "2026-10-15")
+        self.ingest(self.report(review, phased(assessment()), "2026-10-15", "after-teaching"), "2026-10-15")
+        self.assertEqual(self.objective()["understanding"], "demonstrated")
+        self.assertEqual(self.objective()["retention"], "needs-review")
+
+    def test_cold_flags_cannot_hide_a_failed_review_or_visual_assistance(self):
+        self.ingest(self.report(self.prepare()))
+        attempts = [phased(assessment("failed", result="fail"), "diagnostic", True),
+                    phased(assessment("repair"), before_teaching=True, resolves=["failed"])]
+        r = self.report(self.prepare("review", "2026-10-15"), day="2026-10-15", rid="cold-failure")
+        r["objectives"][0]["assessments"] = attempts
+        self.ingest(r, "2026-10-15")
+        self.assertEqual(self.objective()["understanding"], "demonstrated")
+        self.assertEqual(self.objective()["retention"], "needs-review")
+        hint = phased(assessment("visual", assistance="light"), "diagnostic", True)
+        hint["assistance_details"] = "Tutor highlighted the next operation in the diagram."
+        r = self.report(self.prepare("review", "2026-10-16"), day="2026-10-16", rid="visual-help")
+        r["objectives"][0]["assessments"] = [hint, phased(assessment("fresh"), before_teaching=True)]
+        self.ingest(r, "2026-10-16")
+        self.assertEqual(self.objective()["retention"], "needs-review")
+
+    def test_update_command_reads_public_version_without_changing_private_state(self):
+        before_state = copy.deepcopy(self.ws.state)
+        before_bytes = self.ws.state_path.read_bytes()
+        with patch("invo_learn.updates.urlopen") as fetch:
+            fetch.return_value.__enter__.return_value.read.return_value = b"99.0.0\n"
+            result = execute(parser().parse_args(["--workspace", str(self.root), "check-updates"]))
+        self.assertEqual(result["status"], "available")
+        self.assertEqual(self.ws.state_path.read_bytes(), before_bytes)
+        self.assertEqual(Workspace(self.root).state, before_state)
+        with patch("invo_learn.updates.urlopen", side_effect=AssertionError("status must stay offline")):
+            execute(parser().parse_args(["--workspace", str(self.root), "status"]))
+
+    def test_invalid_question_can_be_replaced_by_a_valid_cold_review(self):
+        self.ingest(self.report(self.prepare()))
+        invalid = phased(assessment("ambiguous"), "diagnostic", True)
+        invalid.update(valid=False, result="ungradable", independent=False, learner_answer="")
+        r = self.report(self.prepare("review", "2026-10-15"), day="2026-10-15", rid="replacement")
+        r["objectives"][0]["assessments"] = [invalid, phased(assessment("replacement"), before_teaching=True)]
+        self.ingest(r, "2026-10-15")
+        self.assertEqual(self.objective()["retention"], "demonstrated")
+        self.assertEqual(len(self.objective()["evidence"][-1]["assessments"]), 2)
+
     def test_early_review_does_not_establish_retention_or_postpone_due(self):
         self.ingest(self.report(self.prepare()))
         old = copy.deepcopy(self.objective()["review"])
@@ -358,13 +525,13 @@ class WorkflowTests(unittest.TestCase):
         for key in ("profile", "tracks", "reports", "lessons", "review_policy", "mailbox", "active_lesson"):
             self.assertEqual(self.ws.state[key], before[key])
         self.assertEqual(plan.read_text(), "Private evolving plan")
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.2")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.next_version)
         self.assertTrue((Path(result["backup"]) / "state.json").exists())
         out = subprocess.run([sys.executable, str(self.root / "learn.py"), "--today", "2026-10-15", "status"], capture_output=True, text=True, check=True)
         self.assertEqual(len(json.loads(out.stdout)["due_reviews"]), 1)
 
     def test_upgrade_refuses_custom_skills_and_same_version_changes(self):
-        future = self.future("0.2.1")
+        future = self.future(self.version)
         (future / "invo_learn/__init__.py").write_text("# modified same release")
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "same-version"):
             upgrade(self.ws, future)
@@ -374,7 +541,7 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "skill modified"):
             upgrade(self.ws, future)
         self.assertEqual(skill.read_text(), "private customized skill")
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.1")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.version)
 
     def test_upgrade_rejects_modified_runtime_downgrade_and_unmanaged_skill_collision(self):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "downgrades"):
@@ -389,11 +556,11 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "unmanaged"):
             upgrade(self.ws, future)
         self.assertEqual(private_skill.read_text(), "private user skill")
-        runtime = self.root / ".invo-learn/releases/0.2.1/invo_learn/engine.py"
+        runtime = self.root / f".invo-learn/releases/{self.version}/invo_learn/engine.py"
         runtime.write_text("custom runtime")
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "harness modified"):
             upgrade(self.ws, future)
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.1")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.version)
 
     def test_caught_upgrade_activation_failure_restores_exports_and_retries(self):
         future = self.future()
@@ -409,7 +576,7 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), patch("invo_learn.engine.os.replace", side_effect=fail_activation), self.assertRaises(OSError):
             upgrade(self.ws, future)
         self.assertEqual(private_skill.read_bytes(), before)
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.1")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.version)
         with self.ws.locked():
             self.assertEqual(upgrade(self.ws, future)["status"], "upgraded")
 
@@ -422,7 +589,7 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "incompatible"):
             upgrade(self.ws, future)
         self.assertEqual(self.ws.state, before)
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.1")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.version)
 
     def test_prerequisite_override_retains_gap_without_learning_lock(self):
         mapping = copy.deepcopy(self.mapping)
@@ -497,7 +664,8 @@ class EndToEndTests(unittest.TestCase):
             result = run_example(base)
             self.assertEqual(result["delayed_retention"], "demonstrated")
             self.assertTrue(result["mailbox_originals_packets_and_return_preserved"])
-            self.assertEqual(result["synthetic_upgrade"], "0.2.2")
+            major, minor, patch_version = (PUBLIC / "VERSION").read_text().strip().split(".")
+            self.assertEqual(result["synthetic_upgrade"], f"{major}.{minor}.{int(patch_version) + 1}")
 
 
 if __name__ == "__main__":

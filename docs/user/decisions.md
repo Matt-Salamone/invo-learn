@@ -27,14 +27,31 @@
   interpretation is recorded as gaps. New uploads never silently alter accepted
   objectives. Supplemental material is opt-in and labeled, not new scope authority.
 - **Conservative grading:** no numeric mastery or gates. All assistance disqualifies
-  independent evidence; conflicting attempts require a fresh reassessment. Reports
+  independent evidence. Annotated chronological attempts allow a fresh unaided
+  assessment to explicitly resolve earlier failures while preserving all attempts;
+  unresolved failures remain uncertain. Legacy reports retain any-failure blocking.
+  Review relearning resets review needs rather than demonstrating retention. Reports
   can be disputed and withdrawn as a whole; precise assessment-level correction
   can be a future feature. No placement assessment is mandatory.
+- **Self-contained visual teaching:** make liberal use of meaningful visuals,
+  interactive when the host supports them, with readable static alternatives.
+  Explain content directly without page/file commentary or assuming the learner
+  can consult uploads. Provenance remains in maps and tutor context and is supplied
+  separately on request. Visual hints are assistance. The handoff instructs these
+  behaviors; the runtime does not inspect or enforce the teaching conversation.
 - **Adjustable expanding reviews:** 1/3/7/14/30/60 days, repeated at the maximum;
   next-day reset after nonindependent performance. This is an inspectable heuristic,
   not a claim of optimal pedagogy or a calibrated memory model.
 - **Optional scheduling:** null by default. Agent-maintained constraints/plan when
   requested, without calendar integration, background jobs or budget locks.
+- **Flexible teaching arc:** diagnose, visual model/example, attempt, targeted
+  repair or reduced support, fresh independent check, recall/transfer. Branch on
+  the learner's reasoning rather than enforcing a fixed quiz sequence. Teaching
+  behavior remains portable instructions, while evidence handling is deterministic.
+- **Routine update awareness:** one read-only GitHub version check per resumed
+  study session, after handling reports and before a new handoff. Five-second
+  timeout, no learner data sent, offline study allowed. Installation still needs
+  an explicit learner request and the existing versioned upgrade procedure.
 - **Dedicated mailbox:** new/empty adoption only, owner/path marker, root/protected
   folder/link checks, full snapshots before clearing, pending-report barrier.
   External mailboxes allowed. Filesystem attack races and concurrent hostile access

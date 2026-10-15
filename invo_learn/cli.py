@@ -8,6 +8,7 @@ import sys
 from .contracts import Invalid
 from .engine import Workspace, read_json
 from .install import bootstrap, upgrade
+from .updates import check_updates
 
 
 def parser(workspace_default=None):
@@ -23,6 +24,7 @@ def parser(workspace_default=None):
     b.add_argument("--preferences", type=Path, help="optional JSON preferences")
     b.add_argument("--no-git", action="store_true")
     sub.add_parser("status", help="all tracks, gaps and due reviews")
+    sub.add_parser("check-updates", help="read-only GitHub version check; never installs an update")
     sub.add_parser("render", help="regenerate inspectable overview and coverage files")
     t = sub.add_parser("add-course", aliases=["add-track"], help="add a course or other learning track")
     t.add_argument("track_id")
@@ -87,6 +89,8 @@ def execute(args):
         return bootstrap(args.source, args.destination, args.name, args.mailbox,
                          read_json(args.preferences) if args.preferences else None, not args.no_git)
     ws = Workspace(args.workspace)
+    if cmd == "check-updates":
+        return check_updates(read_json(ws.root / ".invo-learn/active.json")["version"])
     if cmd == "status":
         return ws.status(args.today)
     with ws.locked():

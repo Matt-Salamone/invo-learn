@@ -107,12 +107,46 @@ inbox/mailbox-snapshots before any clearing. Snapshots are preserved but do not
 automatically become learning evidence; the agent inspects/ingests returned reports.
 Do not repurpose the mailbox or put unrelated personal files there.
 
+## How lessons teach
+
+The chatbot follows a flexible arc: diagnose, build a visual model with an example,
+invite an attempt, diagnose that attempt, choose a targeted response, check fresh
+independent work, and close with recall and transfer. It asks one manageable
+question at a time and waits for your answer. Prior knowledge can skip unnecessary
+explanation; beginners may need a worked example before attempting a whole task.
+
+Good reasoning leads to less support or a changed application. A correct answer
+with weak reasoning leads to a why/prediction/boundary question. A small mistake
+gets a focused correction; a conceptual error gets a different representation.
+After hints, you try a distinct unaided task. Repeated difficulty calls for a
+smaller task, prerequisite help or a pause. These choices replace a fixed
+concept/example/quiz sequence and avoid repeating the same unsuccessful repair.
+
+Reports keep diagnostic, practice and assessment attempts in order. An early
+failure can be explicitly resolved by a later fresh unaided assessment without
+discarding the mistake. Practice alone does not prove understanding. Reviews ask
+for retrieval before teaching; success after reteaching is relearning and prompts
+another review rather than establishing retention. Older reports keep their
+original conservative grading rules.
+
+Lessons make liberal use of meaningful visuals, including interactive diagrams,
+charts or simulations when supported; readable static alternatives work in other
+chatbots. Explanations and questions stand on their own without slide/page
+commentary or requests to consult uploads. The materials still define scope and
+ground accuracy; source links stay in the coverage map and tutor context, and
+you can ask for provenance separately. Visual hints count as assistance.
+
+These teaching behaviors depend on the chatbot following its handoff. The runtime
+validates the returned evidence and updates records; it does not control chat
+turns, render interactive lessons or inspect the full teaching conversation.
+
 ## Agent tool recipes
 
 From the private root (the learner need not run these):
 
 ```sh
 python learn.py status
+python learn.py check-updates
 python learn.py add-course algebra --title "Algebra"
 python learn.py add-material algebra /path/to/mailbox/notes.pdf
 python learn.py inspect-material algebra <material-id> --note "Read pages 1-8 with PDF tool; equations preserved"
@@ -178,6 +212,15 @@ Back up the **entire** private repository; review state alone omits originals.
 
 ## Explicit updates
 
+During normal study, the agent checks GitHub once per resumed session before
+preparing a lesson or review, after saving/importing any returned report. The
+read-only `python learn.py check-updates` compares the installed version with
+the public main branch using a five-second network timeout. It sends no learner
+records and fetches only the version string. A newer version is offered with a
+changelog link; study continues unless you request an update. Offline/invalid
+responses mean status unknown, not up to date, and do not block study. Ordinary
+status, ingestion and lesson preparation do not themselves contact GitHub.
+
 Ask the agent to update, or run from the private root:
 
 ```sh
@@ -187,8 +230,8 @@ python learn.py status
 
 The checkout's VERSION must be newer and immutable. harness.json declares the
 package/state/report schemas and minimum Python version, checked before installation.
-No network fetching or silent
-auto-update occurs. Managed harness/skill customization conflicts are rejected.
+The upgrade helper fetches no code and never auto-updates. The separate check
+only reads public version information. Managed harness/skill customization conflicts are rejected.
 Prior releases plus pre-update state/activation backups remain under .invo-learn/;
 learner profile, overrides, plans, reports, materials and reviews remain intact.
 The current updater supports state schema 1; future incompatible schemas require

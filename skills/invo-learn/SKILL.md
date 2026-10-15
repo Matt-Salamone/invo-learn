@@ -44,6 +44,16 @@ separately, and cannot expand authoritative uploaded scope on its own.
 
 ## Next lesson or review
 
+Once per resumed study session, before preparing the next lesson/review, run
+`python learn.py check-updates` to compare the installed version with the public
+GitHub main branch. Save/ingest any pasted report FIRST. The check sends no learner
+data and never installs code. If newer, briefly describe the available version
+and link its changelog; use `../invo-learn-update/SKILL.md` only when the learner
+requests the update. Otherwise continue studying on the installed version.
+Do not repeat the same notice during the session. If unavailable/offline, mention
+that once and continue; do not claim the package is current. Do not check during
+individual teaching questions or make updating a prerequisite for study.
+
 Inspect independent evidence, misconceptions and unresolved prerequisites. Pick
 the next useful objectives, recommending remediation with a clear explanation.
 Advancement is advisory. Record an explicit learner override with override while
@@ -60,6 +70,40 @@ Never manually delete mailbox contents. Preserve/ingest a returned report before
 reuse. If the current lesson has no report, request it, or record an explicitly
 requested abandonment; do not silently discard a pending session. restage safely
 recovers an interrupted staging operation.
+
+Create lessons that stand on their own: include the definitions, reasoning,
+examples and figure descriptions needed to teach the objectives without asking
+the learner to consult uploads. Keep source locators for tutor reference and
+coverage records; learner-facing explanations and questions must not narrate
+sources (such as "page 6 of the slides says") or assume the learner has them open.
+Ground the content in the materials without making source commentary the lesson.
+Provide provenance separately only when the learner asks; disclose missing or
+uncertain content rather than inventing it.
+
+Make liberal use of meaningful visuals in lessons. In the teaching context,
+identify useful diagrams, charts, annotated examples or simulations and explain
+what they should make clear. Prefer interactive visuals when supported and useful;
+include a readable static or text-based alternative when interaction is unavailable.
+Visuals need labels and a verbal explanation, and assessment visuals must not
+reveal answers or disguise hints as independent work. These teaching rules also
+apply to review handoffs; keep retrieval unaided before supplying visual help.
+
+Plan a flexible arc: diagnose -> visual model/example -> learner attempt ->
+diagnose the attempt -> targeted response -> fresh independent check -> recall
+and transfer. Supply likely misconceptions, alternative representations and
+useful transfer tasks in context, without scripting every turn. Skip unnecessary
+explanation for prior knowledge; show novices a worked example when needed.
+The chatbot should fade support after sound reasoning, probe correct answers
+with weak reasoning, repair local errors, change representation for conceptual
+errors, and try a new unaided task after guided success. Repeated difficulty calls
+for a smaller task or prerequisite check, not an endless quiz. Keep one question
+at a time and wait for answers. Retrieve before teaching in reviews.
+
+Use chronological diagnostic/practice/assessment annotations in new reports as
+described in docs/user/contracts.md. Retain earlier mistakes and assistance;
+fresh unaided assessment can explicitly resolve earlier failures. Guided practice
+never counts as independent performance, and relearning during a review never
+counts as retention. Legacy reports without annotations keep conservative grading.
 
 Before preparing/restaging, inspect the mailbox for new course resources and
 returned reports. Register new resources via the add-materials skill and ingest
@@ -85,7 +129,7 @@ learner still only pastes it. Report ID conflicts require inspection, not renami
 the ID to force a second import.
 
 Inspect the updated evidence and next-step recommendations. Hinted, repeated,
-invalid or contradictory assessments cannot establish independent mastery.
+invalid or unresolved contradictory assessments cannot establish independent mastery.
 Uncertainty remains visible; use fresh assessments. If a grading/source dispute
 invalidates a report, use dispute with the reason; original evidence is retained
 and progress/reviews are recomputed. Revise plan.md, explain the result briefly,

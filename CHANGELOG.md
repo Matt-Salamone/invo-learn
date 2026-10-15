@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.3.0
+
+Lessons use a flexible arc with explicit choices for sound reasoning, weak
+reasoning, local errors, conceptual errors and assisted success. Tutors fade
+support, repair misconceptions and close with recall/transfer without a fixed
+quiz sequence. The v1 report format adds optional chronological attempt phases,
+before-teaching flags and explicit failure-resolution links. Fresh independent
+assessment can resolve earlier failures without deleting them; practice cannot
+establish understanding and success after review teaching is relearning rather
+than retention. Legacy reports retain their prior grading semantics.
+
+Normal study checks GitHub once per resumed session with a read-only
+check-updates command. New versions are offered, never installed automatically;
+offline checks leave study available and update status unknown.
+
+## 0.2.2
+
+Lesson planning and chatbot handoffs require liberal use of meaningful visuals,
+including interactive diagrams/charts when supported and readable static
+alternatives otherwise. Lessons teach self-contained explanations without source
+page/file commentary or requiring the learner to consult uploads. Provenance
+remains in coverage records and tutor context, available separately on request.
+Visual hints count as assessment assistance. These are portable teaching
+instructions; the runtime does not enforce chatbot presentation behavior.
+
 ## 0.2.1
 
 Setup first explains the defaults and asks whether to use them all. A yes skips

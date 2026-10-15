@@ -21,6 +21,9 @@ Status: interview closed at the owner's request. The agreed requirements below d
 - Uploaded learning materials define learning scope. Supplemental research is an optional course-level preference; distinguish supplemental content from the supplied material.
 - The chatbot may adapt explanations, exercise selection, sequence, and pacing within the assigned lesson objectives. The planning agent owns curriculum changes, durable progress records, and future planning.
 - Begin with a brief check of existing understanding, then alternate short explanations, learner attempts, and feedback. Adapt the balance to preferences and performance.
+- Use a flexible diagnose/model/attempt/targeted-response/independent-check/recall-and-transfer arc. Branch on reasoning and error type, fade assistance, and vary representation rather than repeating a fixed explanation/quiz sequence. Keep failed/guided attempts; allow fresh independent assessments to explicitly resolve earlier failures. Review success after teaching is relearning, not retention.
+- Make liberal use of meaningful visuals in lessons, including interactive diagrams and charts when supported, with readable static alternatives and verbal explanations. Visual hints count as assistance during assessment.
+- Teach self-contained lessons without directly mentioning source pages/files or requiring the learner to consult uploaded materials. Sources still ground accuracy and define scope; keep provenance in planning records and tutor context, supplying it separately on explicit learner request.
 - Track coverage separately from demonstrated understanding. Use independent answers or work appropriate to each objective, unfamiliar applications where useful, and later reviews to establish retention.
 - The chatbot compiles one structured report that the learner can copy or download in a single step. Include objectives attempted, assessment questions and learner answers, hints or assistance, grading rationale, misconceptions, and recommended next steps.
 - Keep report evidence proportional to the lesson; do not reproduce every explanation or conversational exchange. The learner should not need to reconstruct the conversation. Full transcripts are neither required nor routinely collected and are outside the initial scope.
@@ -38,6 +41,7 @@ Status: interview closed at the owner's request. The agreed requirements below d
 - A friend should be able to give their agent the public repository link and have the agent set up their learning environment.
 - Use one private workspace per learner containing all learning tracks, with a shared learner profile and overview and separate track records.
 - Setup should create an independent private workspace and install a versioned copy of the public harness. Harness updates are explicit and preserve preferences and study records.
+- During normal study, check GitHub once per resumed session before preparing the next lesson/review, after processing returned reports. Notify about newer versions without installing automatically; network failures must not block study or imply that the package is current.
 - A dedicated setup skill should collect a few global defaults. New tracks inherit them, with relevant preferences briefly confirmed and per-track overrides supported.
 - Aim to cover all uploaded material by default and generate an inspectable coverage map. The learner can adjust coverage and priorities; distinguish covered, deferred, and unassessed objectives.
 - Additional uploads propose changes to the learning plan for learner review.

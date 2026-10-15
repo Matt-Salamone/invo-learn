@@ -30,6 +30,10 @@ def assessment(aid="q-1", kind="application", assistance="none", result="pass"):
             "kind": kind, "fresh": True, "independent": assistance == "none", "valid": True}
 
 
+def phased(a, phase="assessment", before_teaching=False, resolves=()):
+    return a | {"phase": phase, "before_teaching": before_teaching, "resolves": list(resolves)}
+
+
 def make_report(lesson, completed_on, items, report_id="report-synthetic-1"):
     return {"schema_version": 1, "report_id": report_id, "lesson_id": lesson["id"], "track_id": lesson["track_id"],
             "completed_on": completed_on, "objectives": items, "misconceptions": [],
@@ -82,6 +86,17 @@ def run_example(base):
     lesson = ws.state["lessons"][first["lesson_id"]]
     report = make_report(lesson, "2026-10-14", [item("inverse", assessment("q-inverse", "explain-back", "heavy")),
                                                 item("solve", assessment("q-solve"))])
+    diagnostic = assessment("q-diagnose", result="fail")
+    diagnostic.update(question="Solve 2x + 3 = 11 and explain the operations.",
+                      learner_answer="x=7; subtract 3, then subtract 2.",
+                      rubric="Before attempt: preserve equality and divide to undo multiplication.")
+    practice = assessment("q-practice", assistance="heavy")
+    practice.update(question="After a balance-diagram example, solve 3x + 2 = 14.",
+                    learner_answer="Subtract 2 on both sides, then divide by 3: x=4.")
+    final_check = assessment("q-solve")
+    final_check["rationale"] = "Fresh unaided solution correctly divides to undo multiplication, resolving q-diagnose."
+    report["objectives"][1]["assessments"] = [phased(diagnostic, "diagnostic", True),
+        phased(practice, "practice"), phased(final_check, resolves=["q-diagnose"])]
     # Simulate a downloaded report in staging AND the learner's single report paste.
     atomic(ws.mailbox() / "returned-report.json", report)
     atomic(root / "synthetic-paste.json", report)
@@ -93,6 +108,7 @@ def run_example(base):
     assert duplicate["status"] == "duplicate"
     assert ws.track("algebra")["objectives"]["inverse"]["understanding"] == "needs-practice"
     assert ws.track("algebra")["objectives"]["solve"]["understanding"] == "demonstrated"
+    assert len(ws.track("algebra")["objectives"]["solve"]["evidence"][0]["assessments"]) == 3
     assert ws.track("algebra")["objectives"]["solve"]["retention"] == "unassessed"
     bread_spec = spec(["salt"], attachments=[{"material_id": bread["id"]}])
     bread_spec["context"] = "Synthetic bread source, Salt: at 2% of flour mass, 500g flour calls for 10g salt. Assess recall without hints."
@@ -112,13 +128,15 @@ def run_example(base):
     assert (root / "lessons" / first["lesson_id"] / "packet/START-HERE.md").exists()
     assert list((root / "inbox/mailbox-snapshots").rglob("returned-report.json"))
     # Exercise a newer synthetic release; it is NOT a real published version.
-    _, _, files, _ = package(PUBLIC)
+    _, version, files, _ = package(PUBLIC)
     future = base / "synthetic-package-next"
     for name, data in files.items():
         p = future / name
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_bytes(data)
-    (future / "VERSION").write_text("0.2.2\n", encoding="utf-8")
+    major, minor, patch_version = version.split(".")
+    next_version = f"{major}.{minor}.{int(patch_version) + 1}"
+    (future / "VERSION").write_text(next_version + "\n", encoding="utf-8")
     before = copy.deepcopy(ws.state)
     with ws.locked():
         updated = upgrade(ws, future)

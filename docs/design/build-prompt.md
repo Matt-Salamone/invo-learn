@@ -15,6 +15,22 @@ This is a hybrid system. A planning agent such as Codex, Cursor, or a local agen
 
 The chatbot may adapt explanations, exercises, sequence, and pacing within assigned objectives. Begin with a brief understanding check, then alternate short explanations, attempts, and feedback, adapting to learner preferences and performance. Small prerequisite repairs may happen within a lesson. Large gaps should trigger a suggestion to pause and return to the planning agent for one or more prerequisite lessons. Advancement is advisory: recommend remediation and explain gaps, allow explicit learner overrides, and retain unresolved gaps in the learning map.
 
+Make liberal use of meaningful visuals in lessons, including interactive diagrams,
+charts or simulations when supported and useful, with readable static alternatives
+and verbal explanations. Teach self-contained explanations and questions without
+source/page/file commentary or requiring learners to consult uploads. Materials
+still ground accuracy and define scope; retain provenance in planning records and
+tutor context, supplying it separately on explicit request. Visual hints are
+assistance and must not leak solutions into independent assessments.
+
+Use a flexible diagnose/model/attempt/targeted-response/independent-check/recall-and-transfer
+arc, branching on reasoning and error type rather than enforcing a fixed quiz
+sequence. Fade support after guided work and keep prior failures; fresh independent
+assessment may explicitly resolve them. Success after review teaching is relearning,
+not retention. During normal study, check GitHub once per resumed session before a
+new handoff, after processing reports. Offer newer versions without auto-installing;
+offline checks leave study available and update status unknown.
+
 ## Public package and private workspace
 
 The public repository distributes the harness/skills, reusable supporting tools, templates, documentation, and synthetic examples. Each learner has an independent private working repository containing all their courses, skills, and paths. Do not use a public fork as the private repository or put real learner data into the public package.

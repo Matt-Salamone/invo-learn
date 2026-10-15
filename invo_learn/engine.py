@@ -10,7 +10,7 @@ import shutil
 import stat
 import uuid
 
-from .contracts import Invalid, KINDS, date, fields, identifier, preferences, qualifies, require, report, string, strings
+from .contracts import Invalid, KINDS, date, evidence_outcome, fields, identifier, preferences, require, report, string, strings
 
 STATE_SCHEMA = 1
 DEFAULTS = {"teaching_style": "brief explanation, attempt, feedback",
@@ -513,8 +513,7 @@ class Workspace:
                 if item["coverage"] == "covered":
                     o["coverage"] = "covered"
                 assessments = item["assessments"]
-                success = any(qualifies(a, KINDS[o["kind"]]) for a in assessments)
-                contradiction = any(a["valid"] and a["result"] == "fail" for a in assessments)
+                success, contradiction, cold_success = evidence_outcome(assessments, KINDS[o["kind"]])
                 eligible = success and not contradiction and item["coverage"] == "covered" and item["judgment"] == "demonstrated"
                 if item["judgment"] == "demonstrated" and not eligible:
                     o["uncertainties"].append(f"{r['report_id']}: claimed demonstration lacks consistent fresh unaided evidence")
@@ -528,9 +527,13 @@ class Workspace:
                 if eligible:
                     o["understanding"] = "demonstrated"
                     step = old["step"] if old else 0
-                    if lesson["mode"] == "review" and delayed:
+                    if lesson["mode"] == "review" and delayed and cold_success:
                         step = min(step + 1, len(intervals) - 1)
                         o["retention"] = "demonstrated"
+                    elif lesson["mode"] == "review" and not cold_success:
+                        o["retention"] = "needs-review"
+                        o["uncertainties"].append(f"{r['report_id']}: performance after repair is relearning, not delayed retention")
+                        step = 0
                     elif lesson["mode"] == "review":
                         o["uncertainties"].append(f"{r['report_id']}: early review establishes performance, not delayed retention")
                         # An early review does not postpone a due review or advance its interval.
@@ -538,7 +541,8 @@ class Workspace:
                             continue
                     o["review"] = {"step": step, "last_on": r["completed_on"],
                         "due_on": (when + dt.timedelta(days=intervals[step])).isoformat(), "kind": KINDS[o["kind"]],
-                        "last_result": "independent-pass", "lapses": old["lapses"] if old else 0}
+                        "last_result": "independent-pass", "lapses": (old["lapses"] if old else 0)
+                        + int(lesson["mode"] == "review" and not cold_success)}
                 elif item["coverage"] == "covered" or assessments:
                     o["understanding"] = "uncertain" if success or item["judgment"] == "uncertain" else "needs-practice"
                     if lesson["mode"] == "review" or o["retention"] == "demonstrated":

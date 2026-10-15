@@ -26,7 +26,11 @@
         "coverage": {"enum": ["covered", "unassessed"]},
         "judgment": {"enum": ["demonstrated", "needs-practice", "uncertain"]},
         "assessments": {"type": "array", "items": {"$ref": "#/$defs/assessment"}}
-      }
+      },
+      "allOf": [{
+        "if": {"properties": {"assessments": {"contains": {"required": ["phase"]}}}},
+        "then": {"properties": {"assessments": {"items": {"required": ["phase", "before_teaching", "resolves"]}}}}
+      }]
     },
     "assessment": {
       "type": "object", "additionalProperties": false,
@@ -43,7 +47,15 @@
         "kind": {"enum": ["recall", "explain-back", "application"]},
         "fresh": {"type": "boolean"},
         "independent": {"type": "boolean"},
-        "valid": {"type": "boolean"}
+        "valid": {"type": "boolean"},
+        "phase": {"enum": ["diagnostic", "practice", "assessment"]},
+        "before_teaching": {"type": "boolean"},
+        "resolves": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      },
+      "dependentRequired": {
+        "phase": ["before_teaching", "resolves"],
+        "before_teaching": ["phase", "resolves"],
+        "resolves": ["phase", "before_teaching"]
       }
     }
   }
