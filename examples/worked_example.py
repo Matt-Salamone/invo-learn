@@ -67,8 +67,10 @@ def run_example(base):
     ws = Workspace(root)
     call(ws, "add_track", "algebra", "Synthetic algebra")
     call(ws, "add_track", "bread", "Synthetic bread", {"teaching_style": "brief recall and practical examples"})
-    math = call(ws, "add_material", "algebra", PUBLIC / "examples/materials/algebra.md")
-    bread = call(ws, "add_material", "bread", PUBLIC / "examples/materials/bread.md")
+    for filename in ("algebra.md", "bread.md"):
+        (ws.mailbox() / filename).write_bytes((PUBLIC / "examples/materials" / filename).read_bytes())
+    math = call(ws, "add_material", "algebra", root / "mailbox/algebra.md")
+    bread = call(ws, "add_material", "bread", root / "mailbox/bread.md")
     math_map = map_spec(math["id"], [
         ("inverse", "Explain equality-preserving inverse operations", "concept", "Inverse operations", []),
         ("solve", "Solve linear equations and check the result", "skill", "Linear equations", ["inverse"])])
@@ -116,7 +118,7 @@ def run_example(base):
         p = future / name
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_bytes(data)
-    (future / "VERSION").write_text("0.1.1\n", encoding="utf-8")
+    (future / "VERSION").write_text("0.2.1\n", encoding="utf-8")
     before = copy.deepcopy(ws.state)
     with ws.locked():
         updated = upgrade(ws, future)

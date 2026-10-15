@@ -167,8 +167,19 @@ class Workspace:
                 "supplemental research is disabled for this track")
         source = no_links(source).resolve()
         require(source.is_file(), "material must be a file; archive directory inputs first")
-        require(not within(source, self.mailbox()), "move uploads out of the temporary mailbox before intake")
+        from_mailbox = within(source, self.mailbox())
+        require(not (from_mailbox and source.name == ".invo-mailbox.json"), "mailbox ownership marker is not learning material")
         data = source.read_bytes()
+        # Keep the drop-off in place until guarded staging snapshots the mailbox.
+        # Retrying an intake must not register the same upload twice for a course.
+        if from_mailbox:
+            checksum = digest(data)
+            for material in track["materials"].values():
+                if material["sha256"] == checksum and material["role"] == role:
+                    original = self.path(material["original"])
+                    require(original.is_file() and digest(original.read_bytes()) == checksum,
+                            "durable original checksum mismatch; restore it before retrying intake")
+                    return material
         mid = "m-" + uuid.uuid4().hex[:12]
         dest = self.root / "tracks" / tid / "materials" / "originals" / mid / source.name
         dest.parent.mkdir(parents=True, exist_ok=True)
@@ -559,11 +570,12 @@ class Workspace:
             for oid, o in t["objectives"].items():
                 if t["active"] and o["scope"] == "included" and o["review"] and o["review"]["due_on"] <= today:
                     due.append({"track_id": tid, "objective_id": oid, **o["review"]})
-        return {"learner": self.state["profile"], "tracks": tracks, "due_reviews": sorted(due, key=lambda r: (r["due_on"], r["track_id"], r["objective_id"])),
+        return {"learner": self.state["profile"], "mailbox": self.state["mailbox"], "tracks": tracks, "due_reviews": sorted(due, key=lambda r: (r["due_on"], r["track_id"], r["objective_id"])),
                 "active_lesson": self.state["active_lesson"], "review_policy": self.state["review_policy"]}
 
     def render(self):
         lines = ["# Learner overview", "", f"Learner: {self.state['profile']['name']}", "",
+                 f"Mailbox (drop off materials and pick up lessons): {self.state['mailbox']}", "",
                  "Generated from state.json. Agent-owned plans live in track plan.md files; use tools to change records.", ""]
         for tid, t in self.state["tracks"].items():
             lines.extend([f"## {t['title']} ({tid})", "", f"Preferences: {json.dumps(self.effective_preferences(tid), ensure_ascii=False)}", ""])

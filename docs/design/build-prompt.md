@@ -1,5 +1,12 @@
 # Build prompt: invo-learn
 
+Onboarding revision: see the first bullet in requirements.md. Learners now open
+one learning folder, receive explained questions one at a time with a wait for
+each answer, and use the same mailbox for incoming resources and outgoing lessons.
+The dedicated course/material skills cover initial and additional uploads. Earlier
+references to separate repositories concern public development versus learner data,
+not a requirement for learners to clone and manage a second project.
+
 You are taking over implementation of invo-learn, an agentic teaching and tutoring harness. Build a working first version in https://github.com/Matt-Salamone/invo-learn. Use the current checkout if available; otherwise obtain the repository and follow its instructions. The requirements interview is finished. Read `docs/design/requirements.md` and `docs/research/agentic-tutoring-harnesses.md`, then implement rather than starting another broad interview. This brief requires no access to the original conversation.
 
 ## Product and division of responsibility

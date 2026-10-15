@@ -1,40 +1,87 @@
 ---
 name: invo-learn-setup
-description: Set up invo-learn from its public repository into an independent private learner workspace, with a pinned harness and shared defaults for multiple learning tracks.
+description: Guide initial invo-learn setup with explained, one-question-at-a-time choices and install one learner workspace without a public source clone.
 ---
 
-# Set up a learner workspace
+# Set up one learning workspace
 
-Use the public package at https://github.com/Matt-Salamone/invo-learn. If already
-checked out, use it; otherwise clone to a tools/cache directory. Read its README
-and docs/user/guide.md. Python 3.10+ and Git suffice; no model API or server is needed.
+Read the public README and docs/user/guide.md at
+https://github.com/Matt-Salamone/invo-learn. Python 3.10+ and Git suffice;
+no model API or server is needed. This skill sets up learning, not development
+of the public harness. An existing learner workspace should be reused.
 
-Choose a NEW private directory outside the public checkout (e.g. a sibling
-`invo-learn-private`). It must be independent, never a fork of the public repo.
-Briefly collect learner name, preferred explanation/practice style, default
-supplemental-research preference, remedial preference, and mailbox location.
-Offer: "Do you want a schedule, time budget, or deadlines?" These are optional;
-leave schedule null when not requested. Use documented defaults for unspecified
-preferences. Default mailbox to `mailbox/` at the private root. An external folder
-is allowed only when new/empty and dedicated to this learner's staging.
+## Conversational intake
 
-Save supplied preferences as private JSON or omit --preferences for defaults.
-From the public checkout run:
+Ask **one question per turn**, briefly explain the choice in everyday language,
+then **stop and wait for the learner's answer**. Do not bundle fields into one
+question, send a questionnaire, or continue dependent setup while waiting.
+Silence and elapsed time are not acceptance of defaults. Honor answers already
+supplied; a learner may explicitly choose defaults for the remaining questions.
+Save answers in private temporary notes so an interrupted setup can resume.
+
+Start by explaining: "You'll use one folder for your courses and progress. The
+mailbox inside it, or on your Desktop, is where you give me materials and pick up
+lesson files. I'll guide you through each choice."
+
+Collect these choices in order, skipping only already answered choices:
+
+1. **Workspace:** explain that the current new/empty folder can be the learner's
+   only workspace. Ask where to keep it; recommend the current folder when suitable.
+   Do not ask them to clone or open a second repository. A public developer checkout
+   is not suitable for learner records; explain that distinction if encountered.
+2. **Name:** ask what name to use; do not infer it from the computer account.
+3. **Teaching style:** explain "I can use a short explanation, have you try a
+   question, then give feedback." Ask whether that suits them or they prefer another style.
+4. **Supplemental research:** explain "Your files define what we study. With this
+   enabled, I may look up extra explanations or examples and label them separately;
+   they won't silently add course requirements." Ask whether to allow it; recommend off.
+5. **Prerequisite help:** explain "If a missing background skill makes something
+   hard, I can suggest a short catch-up lesson. You can still choose to move on."
+   Ask whether they want that or another approach. Store it as the remediation preference.
+6. **Mailbox location:** explain both directions: put course resources here and
+   say "materials ready"; later pick up agent-prepared lesson files here. Recommend
+   `mailbox/` inside the workspace, offering a dedicated Desktop folder if preferred.
+   Ask for the location. An external folder must be new/empty and dedicated to learning.
+7. **Optional scheduling:** explain "I can plan around study time or deadlines;
+   you can also study whenever you want. Review dates in the records work either
+   way, without automatic notifications." Ask "Do you want a schedule, time budget,
+   or deadlines?" Keep schedule null if declined. Gather any requested details one
+   question at a time. Do not create an automation or calendar event implicitly.
+
+After answers, summarize the chosen settings in plain language. Use documented
+defaults only for choices the learner explicitly skipped or delegated. Do not
+restart the interview or add a redundant final approval question.
+
+## Install in the chosen folder
+
+Use `setup_workspace.py` from the public repository. Read it before executing.
+Download it to a temporary tools location, not the learner's chosen folder (which
+must remain new/empty). It downloads a temporary archive, installs the pinned
+harness inside the chosen folder, and removes the temporary source automatically.
+No public checkout or permanent second workspace is needed.
+
+Save preferences as private temporary JSON, then run:
 
 ```sh
-python -m invo_learn bootstrap <private-directory> --name <learner-name>
+python <temporary-path>/setup_workspace.py <chosen-folder> --name <name> --preferences <private-preferences.json> --mailbox <location>
 ```
 
-Optional flags: --mailbox <location>, --preferences <private-json-file>.
-Do not use --no-git unless a files-only setup is explicitly preferred. No remote
-is created by default. Only when requested and authorized, create a separate
-PRIVATE remote, verify its visibility before pushing, and never upload these
-records to the public package. Host-specific account tooling is optional.
+For a developer who already has a trusted source checkout, the equivalent
+`python -m invo_learn bootstrap <chosen-folder> --name <name> ...` remains available.
+Never put real learner data in the public source checkout or a public fork. Keep
+default Git initialization; use --no-git only if files-only setup was requested.
+No remote is created. A hosted private remote requires an explicit request and
+visibility verification before pushing. Do not auto-update the installed harness.
 
-Open the private directory as the agent's workspace. Read its AGENTS.md and
-`.agents/skills/invo-learn/SKILL.md`; the installer supplies discoverable skills.
-Hosts without automatic skill discovery can read the same files directly.
-Run `python learn.py status`, explain where materials and records live, and give
-the learner the mailbox upload/report-paste instructions. Begin track intake
-only when a track/materials are supplied. Never seed real learner records into
-the public package. Do not auto-update the installed harness.
+Work from the chosen learner folder for subsequent commands. Read its AGENTS.md,
+START-HERE.md and installed `.agents/skills/invo-learn/SKILL.md`; run
+`python learn.py status`. Show its actual path and the actual mailbox path.
+Explain that records and archived originals live in the workspace and the agent
+handles filing; the learner only exchanges files via the mailbox and reports via chat.
+
+## First course
+
+Continue with `.agents/skills/invo-learn-add-course/SKILL.md`. Reuse a supplied
+course name/materials; otherwise ask only "What course or skill would you like to
+add first?" and wait. Do not leave the learner with only a list of CLI commands
+or upload instructions without an actual course/material destination.

@@ -4,6 +4,14 @@ Status: interview closed at the owner's request. The agreed requirements below d
 
 ## Agreed behavior
 
+- **Onboarding revision:** the learner uses one workspace, with a temporarily
+  downloaded harness installed inside it; no public clone and second learner
+  project are required. Setup explains unfamiliar preferences, asks one question
+  per turn, and stops for an answer. Dedicated add-course and add-materials skills
+  guide first and later uploads through the same mailbox used for lesson handoffs.
+  These revisions supersede earlier bootstrap/distribution wording below where it
+  implied a learner must manage two folders. Developer source and learner records
+  still have separate purposes; no real records enter the public source repository.
 - A planning agent (Codex, Cursor, or a local agent) manages lesson planning, bookkeeping, learner state, and future study decisions.
 - A separate chatbot conducts lessons, questions, practice, and quizzes from an agent-produced prompt and context, then returns a report for the agent to ingest.
 - Manual handoffs are sufficient. Encourage a fresh chatbot conversation for each lesson. Handoff automation is a possible future extension.

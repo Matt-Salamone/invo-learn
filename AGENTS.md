@@ -7,6 +7,10 @@ in this checkout or a public fork.
 For a request to set up study using this repository, read
 `skills/invo-learn-setup/SKILL.md` and follow it. For implementation, read
 `docs/design/build-prompt.md` and `docs/design/requirements.md`.
+Setup gives learners one workspace using a temporary source download; it must
+explain choices, ask one question at a time, and wait for answers. Course setup
+and later uploads use the add-course and add-materials skills and the same mailbox
+as lesson handoffs. Requests to improve the harness are development, not learner setup.
 
 The runtime uses Python's standard library (3.10+). Verify changes with
 `python -m unittest discover -s tests -v` and `python examples/worked_example.py`.

@@ -43,7 +43,7 @@ class WorkflowTests(unittest.TestCase):
     def objective(self):
         return self.ws.track("math")["objectives"]["solve"]
 
-    def future(self, version="0.1.1"):
+    def future(self, version="0.2.1"):
         _, _, files, _ = package(PUBLIC)
         future = self.base / ("package-" + version)
         for name, data in files.items():
@@ -358,13 +358,13 @@ class WorkflowTests(unittest.TestCase):
         for key in ("profile", "tracks", "reports", "lessons", "review_policy", "mailbox", "active_lesson"):
             self.assertEqual(self.ws.state[key], before[key])
         self.assertEqual(plan.read_text(), "Private evolving plan")
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.1.1")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.1")
         self.assertTrue((Path(result["backup"]) / "state.json").exists())
         out = subprocess.run([sys.executable, str(self.root / "learn.py"), "--today", "2026-10-15", "status"], capture_output=True, text=True, check=True)
         self.assertEqual(len(json.loads(out.stdout)["due_reviews"]), 1)
 
     def test_upgrade_refuses_custom_skills_and_same_version_changes(self):
-        future = self.future("0.1.0")
+        future = self.future("0.2.0")
         (future / "invo_learn/__init__.py").write_text("# modified same release")
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "same-version"):
             upgrade(self.ws, future)
@@ -374,7 +374,7 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "skill modified"):
             upgrade(self.ws, future)
         self.assertEqual(skill.read_text(), "private customized skill")
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.1.0")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.0")
 
     def test_upgrade_rejects_modified_runtime_downgrade_and_unmanaged_skill_collision(self):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "downgrades"):
@@ -389,11 +389,11 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "unmanaged"):
             upgrade(self.ws, future)
         self.assertEqual(private_skill.read_text(), "private user skill")
-        runtime = self.root / ".invo-learn/releases/0.1.0/invo_learn/engine.py"
+        runtime = self.root / ".invo-learn/releases/0.2.0/invo_learn/engine.py"
         runtime.write_text("custom runtime")
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "harness modified"):
             upgrade(self.ws, future)
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.1.0")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.0")
 
     def test_caught_upgrade_activation_failure_restores_exports_and_retries(self):
         future = self.future()
@@ -409,7 +409,7 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), patch("invo_learn.engine.os.replace", side_effect=fail_activation), self.assertRaises(OSError):
             upgrade(self.ws, future)
         self.assertEqual(private_skill.read_bytes(), before)
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.1.0")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.0")
         with self.ws.locked():
             self.assertEqual(upgrade(self.ws, future)["status"], "upgraded")
 
@@ -422,7 +422,7 @@ class WorkflowTests(unittest.TestCase):
         with self.ws.locked(), self.assertRaisesRegex(Invalid, "incompatible"):
             upgrade(self.ws, future)
         self.assertEqual(self.ws.state, before)
-        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.1.0")
+        self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], "0.2.0")
 
     def test_prerequisite_override_retains_gap_without_learning_lock(self):
         mapping = copy.deepcopy(self.mapping)
@@ -497,7 +497,7 @@ class EndToEndTests(unittest.TestCase):
             result = run_example(base)
             self.assertEqual(result["delayed_retention"], "demonstrated")
             self.assertTrue(result["mailbox_originals_packets_and_return_preserved"])
-            self.assertEqual(result["synthetic_upgrade"], "0.1.1")
+            self.assertEqual(result["synthetic_upgrade"], "0.2.1")
 
 
 if __name__ == "__main__":

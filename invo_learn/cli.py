@@ -24,7 +24,7 @@ def parser(workspace_default=None):
     b.add_argument("--no-git", action="store_true")
     sub.add_parser("status", help="all tracks, gaps and due reviews")
     sub.add_parser("render", help="regenerate inspectable overview and coverage files")
-    t = sub.add_parser("add-track")
+    t = sub.add_parser("add-course", aliases=["add-track"], help="add a course or other learning track")
     t.add_argument("track_id")
     t.add_argument("--title", required=True)
     t.add_argument("--preferences", type=Path)
@@ -93,7 +93,7 @@ def execute(args):
         if cmd == "render":
             ws.render()
             return {"status": "rendered"}
-        if cmd == "add-track":
+        if cmd in ("add-course", "add-track"):
             return ws.add_track(args.track_id, args.title, read_json(args.preferences) if args.preferences else None)
         if cmd == "preferences":
             return ws.set_preferences(args.track, read_json(args.file))

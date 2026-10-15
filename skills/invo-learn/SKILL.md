@@ -15,11 +15,12 @@ priorities and notes in `tracks/<id>/plan.md`.
 
 ## New or changed tracks
 
-Use add-track with a stable lowercase ID and title. Inherit global defaults;
-briefly confirm relevant supplemental-research/remediation preferences, allowing
-per-track overrides. Offer optional schedule/time budget/deadlines. If absent,
-leave schedule null; spaced-review dates still work. Coordinate supplied
-constraints and priorities across tracks; no calendar integration is required.
+Use `../invo-learn-add-course/SKILL.md` for a new course or skill and
+`../invo-learn-add-materials/SKILL.md` for first or additional resources. Explain
+each unfamiliar choice, ask one question per turn, and stop and wait for an answer.
+Reuse existing courses and preferences when receiving later uploads. The mailbox
+is the shared interface for resources, lesson packets, and returned reports;
+always say which action is next and give its actual path.
 
 Use add-material for EVERY uploaded file, regardless of extension. Originals are
 copied into durable track storage. UTF-8 text is automatically usable. For other
@@ -59,6 +60,11 @@ Never manually delete mailbox contents. Preserve/ingest a returned report before
 reuse. If the current lesson has no report, request it, or record an explicitly
 requested abandonment; do not silently discard a pending session. restage safely
 recovers an interrupted staging operation.
+
+Before preparing/restaging, inspect the mailbox for new course resources and
+returned reports. Register new resources via the add-materials skill and ingest
+reports first. Ask about ambiguous files rather than silently archiving unprocessed
+uploads. Snapshots are recovery copies, not evidence that intake was completed.
 
 Tell the learner: "Upload every visible file in the mailbox into a fresh chatbot
 conversation. Ask it to teach START-HERE.md and return the JSON report. Paste that

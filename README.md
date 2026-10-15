@@ -9,23 +9,61 @@ then paste the report back; your agent handles the bookkeeping.
 
 Give your agent this request:
 
-> Set up invo-learn from https://github.com/Matt-Salamone/invo-learn using
-> skills/invo-learn-setup/SKILL.md. Create an independent private learner workspace
-> outside the public checkout, then help me add a learning track.
+> Set up invo-learn in this folder using
+> https://github.com/Matt-Salamone/invo-learn and skills/invo-learn-setup/SKILL.md.
+> Explain each choice, ask me one question at a time, and wait for my answer.
+> Then help me add my first course.
 
-Or, with **Python 3.10+ and Git**, clone the public package and run:
+Start in a new/empty folder. You keep **one learning workspace** containing all
+your courses and progress. Your agent downloads the harness temporarily and
+installs it inside that folder; you do not need to clone this public repository,
+manage a second workspace, or switch projects after setup. **Python 3.10+ and Git**
+are the only dependencies. No API key or server is required.
+
+For manual installation, download and inspect
+[setup_workspace.py](setup_workspace.py) into a temporary tools location, then run:
 
 ```sh
-git clone https://github.com/Matt-Salamone/invo-learn.git
-cd invo-learn
-python -m invo_learn bootstrap ../invo-learn-private --name "Your name"
+python /path/to/setup_workspace.py /path/to/my-learning --name "Your name"
 ```
 
-Open the private directory with your agent and ask it to read AGENTS.md. Setup
-copies a pinned harness and skills there; it creates no remote. You can choose a
-dedicated external mailbox with --mailbox. Scheduling and supplemental research
-are optional. Real study data belongs in the private workspace, never this public
-repo or a public fork.
+The agent-led setup explains and collects teaching style, whether to look up
+extra explanations beyond your files, whether to suggest catch-up lessons for
+missing background skills, and optional study times/deadlines. Manual installation
+uses defaults; `--preferences <private.json>` supplies alternatives and
+`--mailbox <path>` chooses a dedicated mailbox, including on your Desktop.
+Setup creates a local Git repository with no remote. Your learning records stay
+out of the public package; a hosted private backup is optional.
+
+## Add your first course
+
+In your learning workspace, tell your agent **"Add a course"** (or name a skill).
+It uses [invo-learn-add-course](skills/invo-learn-add-course/SKILL.md), asking and
+explaining one choice at a time. When it gives you your mailbox path, put the
+course's syllabus, notes, slides, or other resources there and say **"materials
+ready."** You can also attach files or give paths. The agent saves the originals
+and proposes a source-linked plan for you to review before starting a lesson.
+
+## Add more material later
+
+Say **"Add materials to [course name]"**, put the new resources in the **same mailbox**,
+and say **"materials ready."** The
+[add-materials skill](skills/invo-learn-add-materials/SKILL.md) files them in the
+existing course and proposes plan changes without resetting your progress.
+You review changes before they become the accepted plan.
+
+## Take a lesson
+
+Ask for the next lesson. When your agent says the mailbox is ready, upload every
+visible file into a fresh chatbot conversation. Ask it to teach `START-HERE.md`
+and return the JSON report. Paste that one report back to your planning agent.
+The agent updates your records and plans the next lesson or review.
+
+The mailbox is the interface in both directions: you drop off resources and pick
+up lesson files there. Originals and lessons are archived elsewhere in your one
+workspace before the agent reuses it. Add new files alongside an unfinished
+lesson without overwriting its files; the agent preserves the pending session.
+Do not manually clear the mailbox.
 
 Read the [usage guide](docs/user/guide.md), [contracts](docs/user/contracts.md),
 [documented defaults](docs/user/decisions.md), and [worked example](examples/README.md).
@@ -46,7 +84,11 @@ Windows/Ubuntu and Python 3.10/3.13; local validation used Windows/Python 3.13.
 
 The synthetic example creates a temporary independent workspace with two tracks,
 coverage, a lesson/report cycle and a delayed review. It requires no real chatbot.
-Updates are explicit: from your private workspace run `python learn.py upgrade
+Developers with an existing source checkout may still use `python -m invo_learn
+bootstrap <new-learner-folder> --name "Your name"`. Real learner records never
+belong in this public development checkout or a public fork.
+
+Updates are explicit: from your learning workspace run `python learn.py upgrade
 --source /path/to/trusted/newer-public-checkout`. Versions are immutable; records
 and preferences are preserved.
 

@@ -6,7 +6,15 @@
   may leave recoverable unused files, never automatic learning evidence.
 - **Private workspace per learner:** independent Git initialization, no remote
   by default, all tracks share profile/review policy; track overrides inherit live
-  global defaults. No real learner workspace is created in the public checkout.
+  global defaults. The learner opens one folder. Setup downloads temporary source
+  instead of asking them to clone the public project and switch to a second folder.
+  Developer checkouts remain separate from real learner records.
+- **Guided choices:** explain each preference and ask one question per turn,
+  stopping until answered. Defaults require an explicit skip/delegation, not silence.
+- **One mailbox in both directions:** first/later course uploads and prepared
+  lessons share the learner-facing exchange folder. The agent registers selected
+  resources before staging lessons, distinguishes returned reports and handoff
+  metadata, and snapshots all staging copies. No separate incoming folder is needed.
 - **Versioned immutable bundles:** explicit trusted-checkout updates, checksummed
   installation, conflict refusal and schema compatibility checks. Version 1 needs
   no data migration. Future incompatible migrations are outside this release.

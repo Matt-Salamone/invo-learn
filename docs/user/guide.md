@@ -1,17 +1,32 @@
 # Using invo-learn
 
 Give your planning agent the public repository URL and ask it to use the setup
-skill. It creates a **separate private local repository** containing one shared
-profile and all your tracks. Python 3.10+ and Git are the only dependencies. No
+skill. It installs **one learning workspace** containing the harness, shared
+profile and all your courses. You do not need a public clone or a second project.
+Python 3.10+ and Git are the only dependencies. No
 paid chatbot session, API key, server, dashboard, or proprietary model is needed
 to set up or test the workflow. Choose a chatbot that can read your lesson uploads.
 
 ## Setup and discovery
 
-From a checkout of the public package:
+Ask the agent to set up the current new/empty folder. It explains one choice,
+asks one question, and stops until you answer. It never infers your name or
+acceptance from your computer account or silence. Preferences mean:
+
+- **Teaching style:** how explanations, your attempts, and feedback alternate.
+- **Supplemental research:** optional extra explanations/examples beyond your
+  files, labeled separately; your files still define course scope. Off by default.
+- **Prerequisite help:** suggest catch-up lessons when missing background skills
+  cause difficulty; you can still choose to move on.
+- **Scheduling:** optional study times, time budgets, or deadlines. Review dates
+  work without a schedule; there are no automatic notifications or calendar events.
+- **Mailbox:** the place you drop off course materials and pick up lesson files.
+
+The agent downloads and reads `setup_workspace.py` into temporary tools storage.
+For manual setup, run that script with a new/empty destination:
 
 ```sh
-python -m invo_learn bootstrap ../invo-learn-private --name "Learner"
+python /temporary/tools/setup_workspace.py /path/to/my-learning --name "Learner"
 ```
 
 Optional flags: `--mailbox <new-or-empty-dedicated-folder>` (relative to the private
@@ -34,7 +49,14 @@ permissions and backup/encryption follow your computer's configuration. A hosted
 private remote is optional and requires an explicit request. Verify visibility
 before pushing. Never use a public fork as your learner workspace.
 
-Open the private workspace with your agent. AGENTS.md routes to the installed
+The installer downloads an archive into temporary storage, installs a pinned
+bundle, and removes the temporary source. There is no permanent source clone.
+Developers can still bootstrap from a trusted checkout using `python -m invo_learn
+bootstrap <new-learner-folder> --name "Learner"`; learner records must not go into
+the public developer checkout. Setup never alters an existing nonempty folder.
+
+Stay in the learning workspace with your agent. START-HERE.md explains how to begin.
+AGENTS.md routes to the installed
 skills in `.agents/skills/`. For hosts that do not discover that location, ask
 them to read AGENTS.md and the skill directly, or configure their project skill
 search path to `.agents/skills`. There is no global configuration modification.
@@ -43,8 +65,12 @@ The versioned bundle includes reference docs at the release path in
 
 ## Normal learner workflow
 
-1. Tell the agent your course or skill and provide its materials. It inherits
-   defaults, confirms relevant overrides, and offers optional scheduling.
+1. Say **"Add a course"** or name the course/skill. The add-course skill explains
+   each choice, asks one question at a time, and waits. It inherits global settings,
+   supports course overrides, and offers optional scheduling. The agent gives you
+   the actual mailbox path. Put the course resources there and say **"materials
+   ready"**; attachments or existing file paths also work. The agent copies and
+   registers originals in durable course storage. You do not file them manually.
 2. Review the source-linked coverage map and proposed lessons. Later uploads
    produce proposed changes for review. Unreadable materials remain visible gaps
    until readable or converted with your permission; originals are always retained.
@@ -55,10 +81,20 @@ The versioned bundle includes reference docs at the release path in
 4. Learn with the chatbot, then copy its one complete JSON report back to the
    planning agent. The agent handles saving/importing and updates your records.
    You do not reconstruct a transcript or run an import command.
-5. Review the outcome and next steps. The agent recommends remediation when
+5. Review the outcome and next steps. The agent recommends catch-up help when
    needed; you can explicitly override progression while retaining the gaps.
+6. For additional uploads, say **"Add materials to [course name]"**, drop the new
+   resources in the same mailbox, and say **"materials ready."** The add-materials
+   skill files them in that existing course and proposes coverage changes for your
+   review. Existing objective IDs, evidence, and review progress are preserved.
+   Uploading files alone does not approve a new plan.
 
-The mailbox is temporary staging, not source storage. A lesson remains durably
+The mailbox is a two-way exchange, not permanent source storage. The agent
+distinguishes new resources, old handoff files, and returned reports. Add new
+resources alongside a pending lesson without overwriting its files; intake does
+not abandon that lesson. Ambiguous files/course destinations get one clarification
+at a time. Originals are copied to `tracks/<id>/materials/originals/`; mailbox
+copies remain until guarded lesson staging snapshots them. A lesson remains durably
 archived in lessons/. Reuse requires its report or an explicit abandonment. All
 old mailbox files (including unexpected downloaded reports) are copied into
 inbox/mailbox-snapshots before any clearing. Snapshots are preserved but do not
@@ -71,14 +107,19 @@ From the private root (the learner need not run these):
 
 ```sh
 python learn.py status
-python learn.py add-track algebra --title "Algebra"
-python learn.py add-material algebra /path/to/notes.pdf
+python learn.py add-course algebra --title "Algebra"
+python learn.py add-material algebra /path/to/mailbox/notes.pdf
 python learn.py inspect-material algebra <material-id> --note "Read pages 1-8 with PDF tool; equations preserved"
 python learn.py propose-map algebra /private/path/map.json
 python learn.py accept-map algebra <proposal-id> --approval "Learner approved this coverage map"
 python learn.py prepare algebra /private/path/lesson.json
 python learn.py ingest /private/path/exact-pasted-report.txt
 ```
+
+`add-track` remains an alias for add-course; internal track IDs and record paths
+are unchanged. Direct mailbox intake copies bytes into durable storage, retaining
+the staging copy. Retrying identical mailbox bytes for the same course and role
+reuses the material record. The agent checks original integrity before reuse.
 
 The tools print JSON IDs to use in subsequent specs. Contract shapes and a complete
 example report are in [contracts.md](contracts.md) and the public examples folder.

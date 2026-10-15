@@ -32,6 +32,8 @@ This repository holds private learner records and source materials. Never publis
 copy its data to the public harness repository, or add a public remote. A local Git
 repository is sufficient. Only create a hosted private remote on explicit request.
 
+Read `.agents/skills/invo-learn-add-course/SKILL.md` to add a course or skill.
+Read `.agents/skills/invo-learn-add-materials/SKILL.md` for first or later uploads.
 Read `.agents/skills/invo-learn/SKILL.md` for study work and pasted chatbot reports.
 Read `.agents/skills/invo-learn-update/SKILL.md` for an explicitly requested update.
 Any agent host can read those files directly; discovery does not depend on a plugin.
@@ -40,6 +42,9 @@ and all active tracks before coordinating work. Use `learn.py` for record change
 write adaptive plans and notes in `tracks/<id>/plan.md`.
 
 The active installed bundle and reference docs are located via `.invo-learn/active.json`.
+The mailbox is the learner's interface: incoming course resources, outgoing lesson
+files, and returned reports. Explain which action is next. Preserve new resources
+with add-material and ingest returned reports before preparing another handoff.
 Never clear the mailbox yourself. Use prepare/restage, which preserve snapshots.
 For a pasted report, save the exact paste privately and call ingest automatically;
 the learner should not have to run an import command. Require explicit permission
@@ -69,7 +74,9 @@ def package(source):
     for expected in ("invo_learn/cli.py", "invo_learn/engine.py", "invo_learn/install.py",
                      "invo_learn/contracts.py", "invo_learn/templates/chatbot.md",
                      "invo_learn/templates/report.schema.json", "skills/invo-learn/SKILL.md",
-                     "skills/invo-learn-setup/SKILL.md", "skills/invo-learn-update/SKILL.md", "docs/user/guide.md"):
+                     "skills/invo-learn-setup/SKILL.md", "skills/invo-learn-update/SKILL.md",
+                     "skills/invo-learn-add-course/SKILL.md", "skills/invo-learn-add-materials/SKILL.md",
+                     "docs/user/guide.md"):
         require(expected in files, f"incomplete harness package: {expected}")
     hashes = {name: digest(data) for name, data in files.items()}
     return source, version, files, hashes
@@ -125,6 +132,21 @@ def bootstrap(source, root, name, mailbox=None, prefs=None, git=True):
         "source": str(source), "managed_exports": {n: digest(d) for n, d in exports(files).items()}})
     (root / "learn.py").write_text(RUNNER, encoding="utf-8")
     (root / "AGENTS.md").write_text(GUIDANCE, encoding="utf-8")
+    (root / "START-HERE.md").write_text(
+        "# Start learning\n\n"
+        "Tell your agent: **Add a course** (or describe a skill you want to learn). "
+        "It will explain each choice and ask one question at a time.\n\n"
+        f"Your mailbox is: `{box}`\n\n"
+        "When asked, put your syllabus, notes, slides, or other resources in the mailbox "
+        "and tell the agent **materials ready**. Attachments and other file paths work too. "
+        "The agent saves originals in the course records and proposes a plan for review.\n\n"
+        "For later uploads, say **Add materials to [course name]** and use the same mailbox.\n\n"
+        "When a lesson is ready, the agent will tell you to upload every visible mailbox "
+        "file into a fresh chatbot conversation. Ask it to teach START-HERE.md and return "
+        "the JSON report, then paste that report back to your agent.\n\n"
+        "The mailbox is temporary exchange space; the agent preserves resources and "
+        "lesson records elsewhere in this workspace. Do not clear it manually.\n",
+        encoding="utf-8")
     (root / ".gitignore").write_text("__pycache__/\n*.py[cod]\n.invo-learn/operation.lock\n.invo-learn/install-*/\nmailbox/\n.env\n.env.*\n*.key\n*.pem\n", encoding="utf-8")
     if within(box, root) and box.name != "mailbox":
         with (root / ".gitignore").open("a", encoding="utf-8") as out:
@@ -134,7 +156,7 @@ def bootstrap(source, root, name, mailbox=None, prefs=None, git=True):
         require(result.returncode == 0, f"Git initialization failed: {result.stderr}; files are preserved for recovery")
     Workspace(root).render()
     return {"workspace": str(root), "mailbox": str(box), "version": version, "git": git,
-            "next": "Open the private workspace with your agent and read AGENTS.md; add a track and upload materials."}
+            "next": "Stay in this workspace. Read START-HERE.md and ask your agent to add a course."}
 
 
 def upgrade(ws, source):
