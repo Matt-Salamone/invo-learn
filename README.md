@@ -70,6 +70,9 @@ The teaching arc branches on your reasoning: diagnose, model/example, attempt,
 targeted feedback, fresh independent check, recall and transfer. Early mistakes
 stay in the record and can be explicitly resolved by later independent work.
 Success after reteaching in a review counts as relearning rather than retention.
+Every chatbot turn ends with a lesson progress bar and a separate provisional
+mastery summary. Completion tracks lesson checkpoints; mastery tracks independent
+performance and delayed retention, with durable records updated from the report.
 
 The mailbox is the interface in both directions: you drop off resources and pick
 up lesson files there. Originals and lessons are archived elsewhere in your one

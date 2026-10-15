@@ -31,6 +31,13 @@ not retention. During normal study, check GitHub once per resumed session before
 new handoff, after processing reports. Offer newer versions without auto-installing;
 offline checks leave study available and update status unknown.
 
+End every teaching-chatbot turn with a compact progress bar for completed lesson
+checkpoints and a separate provisional mastery summary for the assigned objectives.
+Adapt checkpoint totals with explanation, count learner work only after evaluation,
+and leave interrupted lessons incomplete. Mastery labels follow the evidence rules
+for guided work, independent assessment and delayed retention; completing the
+session does not imply mastery. Keep the final footer outside the report JSON.
+
 ## Public package and private workspace
 
 The public repository distributes the harness/skills, reusable supporting tools, templates, documentation, and synthetic examples. Each learner has an independent private working repository containing all their courses, skills, and paths. Do not use a public fork as the private repository or put real learner data into the public package.

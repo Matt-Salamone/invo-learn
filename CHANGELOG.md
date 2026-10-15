@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.1
+
+Every teaching-chatbot turn ends with a compact progress bar based on completed
+lesson checkpoints and a separate provisional mastery summary for assigned
+objectives. Checkpoint totals adapt with explanation; pending answers and early
+stops do not fabricate progress. Mastery labels follow independent-performance
+and delayed-retention evidence, separately from session completion. Footers stay
+outside the final report JSON. These are portable chatbot instructions; durable
+evidence continues through the existing validated report workflow.
+
 ## 0.3.0
 
 Lessons use a flexible arc with explicit choices for sound reasoning, weak

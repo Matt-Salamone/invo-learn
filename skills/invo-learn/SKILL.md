@@ -105,6 +105,16 @@ fresh unaided assessment can explicitly resolve earlier failures. Guided practic
 never counts as independent performance, and relearning during a review never
 counts as retention. Legacy reports without annotations keep conservative grading.
 
+Require a compact lesson progress bar and separate provisional mastery summary
+at the end of every teaching-chatbot turn, including opening, pause and report
+turns. Plan meaningful checkpoints for the assigned lesson; the chatbot can adapt
+their total for repair or skipped steps and must explain revisions. Completion
+tracks delivered teaching/evaluated attempts, never turns elapsed or mastery.
+Mastery tracks each objective's unassessed/guided/independent/retained or uncertain/
+needs-review evidence using the report rules, including prior packet records.
+Hints cannot earn independence; retention requires cold delayed review. Keep
+footer text outside report JSON; the planning agent remains the durable authority.
+
 Before preparing/restaging, inspect the mailbox for new course resources and
 returned reports. Register new resources via the add-materials skill and ingest
 reports first. Ask about ambiguous files rather than silently archiving unprocessed

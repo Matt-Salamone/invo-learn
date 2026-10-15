@@ -48,6 +48,12 @@
   repair or reduced support, fresh independent check, recall/transfer. Branch on
   the learner's reasoning rather than enforcing a fixed quiz sequence. Teaching
   behavior remains portable instructions, while evidence handling is deterministic.
+- **Progress and mastery displays:** every chatbot turn ends with a portable text
+  progress bar based on completed lesson checkpoints and a separate provisional
+  summary of objective evidence. Checkpoint totals can adapt with explanation;
+  finishing a session does not imply mastery. Independent/retained labels follow
+  report evidence rules and can fall after new conflicting evidence. The display
+  changes no schema or durable state and stays outside the final report JSON.
 - **Routine update awareness:** one read-only GitHub version check per resumed
   study session, after handling reports and before a new handoff. Five-second
   timeout, no learner data sent, offline study allowed. Installation still needs

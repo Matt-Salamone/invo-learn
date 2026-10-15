@@ -140,6 +140,26 @@ These teaching behaviors depend on the chatbot following its handoff. The runtim
 validates the returned evidence and updates records; it does not control chat
 turns, render interactive lessons or inspect the full teaching conversation.
 
+Every teaching-chatbot turn ends with a compact progress bar and a separate
+provisional mastery summary, including the first turn, pauses and the final report:
+
+```text
+Lesson progress: [####------] 4/10 checkpoints | Now: fresh application
+Mastery (provisional): 1/3 objectives independent; 0/3 retained | Current: equality — guided
+```
+
+The chatbot briefly names lesson checkpoints at the start. A question counts only
+after you answer and receive feedback. Repairs or skipped steps may change the
+total, with an explanation; stopping early does not force the bar to 100%.
+Completing a lesson can leave mastery gaps. Mastery labels reflect evidence for
+each objective: unassessed, guided, independent, retained, needs-review or uncertain.
+Retained objectives are included in the independent count. Hints cannot establish
+independence, immediate success cannot establish retention, and conflicting
+evidence can lower the displayed status. The footer uses existing packet records
+and current attempts; only report ingestion updates your durable records. On the
+final turn, it appears outside the report's JSON block so copying the report works
+as before. These displays require the chatbot to follow the handoff instructions.
+
 ## Agent tool recipes
 
 From the private root (the learner need not run these):
