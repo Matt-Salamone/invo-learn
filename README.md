@@ -1,17 +1,18 @@
 # invo-learn
 
-A personal agentic teaching and tutoring harness, currently in research and requirements discovery.
+A personal agentic teaching and tutoring harness, ready for implementation.
 
-The aim is to decide how the harness should plan learning, teach, assess understanding, retain learner state, and adapt over time before choosing an implementation.
+A planning agent manages materials, coverage, progress, and spaced reviews. A separate chatbot teaches through manual mailbox handoffs and returns a structured lesson report.
 
 ## Current work
 
-- Investigate existing open-source tutoring systems and the different projects called Learn Anything.
-- Interview the project owner to define the desired learning experience, scope, and success criteria.
-- Turn the agreed requirements into a concrete design and implementation plan.
+Research and the requirements interview are complete. Implementation is the next step.
+
+- [Agreed requirements](docs/design/requirements.md)
+- [Build prompt for an implementation agent](docs/design/build-prompt.md)
 
 ## Research
 
 Read the [agentic tutoring harness survey](docs/research/agentic-tutoring-harnesses.md) for source-inspected comparisons and design tradeoffs.
 
-Implementation details and feature commitments will follow the requirements interview.
+The build prompt distinguishes agreed behavior from decisions left to the implementation agent.
