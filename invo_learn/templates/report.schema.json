@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "invo-learn lesson report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "lesson_id", "track_id", "completed_on", "objectives", "misconceptions", "recommended_next_steps", "prerequisite_gaps"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "report_id": {"$ref": "#/$defs/id"},
+    "lesson_id": {"$ref": "#/$defs/id"},
+    "track_id": {"$ref": "#/$defs/id"},
+    "completed_on": {"type": "string", "format": "date"},
+    "objectives": {"type": "array", "items": {"$ref": "#/$defs/objective"}},
+    "misconceptions": {"$ref": "#/$defs/strings"},
+    "recommended_next_steps": {"$ref": "#/$defs/strings"},
+    "prerequisite_gaps": {"$ref": "#/$defs/strings"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"},
+    "strings": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "objective": {
+      "type": "object", "additionalProperties": false,
+      "required": ["objective_id", "coverage", "judgment", "assessments"],
+      "properties": {
+        "objective_id": {"$ref": "#/$defs/id"},
+        "coverage": {"enum": ["covered", "unassessed"]},
+        "judgment": {"enum": ["demonstrated", "needs-practice", "uncertain"]},
+        "assessments": {"type": "array", "items": {"$ref": "#/$defs/assessment"}}
+      }
+    },
+    "assessment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["assessment_id", "question", "learner_answer", "rubric", "rationale", "result", "assistance", "assistance_details", "kind", "fresh", "independent", "valid"],
+      "properties": {
+        "assessment_id": {"$ref": "#/$defs/id"},
+        "question": {"type": "string", "minLength": 1},
+        "learner_answer": {"type": "string"},
+        "rubric": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+        "result": {"enum": ["pass", "fail", "ungradable"]},
+        "assistance": {"enum": ["none", "light", "heavy", "answer-revealed"]},
+        "assistance_details": {"type": "string"},
+        "kind": {"enum": ["recall", "explain-back", "application"]},
+        "fresh": {"type": "boolean"},
+        "independent": {"type": "boolean"},
+        "valid": {"type": "boolean"}
+      }
+    }
+  }
+}
