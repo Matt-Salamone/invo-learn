@@ -118,7 +118,7 @@ def run_example(base):
         p = future / name
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_bytes(data)
-    (future / "VERSION").write_text("0.2.1\n", encoding="utf-8")
+    (future / "VERSION").write_text("0.2.2\n", encoding="utf-8")
     before = copy.deepcopy(ws.state)
     with ws.locked():
         updated = upgrade(ws, future)

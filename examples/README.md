@@ -16,8 +16,8 @@ the first durable packet. A bread recall report yields due reviews across tracks
 
 On the **simulated** next day, a fresh unaided equation review establishes retention
 and expands its interval from 1 to 3 days. The next due date is October 18, 2026.
-The example simulates an explicit 0.2.1 update using a separate copied package;
-0.2.1 here is a test fixture, not a published release. Preferences and every track,
+The example simulates an explicit 0.2.2 update using a separate copied package;
+0.2.2 here is a test fixture, not a published release. Preferences and every track,
 report and lesson record are compared before/after. It stages prerequisite repair
 as the next handoff. The output summarizes these asserted outcomes.
 

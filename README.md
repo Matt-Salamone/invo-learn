@@ -27,6 +27,10 @@ For manual installation, download and inspect
 python /path/to/setup_workspace.py /path/to/my-learning --name "Your name"
 ```
 
+The first setup question is **"Would you like to set up using all defaults?"**
+The agent explains the defaults before asking and waits for your answer. Say yes
+to skip the individual setup questions, or no to customize one choice at a time.
+
 The agent-led setup explains and collects teaching style, whether to look up
 extra explanations beyond your files, whether to suggest catch-up lessons for
 missing background skills, and optional study times/deadlines. Manual installation

@@ -9,9 +9,15 @@ to set up or test the workflow. Choose a chatbot that can read your lesson uploa
 
 ## Setup and discovery
 
-Ask the agent to set up the current new/empty folder. It explains one choice,
-asks one question, and stops until you answer. It never infers your name or
-acceptance from your computer account or silence. Preferences mean:
+Ask the agent to set up the current new/empty folder. Its first question is
+**"Would you like to set up using all defaults?"** It briefly explains those
+defaults and stops until you answer. Yes uses the current new/empty folder,
+the generic name "Learner", the teaching/research/catch-up defaults below,
+`mailbox/` in that folder, and no schedule; already supplied choices are retained.
+No starts a guided interview, explaining and asking one choice at a time.
+You can also request a specific exception and use defaults for everything else.
+It never infers your name or acceptance from your computer account or silence.
+Preferences mean:
 
 - **Teaching style:** how explanations, your attempts, and feedback alternate.
 - **Supplemental research:** optional extra explanations/examples beyond your

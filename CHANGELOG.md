@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+Setup first explains the defaults and asks whether to use them all. A yes skips
+individual setup questions; a no keeps the explained, one-question-at-a-time
+interview. Explicit exceptions are preserved, and silence never selects defaults.
+
 ## 0.2.0
 
 Guided setup asks and explains one choice at a time. A standalone installer

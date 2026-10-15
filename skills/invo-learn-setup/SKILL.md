@@ -19,11 +19,28 @@ Silence and elapsed time are not acceptance of defaults. Honor answers already
 supplied; a learner may explicitly choose defaults for the remaining questions.
 Save answers in private temporary notes so an interrupted setup can resume.
 
-Start by explaining: "You'll use one folder for your courses and progress. The
-mailbox inside it, or on your Desktop, is where you give me materials and pick up
-lesson files. I'll guide you through each choice."
+The **first setup question** must be: "Would you like to set up using all defaults?"
+Before that question, briefly explain the defaults: use the current new/empty
+folder as the one learning workspace; use "Learner" as the profile name; alternate
+short explanations, attempts, and feedback; do no extra web research beyond
+provided materials; suggest catch-up lessons for missing background skills while
+letting the learner move on; use `mailbox/` inside the workspace to drop off
+resources and pick up lessons; leave scheduling off. Keep any choices the learner
+already explicitly supplied. **Stop and wait for the answer.** Do not ask about
+the workspace, name, or individual preferences before this question.
 
-Collect these choices in order, skipping only already answered choices:
+If **yes**, that answer authorizes the documented defaults for all remaining
+setup choices. Use the generic name "Learner" unless a name was supplied; do not
+infer it from the computer account. Skip the individual setup interview and
+install, then continue to the first-course step. If the current folder is not
+new/empty or is a public developer checkout, explain the blocker and ask only
+where to create the learning workspace, then wait. Do not overwrite existing files.
+
+If **no**, explain that each choice can be customized and collect the following
+choices one at a time, skipping only already answered choices. If they answer
+with a specific exception (for example, "defaults, but put the mailbox on the
+Desktop"), apply that exception and defaults elsewhere; ask only for missing
+details. Never treat silence as a yes.
 
 1. **Workspace:** explain that the current new/empty folder can be the learner's
    only workspace. Ask where to keep it; recommend the current folder when suitable.
@@ -48,7 +65,7 @@ Collect these choices in order, skipping only already answered choices:
    or deadlines?" Keep schedule null if declined. Gather any requested details one
    question at a time. Do not create an automation or calendar event implicitly.
 
-After answers, summarize the chosen settings in plain language. Use documented
+After either path, summarize the chosen settings in plain language. Use documented
 defaults only for choices the learner explicitly skipped or delegated. Do not
 restart the interview or add a redundant final approval question.
 
