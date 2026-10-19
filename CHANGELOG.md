@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.4.0
+
+Default lessons explain concepts comprehensively before practice, including
+mechanisms, causal reasoning, justified worked examples and meaningful visuals.
+Adaptive questions, feedback, faded help and independent/delayed evidence remain.
+Existing stored teaching preferences and archived packets are preserved.
+
+Study automatically installs a newer compatible release from the trusted public
+source before preparing lessons/reviews, unless auto_update=false. The updater
+uses existing compatibility, checksum, customization, backup and recovery checks;
+prepare re-enters newly active code. Save/ingest reports and finish their plans
+and backup before updates. Offline/failed checks never imply current status.
+
+The default agent workflow commits and pushes completed lessons and processed
+reports/plans with explicit file scope, unless auto_backup=false. A new helper
+requires a workspace-bound, freshly verified private independent GitHub remote,
+refuses unrelated staged/unpushed changes, never force-pushes and verifies the
+remote SHA. Backup failure preserves learning success. GitHub verification needs
+authenticated gh; no remote or visibility is created/changed automatically.
+
+Existing installations need one authorized upgrade to receive this workflow.
+Missing workflow keys default true; all stored values (including legacy short
+teaching styles and explicit opt-outs) survive. No state/report schema change.
+
 ## 0.3.1
 
 Every teaching-chatbot turn ends with a compact progress bar based on completed

@@ -20,7 +20,7 @@ Status: interview closed at the owner's request. The agreed requirements below d
 - The mailbox is temporary staging. Original materials and durable lesson records remain preserved elsewhere in the private workspace.
 - Uploaded learning materials define learning scope. Supplemental research is an optional course-level preference; distinguish supplemental content from the supplied material.
 - The chatbot may adapt explanations, exercise selection, sequence, and pacing within the assigned lesson objectives. The planning agent owns curriculum changes, durable progress records, and future planning.
-- Begin with a brief check of existing understanding, then alternate short explanations, learner attempts, and feedback. Adapt the balance to preferences and performance.
+- Begin with a brief check of existing understanding, then give longer, detailed, comprehensive explanations before practice, including conceptual mechanisms, causal reasoning, worked examples and useful visuals with readable static alternatives. Adapt the balance to preferences and performance.
 - Use a flexible diagnose/model/attempt/targeted-response/independent-check/recall-and-transfer arc. Branch on reasoning and error type, fade assistance, and vary representation rather than repeating a fixed explanation/quiz sequence. Keep failed/guided attempts; allow fresh independent assessments to explicitly resolve earlier failures. Review success after teaching is relearning, not retention.
 - Make liberal use of meaningful visuals in lessons, including interactive diagrams and charts when supported, with readable static alternatives and verbal explanations. Visual hints count as assistance during assessment.
 - Teach self-contained lessons without directly mentioning source pages/files or requiring the learner to consult uploaded materials. Sources still ground accuracy and define scope; keep provenance in planning records and tutor context, supplying it separately on explicit learner request.
@@ -41,8 +41,8 @@ Status: interview closed at the owner's request. The agreed requirements below d
 - Distribute the harness/skill package from the public project. Each learner's working repository is separate and private.
 - A friend should be able to give their agent the public repository link and have the agent set up their learning environment.
 - Use one private workspace per learner containing all learning tracks, with a shared learner profile and overview and separate track records.
-- Setup should create an independent private workspace and install a versioned copy of the public harness. Harness updates are explicit and preserve preferences and study records.
-- During normal study, check GitHub once per resumed session before preparing the next lesson/review, after processing returned reports. Notify about newer versions without installing automatically; network failures must not block study or imply that the package is current.
+- Setup should create an independent private workspace and install a versioned copy of the public harness. Harness updates default to automatic compatible trusted installation before lessons/reviews and preserve preferences and study records.
+- During normal study, check GitHub before preparing the next lesson/review, after processing returned reports and their plans/private backups. Automatically install newer compatible trusted versions unless opted out; network failures must not block study or imply that the package is current.
 - A dedicated setup skill should collect a few global defaults. New tracks inherit them, with relevant preferences briefly confirmed and per-track overrides supported.
 - Aim to cover all uploaded material by default and generate an inspectable coverage map. The learner can adjust coverage and priorities; distinguish covered, deferred, and unassessed objectives.
 - Additional uploads propose changes to the learning plan for learner review.
@@ -61,3 +61,25 @@ The final interview questions about transformation-workflow reuse, external conv
 ## Research
 
 See [the source-inspected survey](../research/agentic-tutoring-harnesses.md). Its recommendations remain proposals unless accepted in this interview.
+
+## Workflow revision (0.4.0)
+
+The default agent workflow saves/ingests reports and updates plans, then automatically
+commits/pushes completed work to a verified bound private learner remote. After a
+handoff or regeneration, do the same. Scope commits to related reviewed files only,
+preserve exact originals/reports/archives/checksums, never push learner data to the
+public harness, create remotes/change visibility silently, force-push or claim an
+unverified push. No suitable remote or backup failure leaves successful work local.
+Duplicates with no changes create no empty commit. auto_backup=false opts out.
+
+Before each lesson/review, automatically install the latest compatible trusted
+candidate using existing compatibility/customization checks, backups and recovery.
+Save/ingest reports before updates. Unavailable/incompatible/safely failed updates
+allow installed-version study when safe, with an accurate status. auto_update=false
+opts out. Existing installations receive this after one authorized upgrade; missing
+workflow keys inherit true while every explicit stored choice survives. Preserve
+legacy teaching styles whose choice provenance is unknown. Regenerated packets use
+new active instructions; old archives remain immutable. Detailed default teaching
+still skips demonstrated knowledge, asks one manageable question, gives specific
+feedback, fades help and uses fresh independent assessments. Completion remains
+separate from understanding and delayed retention.

@@ -1,38 +1,74 @@
 ---
 name: invo-learn-update
-description: Explicitly upgrade a private invo-learn workspace from a trusted public harness checkout while preserving learner preferences, materials, evidence and review state.
+description: Automatically update before lessons or reviews, handle explicit upgrades, and recover failed invo-learn installations without losing learner records.
 ---
 
-# Explicit harness update
+# Trusted harness updates
 
-Act only on a learner's request to update. Read `.invo-learn/active.json` in the
-private workspace and the desired public checkout's VERSION and CHANGELOG.md.
-Obtain the requested release from https://github.com/Matt-Salamone/invo-learn in a
-separate tools/cache checkout. Avoid changing a public checkout with unrelated
-local edits; an independent clone is an appropriate alternative.
+Save and ingest returned reports FIRST, update records and plan.md, and finish
+that report's backup using the study skill. Inspect mailbox uploads before reuse.
+Never make a network update the first action on a returned report.
 
-Routine study uses `python learn.py check-updates` for a read-only version check
-against GitHub. An available update is a notice, not permission to install it;
-continue normal study unless an update is requested. Network failure must not
-block lessons or be reported as proof that the installed version is current.
+Before planning/preparing a lesson or review, run:
 
-From the private workspace run:
+```sh
+python learn.py study-update --track <id>
+```
+
+Missing auto_update defaults to true. This choice authorizes compatible trusted
+updates each time without a separate request. Honor global or track
+preferences auto_update=false; check-updates remains a read-only manual check.
+New setup explains this default before consent. Older installations keep their
+old behavior until one explicitly authorized upgrade to 0.4.0 or later; explain
+the new workflow and allow an opt-out before that upgrade. Preserve all stored
+preferences, including old default-looking teaching values: their provenance
+cannot be reliably inferred. Missing workflow keys inherit true, explicit false
+survives. If an older CLI rejects the new preference keys, retain the chosen
+opt-outs in private setup notes and apply them with the new preferences command
+immediately after the upgrade, before any study preparation. No repeated consent is needed after choosing the workflow.
+
+study-update checks the fixed public source at
+https://github.com/Matt-Salamone/invo-learn, downloads main into a temporary tools
+location only when newer, checks its version matches the announced version, and
+uses upgrade in a fresh process. It sends no learner records. The Git snapshot
+is the trust boundary; this is not signed-release verification or arbitrary URL
+installation. A race in VERSION is refused and retried next time. The latest
+candidate must pass existing package/state/report/Python compatibility checks;
+if incompatible, stay on the installed version rather than bypass checks.
+
+prepare also checks automatically. After activation it invokes the new learn.py
+process, so generated packets use newly active code/templates. After study-update,
+reread newly active skills/docs before writing the lesson spec. Never edit old
+packet archives: restage is byte-preserving recovery; regeneration requires a new
+prepare and lesson ID after report ingestion or explicitly requested abandonment.
+
+For a one-time upgrade of an older installation, an explicitly selected trusted
+checkout, or an opted-out learner requesting a particular update:
 
 ```sh
 python learn.py upgrade --source <trusted-public-checkout>
 python learn.py status
 ```
 
-The helper installs an immutable versioned bundle, keeps prior bundles and a
-pre-update state/activation backup, refreshes managed skills, and explicitly
-switches the active release. It checks installed-file modifications and rejects
-same-version content changes, downgrades and incompatible state schemas. It
-does not overwrite learner preferences, plans, original/derived materials,
-reports, lessons or review records. It does not fetch code or update itself.
+The low-level upgrade does not fetch. It installs an immutable versioned bundle,
+keeps prior bundles and pre-update state/activation backups, refreshes managed
+skills and switches activation. It checks installed-file/skill/runner modifications,
+same-version collisions, downgrades, schemas and Python compatibility. Preferences,
+plans, originals/derived files, exact reports, archived lessons and review state
+are preserved. Never change a manifest or force overwrite a conflict.
 
-If custom harness/skill files conflict, preserve those custom files privately and
-explain the conflict. Never force an overwrite or edit a manifest to bypass the
-check. Resolve the customization with the learner, then retry. For unsupported
-schemas, stop the update with records intact; a documented migration must exist
-before proceeding. Read the newly installed skills/docs after success and
-report the installed version and any behavior changes.
+Explain unavailable/failed/incompatible outcomes accurately. Continue studying on
+the installed version when safe; never call it current after failed verification.
+Customization conflicts require preserving the custom files and resolving the
+conflict with the learner. Caught export failures roll back; an interrupted export
+can require restoring managed skills from the unchanged active release. Inspect
+active.json and the lock before recovery; verify no process is running before
+removing a stale lock. Unsupported schemas need an implemented migration.
+If activation succeeded but preparation failed, retain the new activation and
+retry preparation or restage its completed packet as appropriate. Do not duplicate
+a pending lesson or repeat evidence ingestion to fix a backup failure.
+
+After a completed handoff or processed report/plan, follow the study skill's
+automatic scoped private backup step. Include related update bundles/exports and
+recovery backups when reviewing the completed file scope. Report installation,
+learning and Git backup outcomes separately.

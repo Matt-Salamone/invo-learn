@@ -54,6 +54,9 @@ track opt-in and is labeled separately. Each packet includes START-HERE.md with
 instructions/context, lesson.json with frozen metadata, report.schema.json and
 selected sources. Source checksums and the full durable packet are retained.
 
+Default context supplies longer, detailed, comprehensive explanations before
+practice, conceptual mechanisms, causal reasoning and justified worked examples.
+Honor explicit style overrides and skip demonstrated knowledge.
 Context should supply enough definitions, reasoning, examples and figure details
 for a self-contained lesson, plus useful visual teaching ideas. Make liberal use
 of visuals, including interactive diagrams/charts when supported and useful, with

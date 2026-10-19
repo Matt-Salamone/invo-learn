@@ -27,3 +27,9 @@ The report construction helpers show legacy and annotated v1 evidence shapes wit
 questions, work, hint detail, frozen rubric text and rationale. Unit tests add
 malformed/conflicting reports, disputed assessments, early/failed reviews,
 mailbox path protection, transformation approvals and update failures.
+
+The inherited algebra teaching preference now requests detailed mechanisms and
+worked examples before practice; bread demonstrates a retained explicit short-style
+override. This offline library example does not perform network updates or Git
+publication. Those are agent workflow steps; focused tests exercise trusted-update
+activation and private backup outcomes with synthetic repositories and mocked APIs.

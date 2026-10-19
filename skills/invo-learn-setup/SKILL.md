@@ -21,11 +21,16 @@ Save answers in private temporary notes so an interrupted setup can resume.
 
 The **first setup question** must be: "Would you like to set up using all defaults?"
 Before that question, briefly explain the defaults: use the current new/empty
-folder as the one learning workspace; use "Learner" as the profile name; alternate
-short explanations, attempts, and feedback; do no extra web research beyond
+folder as the one learning workspace; use "Learner" as the profile name; give
+longer, detailed, comprehensive explanations before practice, with mechanisms,
+causal reasoning, worked examples and useful visuals; do no extra web research beyond
 provided materials; suggest catch-up lessons for missing background skills while
 letting the learner move on; use `mailbox/` inside the workspace to drop off
-resources and pick up lessons; leave scheduling off. Keep any choices the learner
+resources and pick up lessons; leave scheduling off. Automatically install compatible
+trusted updates before lessons/reviews and automatically commit/push completed
+lessons and processed reports to a verified private learner remote when configured.
+Without a suitable remote, work stays local and the agent explains backup setup.
+Both workflows can be opted out of with auto_update=false or auto_backup=false. Keep any choices the learner
 already explicitly supplied. **Stop and wait for the answer.** Do not ask about
 the workspace, name, or individual preferences before this question.
 
@@ -47,8 +52,9 @@ details. Never treat silence as a yes.
    Do not ask them to clone or open a second repository. A public developer checkout
    is not suitable for learner records; explain that distinction if encountered.
 2. **Name:** ask what name to use; do not infer it from the computer account.
-3. **Teaching style:** explain "I can use a short explanation, have you try a
-   question, then give feedback." Ask whether that suits them or they prefer another style.
+3. **Teaching style:** explain "I can give detailed explanations of how and why,
+   with worked examples and useful diagrams before practice, then adapt to what
+   you already know." Ask whether that suits them or they prefer another style.
 4. **Supplemental research:** explain "Your files define what we study. With this
    enabled, I may look up extra explanations or examples and label them separately;
    they won't silently add course requirements." Ask whether to allow it; recommend off.
@@ -64,6 +70,14 @@ details. Never treat silence as a yes.
    way, without automatic notifications." Ask "Do you want a schedule, time budget,
    or deadlines?" Keep schedule null if declined. Gather any requested details one
    question at a time. Do not create an automation or calendar event implicitly.
+
+8. **Automatic updates:** explain compatible trusted updates install before lessons,
+   preserving records and customizations; offline study remains possible. Ask whether
+   to keep this default; store auto_update=false if declined.
+9. **Automatic private backups:** explain completed lessons and processed reports
+   are committed/pushed only to a verified learner private remote. Setup creates no
+   remote; without one files stay local. Ask whether to keep this default; store
+   auto_backup=false if declined. Remote creation still needs an explicit request.
 
 After either path, summarize the chosen settings in plain language. Use documented
 defaults only for choices the learner explicitly skipped or delegated. Do not
@@ -88,7 +102,8 @@ For a developer who already has a trusted source checkout, the equivalent
 Never put real learner data in the public source checkout or a public fork. Keep
 default Git initialization; use --no-git only if files-only setup was requested.
 No remote is created. A hosted private remote requires an explicit request and
-visibility verification before pushing. Do not auto-update the installed harness.
+visibility verification before pushing. Automatic compatible updates are enabled
+unless opted out; choosing all explained defaults is consent to this workflow.
 
 Work from the chosen learner folder for subsequent commands. Read its AGENTS.md,
 START-HERE.md and installed `.agents/skills/invo-learn/SKILL.md`; run

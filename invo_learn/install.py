@@ -26,6 +26,10 @@ from invo_learn.cli import main
 raise SystemExit(main(workspace_default=root))
 '''
 
+LEGACY_RUNNER = RUNNER
+RUNNER = RUNNER.replace("Run the explicitly selected installed harness. No network or automatic update.",
+                        "Run the active installed harness; study preferences control updates.")
+
 GUIDANCE = '''# invo-learn private learner workspace
 
 This repository holds private learner records and source materials. Never publish it,
@@ -35,7 +39,9 @@ repository is sufficient. Only create a hosted private remote on explicit reques
 Read `.agents/skills/invo-learn-add-course/SKILL.md` to add a course or skill.
 Read `.agents/skills/invo-learn-add-materials/SKILL.md` for first or later uploads.
 Read `.agents/skills/invo-learn/SKILL.md` for study work and pasted chatbot reports.
-Read `.agents/skills/invo-learn-update/SKILL.md` for an explicitly requested update.
+Read `.agents/skills/invo-learn-update/SKILL.md` before lessons and for update recovery.
+The study skill automatically updates before lessons and backs up completed work
+unless preferences opt out. A private remote must be verified and explicitly bound.
 Any agent host can read those files directly; discovery does not depend on a plugin.
 Run `python learn.py --help` for deterministic tools. Read `state.json`, `OVERVIEW.md`
 and all active tracks before coordinating work. Use `learn.py` for record changes;
@@ -72,6 +78,7 @@ def package(source):
     if (source / "LICENSE").exists():
         files["LICENSE"] = (source / "LICENSE").read_bytes()
     for expected in ("invo_learn/cli.py", "invo_learn/engine.py", "invo_learn/install.py",
+                     "invo_learn/updates.py", "invo_learn/backup.py",
                      "invo_learn/contracts.py", "invo_learn/templates/chatbot.md",
                      "invo_learn/templates/report.schema.json", "skills/invo-learn/SKILL.md",
                      "skills/invo-learn-setup/SKILL.md", "skills/invo-learn-update/SKILL.md",
@@ -171,7 +178,7 @@ def upgrade(ws, source):
     for name, checksum in current["managed_exports"].items():
         p = ws.path(name)
         require(p.is_file() and digest(p.read_bytes()) == checksum, "installed skill modified; preserve custom changes before upgrade")
-    require((ws.root / "learn.py").read_text(encoding="utf-8") == RUNNER, "workspace runner modified; preserve custom changes before upgrade")
+    require((ws.root / "learn.py").read_text(encoding="utf-8") in (RUNNER, LEGACY_RUNNER), "workspace runner modified; preserve custom changes before upgrade")
     if current["version"] == version:
         require(manifest["files"] == hashes, "same-version package differs; publish a new version rather than overwrite")
         return {"status": "already-current", "version": version}
@@ -188,13 +195,14 @@ def upgrade(ws, source):
     new_exports = exports(files)
     for name in set(new_exports) - set(current["managed_exports"]):
         require(not (ws.root / name).exists(), "new harness skill conflicts with an unmanaged private file")
-    all_paths = set(current["managed_exports"]) | set(new_exports)
+    all_paths = set(current["managed_exports"]) | set(new_exports) | {"learn.py"}
     before = {name: (ws.root / name).read_bytes() if (ws.root / name).exists() else None for name in all_paths}
     backup = ws.root / ".invo-learn" / "upgrade-backups" / uuid.uuid4().hex
     backup.mkdir(parents=True)
     shutil.copy2(ws.state_path, backup / "state.json")
     atomic(backup / "active.json", current)
     try:
+        (ws.root / "learn.py").write_text(RUNNER, encoding="utf-8")
         for name, data in new_exports.items():
             dest = ws.root / name
             dest.parent.mkdir(parents=True, exist_ok=True)

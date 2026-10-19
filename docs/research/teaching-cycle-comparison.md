@@ -6,6 +6,10 @@ comparison, not a trial of the tutors or a measured learning-outcome comparison.
 Implementation follow-up: **0.3.0** adopts the flexible arc and branching policy
 below. Optional ordered attempt annotations and explicit failure-resolution links
 address the same-report failure limitation while preserving legacy semantics.
+The 0.4.0 follow-up changes the default explanation depth to comprehensive
+mechanisms, causal reasoning and worked examples before practice, preserving the
+adaptive arc. The short-explanation descriptions below are historical baseline
+observations.
 See the [current contract](../user/contracts.md#ordered-attempts) for exact rules.
 The earlier [harness survey](agentic-tutoring-harnesses.md) provides architecture
 and implementation context. This follow-up re-read available first-party skill

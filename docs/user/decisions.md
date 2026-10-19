@@ -15,7 +15,7 @@
   lessons share the learner-facing exchange folder. The agent registers selected
   resources before staging lessons, distinguishes returned reports and handoff
   metadata, and snapshots all staging copies. No separate incoming folder is needed.
-- **Versioned immutable bundles:** explicit trusted-checkout updates, checksummed
+- **Versioned immutable bundles:** automatic compatible trusted-source updates (opt-out), checksummed
   installation, conflict refusal and schema compatibility checks. Version 1 needs
   no data migration. Future incompatible migrations are outside this release.
 - **Any file extension accepted:** conservative UTF-8 usability detection plus
@@ -54,10 +54,18 @@
   finishing a session does not imply mastery. Independent/retained labels follow
   report evidence rules and can fall after new conflicting evidence. The display
   changes no schema or durable state and stays outside the final report JSON.
-- **Routine update awareness:** one read-only GitHub version check per resumed
-  study session, after handling reports and before a new handoff. Five-second
-  timeout, no learner data sent, offline study allowed. Installation still needs
-  an explicit learner request and the existing versioned upgrade procedure.
+- **Automatic study updates:** reports and plans/backup first, then check/install
+  the latest compatible trusted candidate before a lesson/review. Existing checks,
+  backup and rollback remain. New preparation uses the activated interpreter and
+  templates; restage preserves archived bytes. Offline/failure never means current.
+- **Scoped private backup:** the agent commits/pushes after completed handoffs or
+  report/plan updates. Explicit file scope and a bound verified private GitHub
+  remote prevent public or unrelated publication. Failures preserve study success.
+  No remote is created. Both workflows have boolean global/track opt-outs; existing
+  stored choices survive, and missing workflow keys inherit true after one upgrade.
+- **Detailed default teaching:** longer comprehensive mechanisms, causal reasoning,
+  worked examples and useful visuals before practice; prior knowledge and explicit
+  style preferences adapt the depth. Legacy stored teaching values are preserved.
 - **Dedicated mailbox:** new/empty adoption only, owner/path marker, root/protected
   folder/link checks, full snapshots before clearing, pending-report barrier.
   External mailboxes allowed. Filesystem attack races and concurrent hostile access

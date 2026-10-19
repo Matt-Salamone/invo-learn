@@ -63,8 +63,10 @@ visible file into a fresh chatbot conversation. Ask it to teach `START-HERE.md`
 and return the JSON report. Paste that one report back to your planning agent.
 The agent updates your records and plans the next lesson or review.
 
-Lessons use visuals liberally, including interactive diagrams and charts when
-supported. Teaching stands on its own without slide/page commentary or asking
+By default, lessons give longer, detailed, comprehensive explanations before
+practice, including mechanisms, causal reasoning and worked examples. Prior
+knowledge and explicit learner preferences adjust depth. Lessons use visuals
+liberally, including interactive diagrams and charts when supported. Teaching stands on its own without slide/page commentary or asking
 you to consult uploads; source links remain in the coverage map for reference.
 The teaching arc branches on your reasoning: diagnose, model/example, attempt,
 targeted feedback, fresh independent check, recall and transfer. Early mistakes
@@ -95,7 +97,7 @@ python -m invo_learn --help
 ```
 
 See [verification results and limits](docs/user/testing.md). CI is configured for
-Windows/Ubuntu and Python 3.10/3.13; local validation used Windows/Python 3.13.
+Windows/Ubuntu and Python 3.10/3.13; local validation used Windows/Python 3.14.
 
 The synthetic example creates a temporary independent workspace with two tracks,
 coverage, a lesson/report cycle and a delayed review. It requires no real chatbot.
@@ -103,12 +105,14 @@ Developers with an existing source checkout may still use `python -m invo_learn
 bootstrap <new-learner-folder> --name "Your name"`. Real learner records never
 belong in this public development checkout or a public fork.
 
-Updates are explicit: from your learning workspace run `python learn.py upgrade
---source /path/to/trusted/newer-public-checkout`. Versions are immutable; records
-and preferences are preserved.
-During normal study, the agent runs `python learn.py check-updates` once per
-resumed session. It checks the public GitHub version without sending learner
-data or installing code; unavailable checks do not interrupt study.
+Before lessons/reviews, the agent automatically installs a compatible trusted
+update after processing returned reports. After completed handoffs and processed
+reports/plans, it automatically commits and pushes only reviewed completed files
+to a verified private learner remote. Setup creates no remote; without one, work
+stays local and the agent explains the missing backup setup. Opt out using
+`auto_update=false` or `auto_backup=false` preferences. Existing installs need one
+authorized upgrade; stored preferences (including legacy teaching styles) survive.
+See [workflow, migration and backup recovery](docs/user/guide.md#automatic-updates-and-migration).
 
 Report validation cannot independently verify the chatbot's judgments or unaided
 work. Complex materials require appropriate reading/conversion tools and permission

@@ -13,7 +13,7 @@ You are taking over implementation of invo-learn, an agentic teaching and tutori
 
 This is a hybrid system. A planning agent such as Codex, Cursor, or a local agent owns planning, bookkeeping, durable learner state, curriculum changes, and future study decisions. A separate chatbot such as ChatGPT teaches from an agent-prepared prompt and context. The learner manually uploads the handoff into a fresh chatbot conversation, completes the lesson, copies one chatbot-generated report, and pastes it to the planning agent. Automated chatbot integration is outside the initial scope.
 
-The chatbot may adapt explanations, exercises, sequence, and pacing within assigned objectives. Begin with a brief understanding check, then alternate short explanations, attempts, and feedback, adapting to learner preferences and performance. Small prerequisite repairs may happen within a lesson. Large gaps should trigger a suggestion to pause and return to the planning agent for one or more prerequisite lessons. Advancement is advisory: recommend remediation and explain gaps, allow explicit learner overrides, and retain unresolved gaps in the learning map.
+The chatbot may adapt explanations, exercises, sequence, and pacing within assigned objectives. Begin with a brief understanding check, then give longer, detailed, comprehensive explanations before practice, including conceptual mechanisms, causal reasoning, worked examples and useful visuals with readable static alternatives, adapting to learner preferences and performance. Small prerequisite repairs may happen within a lesson. Large gaps should trigger a suggestion to pause and return to the planning agent for one or more prerequisite lessons. Advancement is advisory: recommend remediation and explain gaps, allow explicit learner overrides, and retain unresolved gaps in the learning map.
 
 Make liberal use of meaningful visuals in lessons, including interactive diagrams,
 charts or simulations when supported and useful, with readable static alternatives
@@ -27,8 +27,8 @@ Use a flexible diagnose/model/attempt/targeted-response/independent-check/recall
 arc, branching on reasoning and error type rather than enforcing a fixed quiz
 sequence. Fade support after guided work and keep prior failures; fresh independent
 assessment may explicitly resolve them. Success after review teaching is relearning,
-not retention. During normal study, check GitHub once per resumed session before a
-new handoff, after processing reports. Offer newer versions without auto-installing;
+not retention. During normal study, check GitHub before each
+new handoff, after processing reports and their plans/private backups. Automatically install newer compatible trusted versions unless opted out;
 offline checks leave study available and update status unknown.
 
 End every teaching-chatbot turn with a compact progress bar for completed lesson
@@ -42,7 +42,7 @@ session does not imply mastery. Keep the final footer outside the report JSON.
 
 The public repository distributes the harness/skills, reusable supporting tools, templates, documentation, and synthetic examples. Each learner has an independent private working repository containing all their courses, skills, and paths. Do not use a public fork as the private repository or put real learner data into the public package.
 
-Provide a dedicated setup skill and a clear README entrypoint so a friend can give their agent the public repository URL and have it perform setup. Setup should create an independent private workspace, install a versioned copy of the harness, collect a few global preferences, and establish a shared learner profile/overview with separate track records. New tracks inherit defaults, briefly confirm relevant preferences, and permit overrides. Supplemental research and remedial preferences are examples. Support a local private workspace without requiring a hosted GitHub remote; create a private remote when requested and authorized. Harness updates are explicit and preserve learner preferences and study records.
+Provide a dedicated setup skill and a clear README entrypoint so a friend can give their agent the public repository URL and have it perform setup. Setup should create an independent private workspace, install a versioned copy of the harness, collect a few global preferences, and establish a shared learner profile/overview with separate track records. New tracks inherit defaults, briefly confirm relevant preferences, and permit overrides. Supplemental research and remedial preferences are examples. Support a local private workspace without requiring a hosted GitHub remote; create a private remote when requested and authorized. Harness updates default to automatic compatible trusted installation before lessons/reviews and preserve learner preferences and study records.
 
 Let the agent know about all active tracks so it can coordinate priorities. Scheduling, time budgets, and deadlines are optional. Setup and course intake may ask, “Do you want to create a schedule, time budget, or add deadlines?” If the learner does not request or supply these, no calendar or time-budget management is required. When enabled, let the agent handle details rather than prescribing an elaborate scheduling algorithm in the skill.
 
@@ -85,3 +85,25 @@ Deliver a coherent end-to-end implementation, not only a plan or placeholder ski
 Validate meaningful behavior with tests and an end-to-end synthetic exercise: bootstrap a private workspace, add materials for at least two tracks, build a coverage map, stage a lesson, ingest a representative pasted report, update evidence and review state, and prepare a subsequent lesson/review. Verify that mailbox reuse preserves originals and durable artifacts; malformed/duplicate reports do not fabricate or duplicate learning evidence; hinted responses do not become independent mastery; and upgrades preserve learner records. Do not require a real paid chatbot session to exercise these contracts.
 
 When done, report what was built, how to use it, what was tested, and material limitations. Keep the public project free of real learner materials, credentials, and private study records.
+
+## Workflow revision (0.4.0)
+
+The default agent workflow saves/ingests reports and updates plans, then automatically
+commits/pushes completed work to a verified bound private learner remote. After a
+handoff or regeneration, do the same. Scope commits to related reviewed files only,
+preserve exact originals/reports/archives/checksums, never push learner data to the
+public harness, create remotes/change visibility silently, force-push or claim an
+unverified push. No suitable remote or backup failure leaves successful work local.
+Duplicates with no changes create no empty commit. auto_backup=false opts out.
+
+Before each lesson/review, automatically install the latest compatible trusted
+candidate using existing compatibility/customization checks, backups and recovery.
+Save/ingest reports before updates. Unavailable/incompatible/safely failed updates
+allow installed-version study when safe, with an accurate status. auto_update=false
+opts out. Existing installations receive this after one authorized upgrade; missing
+workflow keys inherit true while every explicit stored choice survives. Preserve
+legacy teaching styles whose choice provenance is unknown. Regenerated packets use
+new active instructions; old archives remain immutable. Detailed default teaching
+still skips demonstrated knowledge, asks one manageable question, gives specific
+feedback, fades help and uses fresh independent assessments. Completion remains
+separate from understanding and delayed retention.

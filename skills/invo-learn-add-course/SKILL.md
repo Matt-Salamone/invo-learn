@@ -22,6 +22,10 @@ Reuse answers from this conversation and inherited defaults; do not repeat setup
    allowed, and how catch-up help works, in plain language. Ask one question:
    "Would you like to use those settings for this course?" If they want changes,
    discuss each requested choice separately and store only per-course overrides.
+   The new default is detailed mechanisms, causal reasoning and worked examples
+   before practice with useful visuals; honor any stored alternative. Also explain
+   inherited automatic compatible updates and private backups and their
+   auto_update/auto_backup opt-outs; do not reset existing choices.
 4. If no course scheduling constraints were supplied, explain that study time and
    deadlines are optional and ask whether they want any for this course. Wait.
    Gather requested details one at a time; otherwise inherit defaults (null when

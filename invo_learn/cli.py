@@ -4,11 +4,12 @@ import datetime as dt
 import json
 from pathlib import Path
 import sys
+import subprocess
 
 from .contracts import Invalid
 from .engine import Workspace, read_json
 from .install import bootstrap, upgrade
-from .updates import check_updates
+from .updates import check_updates, study_update
 
 
 def parser(workspace_default=None):
@@ -25,6 +26,15 @@ def parser(workspace_default=None):
     b.add_argument("--no-git", action="store_true")
     sub.add_parser("status", help="all tracks, gaps and due reviews")
     sub.add_parser("check-updates", help="read-only GitHub version check; never installs an update")
+    su = sub.add_parser("study-update", help="automatically install a compatible trusted release unless opted out")
+    su.add_argument("--track")
+    bk = sub.add_parser("backup", help="agent: commit completed scoped files and push to a verified private remote")
+    bk.add_argument("--paths", nargs="+", required=True)
+    bk.add_argument("--message", required=True)
+    bk.add_argument("--track")
+    bc = sub.add_parser("configure-backup", help="bind an existing private GitHub remote to this workspace")
+    bc.add_argument("--remote", default="origin")
+    bc.add_argument("--repository", required=True, help="learner-owned OWNER/REPO, never the public harness")
     sub.add_parser("render", help="regenerate inspectable overview and coverage files")
     t = sub.add_parser("add-course", aliases=["add-track"], help="add a course or other learning track")
     t.add_argument("track_id")
@@ -66,6 +76,7 @@ def parser(workspace_default=None):
     le = sub.add_parser("prepare")
     le.add_argument("track_id")
     le.add_argument("file", type=Path)
+    le.add_argument("--skip-update-check", action="store_true", help=argparse.SUPPRESS)
     rs = sub.add_parser("restage", help="recover staging of an already prepared handoff")
     rs.add_argument("lesson_id")
     ab = sub.add_parser("abandon")
@@ -91,9 +102,30 @@ def execute(args):
     ws = Workspace(args.workspace)
     if cmd == "check-updates":
         return check_updates(read_json(ws.root / ".invo-learn/active.json")["version"])
+    if cmd == "study-update":
+        return study_update(ws, args.track)
+    update_result = None
+    if cmd == "prepare" and not args.skip_update_check:
+        before = read_json(ws.root / ".invo-learn/active.json")["version"]
+        update_result = study_update(ws, args.track_id)
+        after = read_json(ws.root / ".invo-learn/active.json")["version"]
+        if before != after:
+            # Run the newly active code/templates, even if the old updater reported
+            # a failure after activation. Never prepare using cached old modules.
+            prepared = subprocess.run([sys.executable, str(ws.root / "learn.py"), "--today", args.today,
+                                      "prepare", args.track_id, str(args.file.resolve()), "--skip-update-check"],
+                                     capture_output=True, text=True)
+            if prepared.returncode:
+                raise Invalid(prepared.stderr.strip() or "Preparation failed after update; inspect active release")
+            return json.loads(prepared.stdout) | {"update": update_result}
     if cmd == "status":
         return ws.status(args.today)
     with ws.locked():
+        if cmd in ("backup", "configure-backup"):
+            from .backup import backup, configure
+            if cmd == "configure-backup":
+                return configure(ws, args.remote, args.repository)
+            return backup(ws, args.paths, args.message, args.track)
         if cmd == "render":
             ws.render()
             return {"status": "rendered"}
@@ -116,7 +148,7 @@ def execute(args):
         if cmd == "override":
             return ws.override(args.track_id, args.objective_ids, args.reason)
         if cmd == "prepare":
-            return ws.prepare(args.track_id, read_json(args.file), args.today)
+            return ws.prepare(args.track_id, read_json(args.file), args.today) | {"update": update_result}
         if cmd == "restage":
             return ws.stage(args.lesson_id)
         if cmd == "abandon":

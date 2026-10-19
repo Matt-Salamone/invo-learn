@@ -19,7 +19,14 @@ You can also request a specific exception and use defaults for everything else.
 It never infers your name or acceptance from your computer account or silence.
 Preferences mean:
 
-- **Teaching style:** how explanations, your attempts, and feedback alternate.
+- **Teaching style:** longer, detailed, comprehensive explanations before practice,
+  with conceptual mechanisms, causal reasoning, worked examples and useful visuals.
+  Demonstrated knowledge skips unnecessary explanation; explicit overrides win.
+- **Automatic updates:** compatible trusted updates before lessons/reviews; opt out
+  with auto_update=false.
+- **Automatic private backups:** agent commits/pushes completed handoffs and processed
+  reports/plans to a verified private learner remote; opt out with auto_backup=false.
+  No remote is created automatically; without one, completed work stays local.
 - **Supplemental research:** optional extra explanations/examples beyond your
   files, labeled separately; your files still define course scope. Off by default.
 - **Prerequisite help:** suggest catch-up lessons when missing background skills
@@ -41,7 +48,9 @@ The agent briefly collects defaults and offers optional scheduling. Example pref
 
 ```json
 {
-  "teaching_style": "short explanations with visual examples, then practice",
+  "teaching_style": "detailed mechanisms and worked examples with visuals before practice",
+  "auto_update": true,
+  "auto_backup": true,
   "supplemental_research": false,
   "remediation": "recommend short prerequisite lessons; let me override",
   "schedule": null
@@ -108,6 +117,11 @@ automatically become learning evidence; the agent inspects/ingests returned repo
 Do not repurpose the mailbox or put unrelated personal files there.
 
 ## How lessons teach
+
+The default gives longer, detailed, comprehensive explanations before practice:
+conceptual mechanisms, causal reasoning and worked examples with justified steps.
+Explicit learner preferences override this depth. A cold review starts with retrieval
+before repair teaching, so explanation cannot contaminate retention evidence.
 
 The chatbot follows a flexible arc: diagnose, build a visual model with an example,
 invite an attempt, diagnose that attempt, choose a targeted response, check fresh
@@ -230,34 +244,96 @@ filesystem problem then run render. An interrupted import can be retried; source
 files left outside state are recovery artifacts, never evidence by themselves.
 Back up the **entire** private repository; review state alone omits originals.
 
-## Explicit updates
+## Automatic updates and migration
 
-During normal study, the agent checks GitHub once per resumed session before
-preparing a lesson or review, after saving/importing any returned report. The
-read-only `python learn.py check-updates` compares the installed version with
-the public main branch using a five-second network timeout. It sends no learner
-records and fetches only the version string. A newer version is offered with a
-changelog link; study continues unless you request an update. Offline/invalid
-responses mean status unknown, not up to date, and do not block study. Ordinary
-status, ingestion and lesson preparation do not themselves contact GitHub.
+Before each lesson/review, the agent saves/ingests returned reports, revises their
+plans, and completes their backup first. Then `study-update --track <id>` checks
+the trusted public VERSION and automatically installs a newer compatible snapshot
+from the fixed public repository. prepare checks too, and after activation starts
+a fresh interpreter so the handoff uses newly active code and templates. The agent
+rereads new instructions before generating its spec. Updates require no separate
+request once this default is chosen. `check-updates` remains read-only.
 
-Ask the agent to update, or run from the private root:
+Use `preferences <private.json>` with `{"auto_update": false}` to opt out (or
+`--track <id>` for a course override). A manually requested update still uses
+`upgrade --source <trusted-public-checkout>`. No learner records are sent upstream.
+The trusted main snapshot is not cryptographically signed. A version/download
+race, unavailable Git/network, incompatible candidate or modified managed file
+leaves study on the installed version when safe. The result is explained; failed
+verification never means current. There is no search through historical releases
+for a compatible candidate if latest is incompatible.
+
+Existing installs need one authorized upgrade to 0.4.0 or later. The agent explains
+these changed defaults and opt-outs before that upgrade. If the old CLI rejects
+new keys, retain chosen opt-outs in private notes and apply them through the new
+preferences command immediately after upgrading, before study. Thereafter missing
+workflow keys inherit true, while explicit true/false values and every stored
+teaching style survive. Legacy styles may look like old defaults; without reliable
+choice provenance they are preserved. To adopt the new teaching style in such a
+workspace, explicitly set teaching_style to the detailed style above (or ask the
+agent to do it). Missing teaching_style inherits the new default. New tracks
+inherit effective global settings, and track overrides still win. No schema
+migration rewrites records. A preferences change does not rewrite old packets.
+
+Existing compatibility/customization checks, immutable releases, pre-update
+state/activation backups and export rollback remain. Reports, source bytes and
+checksums, plans, evidence, lesson archives and review state survive. Never force
+an overwrite, bypass a conflict or downgrade. After interrupted skill export,
+restore managed skills from the unchanged active release before retrying; inspect
+activation and verify no process is alive before clearing a stale operation lock.
+restage recovers the existing archive exactly. Regeneration with new instructions
+means prepare a new lesson ID after ingestion or explicit abandonment of the old
+one; keep the old archive. An activated update may remain active if a later
+preparation fails; retry preparation or recover its pending packet, not the update.
+
+## Automatic private Git backup
+
+The agent, rather than the teaching chatbot or low-level record mutation, performs
+this default step after a prepared/regenerated lesson (including successful
+restage recovery), or a successfully ingested report AND updated plan. It reviews
+Git status/diffs and lists only the completed operation files, including related
+originals, exact raw input, normalized report, archive, views, plan and any update
+bundles/backups. It then runs:
 
 ```sh
-python learn.py upgrade --source /path/to/trusted-public-checkout
-python learn.py status
+python learn.py configure-backup --remote origin --repository OWNER/PRIVATE-REPO
+python learn.py backup --paths state.json OVERVIEW.md tracks/math/plan.md OTHER-COMPLETED-FILES --message "Process report <id>" --track math
 ```
 
-The checkout's VERSION must be newer and immutable. harness.json declares the
-package/state/report schemas and minimum Python version, checked before installation.
-The upgrade helper fetches no code and never auto-updates. The separate check
-only reads public version information. Managed harness/skill customization conflicts are rejected.
-Prior releases plus pre-update state/activation backups remain under .invo-learn/;
-learner profile, overrides, plans, reports, materials and reviews remain intact.
-The current updater supports state schema 1; future incompatible schemas require
-an explicit migration implementation. Downgrades are rejected. A crash during
-skill export may require restoring the managed skills from the unchanged active
-release before retrying; ordinary caught failures roll back those exports.
+configure-backup is a one-time binding of an already explicitly identified learner
+remote to this workspace ID. The agent must include the actual individual files,
+not the illustrative placeholder, a directory, or all changes indiscriminately.
+Creating a remote/private repository still requires an explicit request; the
+helper never creates one, changes visibility, force-pushes or targets the public
+harness. Direct CLI/library mutations save learning work but do not substitute
+for the agent's final backup step after its plan edits.
+
+Verification currently supports independent GitHub repositories through Git and
+authenticated `gh api`. Both fetch and push must have one identical direct URL,
+no Git URL rewrites, matching the workspace binding; the API must confirm private
+visibility, identity and push access. Forks and the public harness are refused.
+Visibility is checked again before push. Other hosts/unverifiable privacy, no
+remote, no credentials or no Git mean local work is retained and the agent explains
+the missing setup. No automatic remote creation occurs.
+
+Only explicitly reviewed completed files enter the commit. Existing staged
+changes and unpushed history outside the scope cause refusal. This includes
+changes in each pending commit, so reverted unrelated changes are not hidden.
+If a completed file also contains unrelated edits, the agent must resolve that
+scope before backup. A push uses the current branch explicitly, without force,
+and verifies its SHA with ls-remote. Remote divergence fails safely; resolve it
+without force or discarding learner records. A failed commit can leave the scoped
+files staged; inspect them before retry. A failed push leaves a local commit;
+retry backup, not the successful learning operation. A failed backup attempt does
+not block the next safe update or lesson; explain it and keep work local. Unknown verification is
+reported as backup failure, never a successful push.
+
+Opt out with `{"auto_backup": false}` via preferences, globally or per track.
+An unchanged duplicate report requires no commit; a different exact raw paste
+can be saved/backed up without duplicating evidence. The helper never creates an
+empty commit and supports retrying a previously failed push. Report learning,
+update and backup outcomes separately. Local-only work is still completed study;
+it has no verified remote backup until setup and push succeed.
 
 ## Limits
 

@@ -46,12 +46,13 @@ def fields(obj, required, optional=()):
 
 
 def preferences(prefs):
-    fields(prefs, (), ("teaching_style", "supplemental_research", "remediation", "schedule"))
+    fields(prefs, (), ("teaching_style", "supplemental_research", "remediation", "schedule", "auto_update", "auto_backup"))
     for key in ("teaching_style", "remediation"):
         if key in prefs:
             string(prefs[key], key)
-    if "supplemental_research" in prefs:
-        require(type(prefs["supplemental_research"]) is bool, "supplemental_research must be boolean")
+    for key in ("supplemental_research", "auto_update", "auto_backup"):
+        if key in prefs:
+            require(type(prefs[key]) is bool, f"{key} must be boolean")
     if "schedule" in prefs:
         require(prefs["schedule"] is None or isinstance(prefs["schedule"], dict),
                 "schedule must be null or an object with learner-supplied constraints")

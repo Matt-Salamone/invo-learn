@@ -55,7 +55,7 @@ def map_spec(mid, objectives):
 
 def spec(oids, mode="lesson", attachments=None):
     return {"objective_ids": oids, "mode": mode,
-            "context": "Synthetic algebra source: apply the same inverse operation on both sides. For ax+b=c, subtract b, divide by nonzero a, and check. Use new coefficients on review.",
+            "context": "Synthetic algebra source: explain in detail why equality survives the same inverse operation on both sides. Build a labeled balance diagram (interactive if supported, readable static otherwise). Work through 2x+3=11: subtract 3 from both sides to get 2x=8, divide both sides by 2 to get x=4, and substitute to check. Explain each causal step before practice; skip demonstrated knowledge. Use new coefficients on review and retrieve before teaching.",
             "attachments": attachments or [], "supplemental_context": ""}
 
 

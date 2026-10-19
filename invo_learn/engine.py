@@ -13,9 +13,9 @@ import uuid
 from .contracts import Invalid, KINDS, date, evidence_outcome, fields, identifier, preferences, require, report, string, strings
 
 STATE_SCHEMA = 1
-DEFAULTS = {"teaching_style": "brief explanation, attempt, feedback",
+DEFAULTS = {"teaching_style": "longer, detailed, comprehensive explanations before practice; conceptual mechanisms, causal reasoning, worked examples and useful visuals; adapt to demonstrated prior knowledge",
             "supplemental_research": False, "remediation": "recommend prerequisite repair; advancement is advisory",
-            "schedule": None}
+            "schedule": None, "auto_update": True, "auto_backup": True}
 
 
 def digest(data):
@@ -151,7 +151,7 @@ class Workspace:
         return {"track_id": tid, "preferences": self.effective_preferences(tid)}
 
     def effective_preferences(self, tid):
-        return self.state["profile"]["preferences"] | self.track(tid)["preferences"]
+        return DEFAULTS | self.state["profile"]["preferences"] | self.track(tid)["preferences"]
 
     def set_preferences(self, tid, prefs):
         preferences(prefs)

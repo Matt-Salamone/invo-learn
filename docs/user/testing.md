@@ -7,13 +7,12 @@ python -m unittest discover -s tests -v
 python examples/worked_example.py
 ```
 
-The current local run used Windows and Python 3.13: **59 tests run, 58 passed,
-1 skipped**. The skipped test attempts to create a Windows directory junction;
-creation was unavailable in the execution environment. The symlink preservation
-test passed. Junction rejection is implemented using Windows lstat reparse tags
-so it also works with Python 3.10/3.11, but a real junction could not be exercised
-in this run. The ordinary default temp directory was restricted here, so TEMP
-and TMP were pointed at an allowed scratch directory outside the public checkout.
+The current local run used Windows and Python 3.14: **72 tests passed, none
+skipped**. Both symlink preservation and Windows directory junction rejection were
+exercised successfully. Junction rejection uses Windows lstat reparse tags so it
+also works with Python 3.10/3.11. The ordinary default temp directory was restricted
+here, so TEMP and TMP were pointed at an allowed scratch directory outside the
+public checkout. Git's shell helper required running the suite outside the sandbox.
 Normal local runs use the system temp directory.
 
 The suite covers independent setup (including a real new Git repository with no
@@ -48,7 +47,7 @@ the mailbox and runs the installed CLI
 for report ingestion, coordinates two tracks, preserves a downloaded report during
 mailbox reuse, distinguishes assisted understanding from independent work and
 delayed retention, tests a synthetic newer release, and prepares subsequent repair.
-All five SKILL.md files passed the skill-creator frontmatter validator. Whitespace
+The five portable skills retain name/description frontmatter. Whitespace
 checks passed. No real learner records, credentials or source materials were used.
 An independent synthetic forward-test checked novice repair, review relearning,
 and faster pacing for a prepared learner; it did not measure learning outcomes.
@@ -58,3 +57,25 @@ and 3.13. Those CI jobs have not been run from this local implementation session
 No live archive download of this unreleased version, real chatbot, external conversion service, calendar connector, or hosted
 private-remote creation was exercised. Assertions validate the workflow and
 evidence contract, not real-world learning efficacy or a model's grading accuracy.
+
+## 0.4.0 workflow checks
+
+Synthetic automation tests cover inherited detailed teaching and explicit shorter
+styles, missing workflow defaults, global/track opt-outs and preference validation,
+compatible activation in a fresh interpreter using new templates, incompatible or
+customized releases, download/version races, pending-report deferral, immutable
+restaging and regenerated handoffs. Existing tests cover caught activation rollback,
+interrupted staging and state-write recovery, exact raw report bytes/checksums,
+duplicate evidence and retained review state.
+
+Backup tests use real Git commits and a temporary local bare repository, with
+mocked GitHub API identity/visibility responses and redirected local transport.
+They exercise scoped pushes and SHA verification, unrelated untracked/staged or
+unpushed changes, no empty duplicate commits, missing/public/wrong-workspace or
+unverified remotes, public visibility/forks/wrong identity/multiple destinations,
+commit failure, push failure/retry and false push acknowledgement. Report/plan
+backup failures preserve successful learning state and artifact bytes. No live
+GitHub private repository, remote creation, credentials, or learner data is used.
+Git's shell transport needed execution outside the restricted sandbox for local
+bare-repository tests. The normal temp path was restricted; tests used an allowed
+external scratch path. This is an environment constraint, not a learner requirement.

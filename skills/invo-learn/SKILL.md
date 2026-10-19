@@ -44,15 +44,20 @@ separately, and cannot expand authoritative uploaded scope on its own.
 
 ## Next lesson or review
 
-Once per resumed study session, before preparing the next lesson/review, run
-`python learn.py check-updates` to compare the installed version with the public
-GitHub main branch. Save/ingest any pasted report FIRST. The check sends no learner
-data and never installs code. If newer, briefly describe the available version
-and link its changelog; use `../invo-learn-update/SKILL.md` only when the learner
-requests the update. Otherwise continue studying on the installed version.
-Do not repeat the same notice during the session. If unavailable/offline, mention
-that once and continue; do not claim the package is current. Do not check during
-individual teaching questions or make updating a prerequisite for study.
+Before preparing a lesson/review, save and ingest every returned report FIRST,
+update its records and plan, then finish the report backup below. Inspect the
+mailbox for reports/resources before updating or staging. Read
+`../invo-learn-update/SKILL.md` and run `python learn.py study-update --track <id>`.
+The default automatically installs a newer compatible trusted release without a
+separate request each time. Honor auto_update=false. After activation, reread the
+new active study/update skills and templates before writing or regenerating the
+lesson spec. prepare also checks automatically and runs newly active code in a
+fresh interpreter. Offline, incompatible or safely failed updates leave study
+available; explain the actual result and never call an unverified version current.
+Do not retry conflicts by overwriting custom files. Do not update during teaching
+questions. restage recovers an immutable archived packet; to regenerate with new
+instructions, ingest its report or obtain explicit abandonment, then prepare a
+new lesson ID. Keep the previous archive and checksums.
 
 Inspect independent evidence, misconceptions and unresolved prerequisites. Pick
 the next useful objectives, recommending remediation with a clear explanation.
@@ -87,6 +92,11 @@ include a readable static or text-based alternative when interaction is unavaila
 Visuals need labels and a verbal explanation, and assessment visuals must not
 reveal answers or disguise hints as independent work. These teaching rules also
 apply to review handoffs; keep retrieval unaided before supplying visual help.
+
+Default to longer, detailed, comprehensive explanations before practice, covering
+conceptual mechanisms, causal reasoning and justified worked examples. Supply enough
+context for this depth, with useful diagrams and supported interactive visuals
+plus readable static alternatives. Honor explicit learner teaching preferences.
 
 Plan a flexible arc: diagnose -> visual model/example -> learner attempt ->
 diagnose the attempt -> targeted response -> fresh independent check -> recall
@@ -145,3 +155,45 @@ invalidates a report, use dispute with the reason; original evidence is retained
 and progress/reviews are recomputed. Revise plan.md, explain the result briefly,
 and prepare the next agreed lesson/review. Only delayed independent review passes
 establish retention. Prefer concise observable judgments to mastery percentages.
+
+## Automatically back up completed learning work
+
+After successful prepare/regeneration or restage recovery, and after successful
+report ingestion AND plan.md updates, automatically run backup unless the effective
+auto_backup preference is false. This is agent bookkeeping; no per-operation
+confirmation is needed. Direct CLI/library calls do not replace this agent step.
+
+Inspect Git status and diffs first. Enumerate only completed operation files,
+including state, generated views, updated plan, exact raw report, normalized report,
+new durable packets/snapshots, and related registered originals not yet backed up.
+Include active bundles/exports/backups after an update. Preserve all bytes and
+checksums; do not rewrite archives to modernize them. Never use git add ., -A,
+a directory scope, an empty commit, or include unrelated edits. If a shared file
+contains unrelated changes, leave it for review instead of committing the mixture.
+
+Use `python learn.py backup --paths <file1> <file2> ... --message "Prepare lesson <id>" --track <id>`
+(or a report-specific message). File paths are workspace-relative, individually
+reviewed; include prerequisite unpushed history files only if they are related.
+The helper refuses pre-staged changes or unrelated unpushed history, verifies a
+private independent GitHub destination, commits the scope, pushes without force,
+and checks the remote branch SHA. A duplicate ingest with no changed files needs
+no backup; a new raw representation or an outstanding failed backup may be backed
+up without duplicating evidence or creating an empty commit.
+
+A remote must be explicitly identified as this learner workspace's independent
+private repository. If already authorized, verify it and bind it once using
+`python learn.py configure-backup --remote origin --repository OWNER/REPO`.
+No silent remote creation or visibility change. Never bind the public harness or
+a fork. The helper needs Git and authenticated gh for private identity/visibility
+verification. If absent or unverifiable, retain work locally and explain the exact
+setup needed. Other hosts require a separately verified manual backup workflow.
+
+A failed backup attempt does not block the next safe update/lesson. Explain the
+failure and keep the completed work local.
+
+Report learning success separately from backup status. If commit/push fails,
+preserve the successful operation and explain the failure; retry the backup scope,
+not ingestion/preparation. Commit failure may leave scoped files staged; inspect
+and resolve that index before retrying. Never claim a push succeeded without the
+verified remote SHA. Respect auto_backup=false globally or per track; set it via
+preferences, not by disabling validation.
