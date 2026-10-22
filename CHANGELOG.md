@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.1
+
+Pending lessons are scoped to courses. A different course can prepare a lesson
+or run study-update while another awaits its report. Same-course duplicate
+preparation remains blocked. status and the overview expose pending lessons per
+course; restage can restore any prepared packet, and abandonment targets a named
+prepared lesson. Shared mailbox switches retain snapshots and immutable archives,
+and reports may be imported in any course order. Existing state and report
+schemas are unchanged; active_lesson remains the last staged packet.
+
 ## 0.4.0
 
 Default lessons explain concepts comprehensively before practice, including

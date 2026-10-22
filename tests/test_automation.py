@@ -172,6 +172,25 @@ class AutomationTests(unittest.TestCase):
         self.assertNotEqual(json.loads(prepared.stdout)["lesson_id"], lid)
         self.assertIn("SYNTHETIC NEW ACTIVE TEMPLATE", (self.ws.mailbox() / "START-HERE.md").read_text(encoding="utf-8"))
 
+    def test_other_course_update_preserves_pending_record_and_archive(self):
+        prepared = call(self.ws, "prepare", "math", spec(["solve"]), "2026-10-18")
+        lid = prepared["lesson_id"]
+        before_state = copy.deepcopy(self.ws.state)
+        packet = self.root / "lessons" / lid / "packet"
+        before_packet = {p.name: p.read_bytes() for p in packet.iterdir()}
+        call(self.ws, "add_track", "science", "Science")
+        future = self.future()
+        with patch("invo_learn.updates.check_updates", return_value={"status": "available", "latest_version": self.new_version}), self.downloaded_update(future):
+            self.assertEqual(study_update(self.ws, "science")["status"], "upgraded")
+        self.assertEqual(self.ws.state["lessons"][lid], before_state["lessons"][lid])
+        self.assertEqual({p.name: p.read_bytes() for p in packet.iterdir()}, before_packet)
+        # The old course still defers even when active_lesson points elsewhere.
+        self.ws.state["active_lesson"] = None
+        with patch("invo_learn.updates.check_updates") as check:
+            self.assertEqual(study_update(self.ws, "math")["status"], "deferred")
+            self.assertEqual(study_update(self.ws)["status"], "deferred")
+        check.assert_not_called()
+
     def synthetic_remote(self):
         self.remote = self.base / "backup.git"
         subprocess.run(["git", "init", "--bare", str(self.remote)], check=True, capture_output=True)

@@ -71,6 +71,76 @@ class WorkflowTests(unittest.TestCase):
             self.prepare()
         self.assertEqual((self.ws.mailbox() / "START-HERE.md").read_bytes(), before)
 
+    def second_course(self):
+        call(self.ws, "add_track", "science", "Science")
+        material = call(self.ws, "add_material", "science", self.source)
+        proposal = call(self.ws, "propose_map", "science",
+                        map_spec(material["id"], [("solve", "Solve a linear equation", "skill", "whole text", [])]))
+        call(self.ws, "accept_map", "science", proposal["proposal_id"], "Synthetic approval")
+        result = call(self.ws, "prepare", "science", spec(["solve"]), "2026-10-14")
+        return self.ws.state["lessons"][result["lesson_id"]]
+
+    def test_course_switch_preserves_pending_packets_and_same_course_barrier(self):
+        first = self.prepare()
+        original = {p.name: p.read_bytes() for p in self.ws.mailbox().iterdir()}
+        second = self.second_course()
+        self.assertEqual(self.ws.state["lessons"][first["id"]]["status"], "prepared")
+        self.assertEqual(self.ws.state["active_lesson"], second["id"])
+        status = self.ws.status("2026-10-14")
+        self.assertEqual(status["pending_lessons"], {"math": [first["id"]], "science": [second["id"]]})
+        self.assertIn(first["id"], (self.root / "OVERVIEW.md").read_text(encoding="utf-8"))
+        # The other course being visible must not bypass the original course's lock.
+        with self.assertRaisesRegex(Invalid, "this course handoff awaits report"):
+            self.prepare()
+        self.assertEqual(self.ws.state["active_lesson"], second["id"])
+        snapshot = next((self.root / "inbox/mailbox-snapshots").glob("*/contents"))
+        for name, data in original.items():
+            if name != ".invo-mailbox.json":
+                self.assertEqual((snapshot / name).read_bytes(), data)
+        call(self.ws, "stage", first["id"])
+        self.assertEqual(self.ws.state["active_lesson"], first["id"])
+        for name, data in original.items():
+            self.assertEqual((self.ws.mailbox() / name).read_bytes(), data)
+        self.assertEqual(self.ws.state["lessons"][second["id"]]["status"], "prepared")
+
+    def test_reports_from_hidden_courses_are_independent_and_finalized_packets_cannot_restage(self):
+        first = self.prepare()
+        second = self.second_course()
+        science_before = copy.deepcopy(self.ws.track("science")["objectives"])
+        self.ingest(self.report(first))
+        self.assertEqual(self.ws.state["lessons"][second["id"]]["status"], "prepared")
+        self.assertEqual(self.ws.state["active_lesson"], second["id"])
+        self.assertEqual(self.ws.track("science")["objectives"], science_before)
+        with self.assertRaisesRegex(Invalid, "only prepared"):
+            call(self.ws, "stage", first["id"])
+        call(self.ws, "ingest", json.dumps(make_report(second, "2026-10-14",
+             [item("solve")], "report-science")), "2026-10-14")
+        self.assertFalse(self.ws.pending_lessons())
+        # Once reported, math can prepare again while retaining both reports.
+        self.prepare()
+        self.assertEqual(len(self.ws.state["reports"]), 2)
+
+    def test_hidden_pending_lesson_can_be_abandoned_without_affecting_visible_course(self):
+        first = self.prepare()
+        second = self.second_course()
+        call(self.ws, "abandon", first["id"], "Synthetic explicit abandonment")
+        self.assertEqual(self.ws.state["lessons"][first["id"]]["status"], "abandoned")
+        self.assertEqual(self.ws.state["lessons"][second["id"]]["status"], "prepared")
+        self.assertEqual(self.ws.state["active_lesson"], second["id"])
+        with self.assertRaisesRegex(Invalid, "only prepared"):
+            call(self.ws, "stage", first["id"])
+        self.prepare()
+
+    def test_failed_hidden_packet_restage_keeps_visible_packet_and_pointer(self):
+        first = self.prepare()
+        second = self.second_course()
+        before = (self.ws.mailbox() / "START-HERE.md").read_bytes()
+        self.ws.path(f"lessons/{first['id']}/packet/START-HERE.md").write_text("tampered")
+        with self.assertRaisesRegex(Invalid, "checksum"):
+            call(self.ws, "stage", first["id"])
+        self.assertEqual(self.ws.state["active_lesson"], second["id"])
+        self.assertEqual((self.ws.mailbox() / "START-HERE.md").read_bytes(), before)
+
     def test_mailbox_reuse_preserves_unexpected_report_and_durable_packet(self):
         first = self.prepare()
         r = self.report(first)

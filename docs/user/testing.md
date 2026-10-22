@@ -79,3 +79,9 @@ GitHub private repository, remote creation, credentials, or learner data is used
 Git's shell transport needed execution outside the restricted sandbox for local
 bare-repository tests. The normal temp path was restricted; tests used an allowed
 external scratch path. This is an environment constraint, not a learner requirement.
+
+Course isolation tests prepare two synthetic courses without reporting the first,
+check same-course duplicate prevention while the other is visible, restore either
+packet, import reports across course switches, and abandon only a named pending
+lesson. A corrupt hidden packet cannot replace the visible packet or its pointer.
+Course-specific updates preserve another course's pending record and packet bytes.

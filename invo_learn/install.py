@@ -51,6 +51,10 @@ The active installed bundle and reference docs are located via `.invo-learn/acti
 The mailbox is the learner's interface: incoming course resources, outgoing lesson
 files, and returned reports. Explain which action is next. Preserve new resources
 with add-material and ingest returned reports before preparing another handoff.
+Each course may have one pending lesson; another course's missing report does not
+block new work. Use status to find pending lessons by course, not only active_lesson.
+prepare/restage preserve snapshots and packets; restage can restore any prepared
+lesson by ID. Never infer abandonment from switching courses.
 Never clear the mailbox yourself. Use prepare/restage, which preserve snapshots.
 For a pasted report, save the exact paste privately and call ingest automatically;
 the learner should not have to run an import command. Require explicit permission

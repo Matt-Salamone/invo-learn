@@ -72,6 +72,6 @@ Do not reset the course or silently replace the accepted map.
 Use propose-map and show the proposed plan/change summary with source locators.
 Ask the learner to approve or revise it, then **stop and wait**. Only use
 accept-map after actual approval; an upload alone is not map approval. Update the
-adaptive plan after acceptance, retaining any pending lesson/report barrier.
+adaptive plan after acceptance, retaining the pending lesson/report barrier within that same course.
 Explain the next step: ask for the next lesson when ready; later resources use
 this same "add materials to <course>" → mailbox → "materials ready" process.

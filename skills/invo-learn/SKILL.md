@@ -72,9 +72,16 @@ according to fidelity, context size and convenience; include source locators and
 relevant learner context. prepare archives the complete packet durably and
 replaces the dedicated mailbox, preserving its previous contents in snapshots.
 Never manually delete mailbox contents. Preserve/ingest a returned report before
-reuse. If the current lesson has no report, request it, or record an explicitly
-requested abandonment; do not silently discard a pending session. restage safely
-recovers an interrupted staging operation.
+reuse. Check pending lessons for the requested course using status, not only
+active_lesson (the last staged packet). If that course has a pending lesson,
+request its report or record an explicitly requested abandonment before preparing
+another in the same course. Pending lessons in other courses do not block new
+lessons or reviews. Preserve their prepared status and immutable packets; guarded
+prepare snapshots the shared mailbox. restage can switch the mailbox to any
+prepared lesson by ID without abandoning other courses. Reports can arrive in
+any course order and are matched by lesson/track IDs. Never infer abandonment
+from a course switch. Inspect and ingest actual returned reports before switching;
+an absent report from a different course is not a blocker.
 
 Create lessons that stand on their own: include the definitions, reasoning,
 examples and figure descriptions needed to teach the objectives without asking

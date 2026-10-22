@@ -317,6 +317,12 @@ class Workspace:
         self.save("learner-override", {"track_id": tid, "objective_ids": oids, "reason": reason})
         return t["overrides"][-1]
 
+    def pending_lessons(self, tid=None):
+        """Derive pending sessions from existing records; no state migration."""
+        return [lesson for lesson in self.state["lessons"].values()
+                if lesson["status"] == "prepared"
+                and (tid is None or lesson["track_id"] == tid)]
+
     def prepare(self, tid, spec, today):
         t = self.track(tid)
         date(today)
@@ -332,9 +338,8 @@ class Workspace:
         require(isinstance(spec["supplemental_context"], str), "supplemental_context must be text")
         require(not spec["supplemental_context"] or self.effective_preferences(tid)["supplemental_research"], "supplemental research disabled")
         require(isinstance(spec["attachments"], list), "attachments must be a list")
-        active = self.state["active_lesson"]
-        require(not active or self.state["lessons"][active]["status"] in ("reported", "abandoned"),
-                "current handoff awaits report; ingest it or explicitly abandon before reusing mailbox")
+        require(not self.pending_lessons(tid),
+                "this course handoff awaits report; ingest it or explicitly abandon before preparing another in this course")
         box = self.mailbox()  # Preflight before writing any lesson artifacts.
         selected = []
         for a in spec["attachments"]:
@@ -396,7 +401,7 @@ class Workspace:
         return warnings
 
     def stage(self, lid, box=None):
-        require(lid == self.state["active_lesson"], "can only restage the active lesson")
+        require(lid in self.state["lessons"], "unknown lesson")
         lesson = self.state["lessons"][lid]
         require(lesson["status"] == "prepared", "only prepared lessons can be staged")
         box = box or self.mailbox()
@@ -424,11 +429,14 @@ class Workspace:
                     p.unlink()
         for p in packet.iterdir():
             shutil.copyfile(p, box / p.name)
+        if self.state["active_lesson"] != lid:
+            self.state["active_lesson"] = lid
+            self.save("lesson-restaged", {"lesson_id": lid})
         return {"lesson_id": lid, "mailbox": str(box)}
 
     def abandon(self, lid, reason):
         string(reason, "explicit abandonment reason")
-        require(lid == self.state["active_lesson"], "only active lesson can be abandoned")
+        require(lid in self.state["lessons"], "unknown lesson")
         lesson = self.state["lessons"][lid]
         require(lesson["status"] == "prepared", "lesson already finalized")
         lesson.update(status="abandoned", abandonment_reason=reason)
@@ -567,7 +575,8 @@ class Workspace:
             tracks[tid] = {"title": t["title"], "active": t["active"], "preferences": self.effective_preferences(tid),
                            "materials": t["materials"], "objectives": t["objectives"], "source_gaps": t.get("source_gaps", []),
                            "pending_maps": [pid for pid, p in t["proposals"].items() if p["status"] == "pending"],
-                           "overrides": t["overrides"]}
+                           "overrides": t["overrides"],
+                           "pending_lessons": [lesson["id"] for lesson in self.pending_lessons(tid)]}
             mapped = {ref["material_id"] for o in t["objectives"].values() for ref in o["sources"]}
             tracks[tid]["unmapped_primary_materials"] = [mid for mid, m in t["materials"].items()
                 if m["role"] == "primary" and mid not in mapped]
@@ -575,7 +584,10 @@ class Workspace:
                 if t["active"] and o["scope"] == "included" and o["review"] and o["review"]["due_on"] <= today:
                     due.append({"track_id": tid, "objective_id": oid, **o["review"]})
         return {"learner": self.state["profile"], "mailbox": self.state["mailbox"], "tracks": tracks, "due_reviews": sorted(due, key=lambda r: (r["due_on"], r["track_id"], r["objective_id"])),
-                "active_lesson": self.state["active_lesson"], "review_policy": self.state["review_policy"]}
+                "active_lesson": self.state["active_lesson"],
+                "pending_lessons": {tid: [lesson["id"] for lesson in self.pending_lessons(tid)]
+                                    for tid in self.state["tracks"]},
+                "review_policy": self.state["review_policy"]}
 
     def render(self):
         lines = ["# Learner overview", "", f"Learner: {self.state['profile']['name']}", "",
@@ -583,6 +595,8 @@ class Workspace:
                  "Generated from state.json. Agent-owned plans live in track plan.md files; use tools to change records.", ""]
         for tid, t in self.state["tracks"].items():
             lines.extend([f"## {t['title']} ({tid})", "", f"Preferences: {json.dumps(self.effective_preferences(tid), ensure_ascii=False)}", ""])
+            pending = [lesson["id"] for lesson in self.pending_lessons(tid)]
+            lines.extend([f"Pending lessons: {', '.join(pending) or 'none'}", ""])
             track_lines = [f"# Coverage: {t['title']}", "", f"Accepted revision: {t['map_revision']}", ""]
             for oid, o in t["objectives"].items():
                 refs = "; ".join(f"{r['material_id']} — {r['locator']}" for r in o["sources"])

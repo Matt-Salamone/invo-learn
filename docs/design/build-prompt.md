@@ -107,3 +107,15 @@ new active instructions; old archives remain immutable. Detailed default teachin
 still skips demonstrated knowledge, asks one manageable question, gives specific
 feedback, fades help and uses fresh independent assessments. Completion remains
 separate from understanding and delayed retention.
+
+## Independent course sessions (0.4.1)
+
+Allow one pending handoff per course, rather than one per workspace. A pending
+report in another course must not block new lessons/reviews or course-specific
+study updates. Keep prepared status and immutable packets for every course.
+The shared mailbox shows one packet at a time; guarded switching snapshots all
+previous contents. Inspect and ingest reports actually returned before switching.
+List pending IDs per course, restore any prepared packet by ID, and accept reports
+in any course order. Require report ingestion or explicit abandonment only before
+preparing another lesson in the same course. active_lesson remains the last staged
+packet for backward compatibility, not a workspace-wide pending-session lock.
