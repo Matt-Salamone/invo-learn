@@ -9,6 +9,9 @@ Read the public README and docs/user/guide.md at
 https://github.com/Matt-Salamone/invo-learn. Python 3.10+ and Git suffice;
 no model API or server is needed. This skill sets up learning, not development
 of the public harness. An existing learner workspace should be reused.
+Choose an independent new/empty folder outside any enclosing Git repository,
+learner workspace or installed tooling. Setup refuses nested targets before
+creating private records, including when local Git initialization is disabled.
 
 ## Conversational intake
 

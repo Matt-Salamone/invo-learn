@@ -11,6 +11,7 @@ import stat
 import uuid
 
 from .contracts import Invalid, KINDS, date, evidence_outcome, fields, identifier, preferences, require, report, string, strings
+from . import coverage, quality, revisions, workflow
 
 STATE_SCHEMA = 1
 DEFAULTS = {"teaching_style": "longer, detailed, comprehensive explanations before practice; conceptual mechanisms, causal reasoning, worked examples and useful visuals; adapt to demonstrated prior knowledge",
@@ -236,13 +237,13 @@ class Workspace:
 
     def propose_map(self, tid, spec):
         t = self.track(tid)
-        fields(spec, ("objectives", "source_gaps", "rationale"))
+        fields(spec, ("objectives", "source_gaps", "rationale"), ("source_sections", "section_inventory"))
         string(spec["rationale"], "map rationale")
         require(isinstance(spec["objectives"], list) and spec["objectives"], "map needs objectives")
         require(isinstance(spec["source_gaps"], list), "source_gaps must be a list")
         ids, referenced = set(), set()
         for obj in spec["objectives"]:
-            fields(obj, ("id", "title", "kind", "sources", "prerequisites", "scope", "reason"))
+            fields(obj, ("id", "title", "kind", "sources", "prerequisites", "scope", "reason"), ("success_criteria",))
             identifier(obj["id"])
             require(obj["id"] not in ids, "duplicate map objective")
             ids.add(obj["id"])
@@ -284,6 +285,7 @@ class Workspace:
             gaps.add(gap["material_id"])
         primary = {mid for mid, m in t["materials"].items() if m["role"] == "primary"}
         require(primary <= referenced | gaps, "map must account for every primary material through objectives or explicit gaps")
+        coverage.validate(self, tid, spec)
         pid = "map-" + uuid.uuid4().hex[:12]
         t["proposals"][pid] = {"spec": copy.deepcopy(spec), "base_revision": t["map_revision"],
                                "material_ids": sorted(t["materials"]), "status": "pending"}
@@ -302,8 +304,11 @@ class Workspace:
             t["objectives"][obj["id"]] = copy.deepcopy(obj) | {"coverage": old.get("coverage", "unassessed"),
                 "understanding": old.get("understanding", "unassessed"), "retention": old.get("retention", "unassessed"),
                 "evidence": old.get("evidence", []), "uncertainties": old.get("uncertainties", []),
-                "review": old.get("review", None)}
+                "review": old.get("review", None), "gaps": copy.deepcopy(old.get("gaps", {}))}
         t["source_gaps"] = p["spec"]["source_gaps"]
+        for key in ("source_sections", "section_inventory"):
+            if key in p["spec"]:
+                t[key] = copy.deepcopy(p["spec"][key])
         t["map_revision"] += 1
         p.update(status="accepted", approval=approval)
         self.save("map-accepted", {"track_id": tid, "proposal_id": pid})
@@ -323,10 +328,10 @@ class Workspace:
                 if lesson["status"] == "prepared"
                 and (tid is None or lesson["track_id"] == tid)]
 
-    def prepare(self, tid, spec, today):
+    def prepare(self, tid, spec, today, replace_lesson=None, decision=None):
         t = self.track(tid)
         date(today)
-        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"))
+        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"), ("quality_review",))
         strings(spec["objective_ids"], "objective_ids")
         require(spec["objective_ids"] and len(set(spec["objective_ids"])) == len(spec["objective_ids"]), "unique lesson objectives required")
         require(set(spec["objective_ids"]) <= t["objectives"].keys(), "lesson requires accepted map objectives")
@@ -338,9 +343,18 @@ class Workspace:
         require(isinstance(spec["supplemental_context"], str), "supplemental_context must be text")
         require(not spec["supplemental_context"] or self.effective_preferences(tid)["supplemental_research"], "supplemental research disabled")
         require(isinstance(spec["attachments"], list), "attachments must be a list")
-        require(not self.pending_lessons(tid),
+        if replace_lesson is not None:
+            require(replace_lesson in self.state["lessons"] and self.state["lessons"][replace_lesson]["status"] == "prepared",
+                    "replace must identify a pending lesson")
+            require(self.state["lessons"][replace_lesson]["track_id"] == tid, "replacement must stay in the same track")
+            string(decision, "explicit learner replacement decision")
+        require(not [lesson for lesson in self.pending_lessons(tid) if lesson["id"] != replace_lesson],
                 "this course handoff awaits report; ingest it or explicitly abandon before preparing another in this course")
         box = self.mailbox()  # Preflight before writing any lesson artifacts.
+        preflight = quality.preflight(self, tid, spec)
+        require(spec.get("quality_review") is None or preflight["content_checked"],
+                "packet quality checks failed; repair the context before issuing a handoff")
+        corrections = revisions.correction_context(self, tid, spec["objective_ids"])
         selected = []
         for a in spec["attachments"]:
             fields(a, ("material_id",), ("derived_id",))
@@ -360,13 +374,14 @@ class Workspace:
         folder = self.root / "lessons" / lid
         packet = folder / "packet"
         packet.mkdir(parents=True)
-        objectives = [copy.deepcopy(t["objectives"][oid]) for oid in spec["objective_ids"]]
+        objectives = [quality.objective_context(t["objectives"][oid]) for oid in spec["objective_ids"]]
         lesson = {"id": lid, "track_id": tid, "prepared_on": today, "mode": spec["mode"],
                   "sequence": len(self.state["lessons"]),
                   "objective_ids": spec["objective_ids"], "map_revision": t["map_revision"],
                   "status": "prepared", "report_id": None, "spec": copy.deepcopy(spec),
                   "preferences": copy.deepcopy(self.effective_preferences(tid)),
-                  "objective_snapshot": objectives, "staged_files": {}}
+                  "objective_snapshot": objectives, "staged_files": {}, "content_revision": t.get("content_revision", 0),
+                  "preflight": preflight}
         source_lines = []
         for n, (src, checksum, rel) in enumerate(selected, 1):
             name = f"source-{n:02d}-{src.name}"
@@ -381,15 +396,27 @@ class Workspace:
         text += "\n\n## Uploaded-source teaching context\n\n" + spec["context"]
         if spec["supplemental_context"]:
             text += "\n\n## Optional supplemental context (outside uploaded scope)\n\n" + spec["supplemental_context"]
+        if corrections:
+            text += "\n\n## Verified teaching corrections (apply in revision order)\n\n" + corrections
+        text += "\n\n## Packet quality and limitations\n\n" + json.dumps(preflight, indent=2, ensure_ascii=False)
         (packet / "START-HERE.md").write_text(text + "\n", encoding="utf-8")
         shutil.copyfile(Path(__file__).parent / "templates" / "report.schema.json", packet / "report.schema.json")
+        atomic(packet / "report-template.json", quality.report_template(lesson))
+        files = [{"name": p.name, "bytes": p.stat().st_size, "sha256": digest(p.read_bytes())} for p in sorted(packet.iterdir())]
+        atomic(packet / "packet-manifest.json", {"lesson_id": lid, "files": files,
+            "payload_bytes": sum(p["bytes"] for p in files), "preflight": preflight,
+            "note": "Manifest excludes its own bytes; full folder digests are stored in private state"})
         for p in packet.iterdir():
             lesson["staged_files"][p.name] = digest(p.read_bytes())
+        if replace_lesson:
+            self.state["lessons"][replace_lesson].update(status="abandoned", abandonment_reason=decision, replaced_by=lid)
         self.state["lessons"][lid] = lesson
         self.state["active_lesson"] = lid
         self.save("lesson-prepared", {"lesson_id": lid})
         self.stage(lid, box)
-        return {"lesson_id": lid, "mailbox": str(box), "instruction": "Upload every visible file into a fresh chatbot conversation; start with START-HERE.md", "warnings": self.lesson_warnings(tid, spec["objective_ids"])}
+        return {"lesson_id": lid, "mailbox": str(box), "instruction": "Upload every visible file into a fresh chatbot conversation; start with START-HERE.md",
+                "warnings": self.lesson_warnings(tid, spec["objective_ids"]) + preflight["warnings"], "preflight": preflight,
+                "packet_bytes": sum(p.stat().st_size for p in packet.iterdir())}
 
     def lesson_warnings(self, tid, oids):
         t = self.track(tid)
@@ -404,6 +431,7 @@ class Workspace:
         require(lid in self.state["lessons"], "unknown lesson")
         lesson = self.state["lessons"][lid]
         require(lesson["status"] == "prepared", "only prepared lessons can be staged")
+        require(revisions.context_ready(lesson), "packet context requires review after correction; review it or explicitly replace")
         box = box or self.mailbox()
         packet = self.path(f"lessons/{lid}/packet")
         require({p.name: digest(p.read_bytes()) for p in packet.iterdir()} == lesson["staged_files"], "durable packet checksum changed")
@@ -443,7 +471,10 @@ class Workspace:
         self.save("lesson-abandoned", {"lesson_id": lid, "reason": reason})
         return {"status": "abandoned"}
 
-    def ingest(self, raw, today):
+    def ingest(self, raw, today, repair_of=None, repair_note=None):
+        return workflow.ingest(self, raw, today, repair_of, repair_note)
+
+    def _ingest(self, raw, today, relevance=None):
         date(today)
         # Durably retain input even when parsing, validation or state commit fails.
         rid = digest(raw.encode("utf-8"))
@@ -467,6 +498,7 @@ class Workspace:
         require(isinstance(lid, str) and lid in self.state["lessons"], "unknown lesson; raw report preserved in inbox")
         lesson = self.state["lessons"][lid]
         report(obj, lesson, today)
+        revisions.validate_gap_links(self, obj)
         normalized = digest(json.dumps(obj, sort_keys=True, ensure_ascii=False).encode())
         report_id = obj["report_id"]
         existing = self.state["reports"].get(report_id)
@@ -475,13 +507,33 @@ class Workspace:
             return {"status": "duplicate", "report_id": report_id}
         for previous in self.state["reports"].values():
             require(previous["lesson_id"] != lid, "lesson already has a report; record a dispute instead of a second import")
-        require(lesson["status"] == "prepared", "cannot import abandoned/finalized lesson")
+        require(lesson["status"] == "prepared" or lesson.get("replaced_by"), "cannot import abandoned/finalized lesson")
+        reasons = revisions.stale_reasons(self, lesson)
+        if reasons and relevance is None:
+            return {"status": "needs-review", "report_id": report_id, "lesson_id": lid, "reasons": reasons}
+        if relevance is not None:
+            require(reasons, "report does not need stale-context review")
+            require(isinstance(relevance, dict) and set(relevance) == set(lesson["objective_ids"]),
+                    "review every reported objective for relevance")
+            for oid, choice in relevance.items():
+                fields(choice, ("status", "reason"))
+                require(choice["status"] in ("retained", "withdrawn"), "invalid import relevance choice")
+                string(choice["reason"], "report relevance reason")
+        require(lesson["status"] == "prepared" or relevance is not None and lesson.get("replaced_by"),
+                "cannot import abandoned/finalized lesson")
         dest = self.root / "reports" / (report_id + ".json")
         atomic(dest, obj)
         self.state["reports"][report_id] = {"sha256": normalized, "lesson_id": lid,
             "path": dest.relative_to(self.root).as_posix(), "raw_path": path.relative_to(self.root).as_posix(),
             "report": obj, "invalidated": False}
-        lesson.update(status="reported", report_id=report_id)
+        if lesson["status"] == "prepared":
+            lesson["status"] = "reported"
+        lesson["report_id"] = report_id
+        for oid, choice in (relevance or {}).items():
+            self.state.setdefault("evidence_reviews", []).append({"report_id": report_id, "objective_id": oid,
+                "assessment_ids": [], **copy.deepcopy(choice)})
+        for error in obj.get("suspected_errors", []):
+            revisions.concern(self, obj["track_id"], error, origin_report=report_id)
         self.recompute(lesson["track_id"])
         self.save("report-ingested", {"report_id": report_id, "lesson_id": lid})
         return {"status": "imported", "report_id": report_id, "track_id": lesson["track_id"],
@@ -510,13 +562,17 @@ class Workspace:
         for record in reports:
             r = record["report"]
             lesson = self.state["lessons"][r["lesson_id"]]
-            for item in r["objectives"]:
-                o = t["objectives"][item["objective_id"]]
+            for original in r["objectives"]:
+                o = t["objectives"][original["objective_id"]]
+                item, dispositions = revisions.effective_item(self, record, original)
                 o["evidence"].append({"report_id": r["report_id"], "lesson_id": r["lesson_id"],
                     "completed_on": r["completed_on"], "mode": lesson["mode"], "invalidated": record["invalidated"],
-                    **copy.deepcopy(item)})
+                    **copy.deepcopy(original), "dispositions": copy.deepcopy(dispositions)})
                 if record["invalidated"]:
                     o["uncertainties"].append(f"{r['report_id']}: withdrawn: {record['invalidation_reason']}")
+                    continue
+                if item is None:
+                    o["uncertainties"].append(f"{r['report_id']}: evidence withdrawn or awaiting relevance review")
                     continue
                 if item["coverage"] == "covered":
                     o["coverage"] = "covered"
@@ -527,8 +583,6 @@ class Workspace:
                     o["uncertainties"].append(f"{r['report_id']}: claimed demonstration lacks consistent fresh unaided evidence")
                 if contradiction and success:
                     o["uncertainties"].append(f"{r['report_id']}: conflicting pass/fail; use fresh reassessment")
-                if r["misconceptions"] or r["prerequisite_gaps"]:
-                    o["uncertainties"].extend(f"{r['report_id']}: {x}" for x in r["misconceptions"] + r["prerequisite_gaps"])
                 old = o["review"]
                 when = date(r["completed_on"])
                 delayed = old is not None and when >= date(old["due_on"]) and when > date(old["last_on"])
@@ -559,6 +613,8 @@ class Workspace:
                         "due_on": (when + dt.timedelta(days=intervals[0])).isoformat(), "kind": KINDS[o["kind"]],
                         "last_result": "not-demonstrated", "lapses": (old["lapses"] if old else 0) + (lesson["mode"] == "review")}
 
+        revisions.project_gaps(self, tid, reports)
+
     def set_policy(self, intervals):
         require(isinstance(intervals, list) and intervals and all(type(x) is int and x > 0 for x in intervals)
                 and intervals == sorted(set(intervals)), "interval_days must be increasing positive integers")
@@ -575,7 +631,9 @@ class Workspace:
             tracks[tid] = {"title": t["title"], "active": t["active"], "preferences": self.effective_preferences(tid),
                            "materials": t["materials"], "objectives": t["objectives"], "source_gaps": t.get("source_gaps", []),
                            "pending_maps": [pid for pid, p in t["proposals"].items() if p["status"] == "pending"],
-                           "overrides": t["overrides"],
+                           "overrides": t["overrides"], "source_sections": t.get("source_sections", []),
+                           "section_inventory": t.get("section_inventory", []), "unscoped_notes": t.get("unscoped_notes", []),
+                           "plan_decisions": t.get("plan_decisions", []), "content_revision": t.get("content_revision", 0),
                            "pending_lessons": [lesson["id"] for lesson in self.pending_lessons(tid)]}
             mapped = {ref["material_id"] for o in t["objectives"].values() for ref in o["sources"]}
             tracks[tid]["unmapped_primary_materials"] = [mid for mid, m in t["materials"].items()
@@ -583,11 +641,16 @@ class Workspace:
             for oid, o in t["objectives"].items():
                 if t["active"] and o["scope"] == "included" and o["review"] and o["review"]["due_on"] <= today:
                     due.append({"track_id": tid, "objective_id": oid, **o["review"]})
+        queue = workflow.work_queue(self, today)
+        next_action = queue[0] if queue else ({"action": "review-due-objective", **sorted(due, key=lambda r: r["due_on"])[0]}
+                                            if due else {"action": "choose-next-lesson" if tracks else "add-course"})
         return {"learner": self.state["profile"], "mailbox": self.state["mailbox"], "tracks": tracks, "due_reviews": sorted(due, key=lambda r: (r["due_on"], r["track_id"], r["objective_id"])),
                 "active_lesson": self.state["active_lesson"],
                 "pending_lessons": {tid: [lesson["id"] for lesson in self.pending_lessons(tid)]
                                     for tid in self.state["tracks"]},
-                "review_policy": self.state["review_policy"]}
+                "review_policy": self.state["review_policy"],
+                "work_queue": queue, "next_action": next_action, "concerns": self.state.get("concerns", {}),
+                "corrections": self.state.get("corrections", {}), "last_operations": workflow.last_outcomes(self)}
 
     def render(self):
         lines = ["# Learner overview", "", f"Learner: {self.state['profile']['name']}", "",
@@ -606,6 +669,15 @@ class Workspace:
                                     f"  Deferral: {o['reason'] or 'none'}", f"  Review: {json.dumps(o['review'])}"])
                 for note in o["uncertainties"]:
                     track_lines.append(f"  Unresolved/evidence note: {note}")
+                for criterion in o.get("success_criteria", []):
+                    track_lines.append(f"  Success criterion: {criterion}")
+                for gap in o.get("gaps", {}).values():
+                    track_lines.append(f"  Gap {gap['id']} ({gap['status']}): {gap['description']}")
+            for section in t.get("source_sections", []):
+                track_lines.append(f"- Source section {section['id']} ({section['material_id']}, {section['locator']}): "
+                                   + (", ".join(section["objective_ids"]) or "unmapped: " + section["reason"]))
+            for note in t.get("unscoped_notes", []):
+                track_lines.append("- Unscoped report note (not assigned to every objective): " + json.dumps(note, ensure_ascii=False))
             for mid, m in t["materials"].items():
                 track_lines.append(f"- Source {mid}: [{m['name']}]({Path(m['original']).relative_to(Path('tracks') / tid).as_posix()}) ({m['role']}, {m['status']})")
             for gap in t.get("source_gaps", []):
@@ -621,6 +693,8 @@ class Workspace:
             plan = folder / "plan.md"
             if not plan.exists():
                 plan.write_text("# Study plan\n\nAgent: record source coverage rationale, next lessons, unresolved prerequisites, priorities and any learner-supplied scheduling constraints here.\n", encoding="utf-8")
+            if "plan_decisions" in t:
+                atomic(folder / "plan-decisions.json", t["plan_decisions"])
             lines.append("")
         (self.root / "OVERVIEW.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 

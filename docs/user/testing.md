@@ -5,15 +5,16 @@ Run from the public checkout:
 ```sh
 python -m unittest discover -s tests -v
 python examples/worked_example.py
+python examples/packet_evaluation.py
 ```
 
-The current local run used Windows and Python 3.14: **72 tests passed, none
+The current local run used Windows and Python 3.14: **95 tests passed, none
 skipped**. Both symlink preservation and Windows directory junction rejection were
 exercised successfully. Junction rejection uses Windows lstat reparse tags so it
 also works with Python 3.10/3.11. The ordinary default temp directory was restricted
 here, so TEMP and TMP were pointed at an allowed scratch directory outside the
-public checkout. Git's shell helper required running the suite outside the sandbox.
-Normal local runs use the system temp directory.
+public checkout. The 0.5.0 suite passed through the normal execution sandbox with
+that scratch location. Normal local runs use the system temp directory.
 
 The suite covers independent setup (including a real new Git repository with no
 remote), external/dedicated mailbox checks, preservation of originals and durable
@@ -85,3 +86,26 @@ check same-course duplicate prevention while the other is visible, restore eithe
 packet, import reports across course switches, and abandon only a named pending
 lesson. A corrupt hidden packet cannot replace the visible packet or its pointer.
 Course-specific updates preserve another course's pending record and packet bytes.
+
+## 0.5.0 quality and recovery checks
+
+New journeys drive the installed CLI in separate temporary workspaces and fresh
+processes. They exercise verified reduction/provenance and missing-detail refusal;
+packet manifests, isolated teaching context and empty report templates; confirmed
+correction and transitive prerequisite impact; independent correction-review layers;
+selective assessment withdrawal; stale and replaced-packet report relevance;
+linked formatting repair and exact replay; objective-specific gaps/resolution and
+withdrawal; section accounting and immutable evidenced criteria; routine/substantial
+plan decisions with optional workload mismatch; offline doctor/recorded failures;
+corrupt import audits and raw-report integrity; legacy unextended v1 inputs; and
+setup refusal under Git directories, worktree markers or inherited Git overrides.
+Withdrawing guided practice cannot manufacture cold-review retention.
+The integrated per-course workflow also verifies recovery queues for every
+pending course and hidden-packet replacement without disturbing another course.
+
+The packet evaluation generator also passed, constructing three synthetic packets
+and refusing one explicitly incomplete candidate through the installed CLI. It
+exports portable fresh-chat learner scripts and observation criteria when requested.
+No live teaching conversation or learning-efficacy evaluation was performed. The
+four-case protocol is included in installed user docs. CI runs the generator
+alongside the required unit suite and original worked example.

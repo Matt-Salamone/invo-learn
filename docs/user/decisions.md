@@ -31,8 +31,10 @@
   assessment to explicitly resolve earlier failures while preserving all attempts;
   unresolved failures remain uncertain. Legacy reports retain any-failure blocking.
   Review relearning resets review needs rather than demonstrating retention. Reports
-  can be disputed and withdrawn as a whole; precise assessment-level correction
-  can be a future feature. No placement assessment is mandatory.
+  can be disputed and withdrawn as a whole or reviewed with append-only
+  objective/assessment dispositions. Original observations remain immutable;
+  pending/withdrawn work cannot establish new demonstration. No placement
+  assessment is mandatory. See [quality and recovery](quality-and-recovery.md).
 - **Self-contained visual teaching:** make liberal use of meaningful visuals,
   interactive when the host supports them, with readable static alternatives.
   Explain content directly without page/file commentary or assuming the learner

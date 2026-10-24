@@ -62,6 +62,20 @@ The final interview questions about transformation-workflow reuse, external conv
 
 See [the source-inspected survey](../research/agentic-tutoring-harnesses.md). Its recommendations remain proposals unless accepted in this interview.
 
+## Authorized upgrade scope (0.5.0)
+
+The owner requested implementation of all ten suggestions from the
+[invo-assignment comparison](../research/invo-assignment-upgrade-comparison.md):
+packet size/relevance/completeness checks and verified reduction; content-error
+investigation/correction/impact review; selective evidence dispositions and stale
+report relevance; objective-specific gaps; prefilled reports and linked repairs;
+observable criteria and source-section accounting; actionable resume/health;
+routine versus substantial plan/pacing decisions; installed-CLI journeys and
+portable fresh-chat evaluations; and enclosing-repository setup isolation.
+Keep the manual handoff, standard-library portability, private records, actual
+consent for intake conversion, immutable originals/packets, and conservative
+independence/delayed-retention semantics. Existing v1 state/reports remain readable.
+
 ## Workflow revision (0.4.0)
 
 The default agent workflow saves/ingests reports and updates plans, then automatically

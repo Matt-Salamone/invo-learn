@@ -84,6 +84,7 @@ def package(source):
     for expected in ("invo_learn/cli.py", "invo_learn/engine.py", "invo_learn/install.py",
                      "invo_learn/updates.py", "invo_learn/backup.py",
                      "invo_learn/contracts.py", "invo_learn/templates/chatbot.md",
+                     "invo_learn/quality.py", "invo_learn/revisions.py", "invo_learn/workflow.py", "invo_learn/coverage.py",
                      "invo_learn/templates/report.schema.json", "skills/invo-learn/SKILL.md",
                      "skills/invo-learn-setup/SKILL.md", "skills/invo-learn-update/SKILL.md",
                      "skills/invo-learn-add-course/SKILL.md", "skills/invo-learn-add-materials/SKILL.md",
@@ -120,6 +121,13 @@ def bootstrap(source, root, name, mailbox=None, prefs=None, git=True):
     root = no_links(root).resolve()
     require(not within(root, source) and not within(source, root), "private workspace must be independent of the public package checkout")
     require(not root.exists() or (root.is_dir() and not any(root.iterdir())), "setup requires a new or empty workspace")
+    # Include .git files used by linked worktrees. Check even for --no-git so an
+    # enclosing project's ordinary add/commit cannot capture private records.
+    for parent in root.parents:
+        require(not (parent / ".git").exists() and not (parent / "state.json").exists(),
+                "private workspace must be outside enclosing Git/learner repositories; choose an independent folder")
+    require(not any(os.environ.get(key) for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE")),
+            "clear Git directory/worktree/index overrides before setup so Git cannot write outside the learner workspace")
     box = Path(mailbox) if mailbox else root / "mailbox"
     if not box.is_absolute():
         box = root / box

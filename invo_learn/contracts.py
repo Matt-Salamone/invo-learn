@@ -60,7 +60,7 @@ def preferences(prefs):
 
 def report(obj, lesson, today):
     fields(obj, ("schema_version", "report_id", "lesson_id", "track_id", "completed_on",
-                 "objectives", "misconceptions", "recommended_next_steps", "prerequisite_gaps"))
+                 "objectives", "misconceptions", "recommended_next_steps", "prerequisite_gaps"), ("suspected_errors",))
     require(type(obj["schema_version"]) is int and obj["schema_version"] == 1, "unsupported report schema")
     for key in ("report_id", "lesson_id", "track_id"):
         identifier(obj[key])
@@ -74,7 +74,7 @@ def report(obj, lesson, today):
     require(isinstance(obj["objectives"], list), "objectives must be a list")
     ids, assessment_ids = set(), set()
     for item in obj["objectives"]:
-        fields(item, ("objective_id", "coverage", "judgment", "assessments"))
+        fields(item, ("objective_id", "coverage", "judgment", "assessments"), ("gaps", "resolved_gaps"))
         oid = identifier(item["objective_id"])
         require(oid in lesson["objective_ids"] and oid not in ids, "unknown or duplicate objective")
         ids.add(oid)
@@ -119,7 +119,37 @@ def report(obj, lesson, today):
                 require(not a["resolves"] or (a["phase"] == "assessment" and qualifies(a, a["kind"])),
                         "only a fresh unaided valid assessment pass may resolve failures")
             earlier[aid] = a
+        gap_ids = set()
+        require(isinstance(item.get("gaps", []), list), "gaps must be a list")
+        for gap in item.get("gaps", []):
+            fields(gap, ("id", "kind", "description", "assessment_ids"))
+            identifier(gap["id"])
+            require(gap["id"] not in gap_ids, "duplicate gap ID")
+            gap_ids.add(gap["id"])
+            require(gap["kind"] in ("misconception", "prerequisite"), "invalid gap kind")
+            string(gap["description"], "gap description")
+            strings(gap["assessment_ids"], "gap assessment IDs")
+            require(set(gap["assessment_ids"]) <= earlier.keys(), "gap references unknown assessment")
+        require(isinstance(item.get("resolved_gaps", []), list), "resolved_gaps must be a list")
+        resolved_ids = set()
+        for resolution in item.get("resolved_gaps", []):
+            fields(resolution, ("gap_id", "assessment_id", "rationale"))
+            identifier(resolution["gap_id"])
+            require(resolution["gap_id"] not in resolved_ids, "duplicate gap resolution")
+            resolved_ids.add(resolution["gap_id"])
+            string(resolution["rationale"], "gap repair rationale")
+            attempt = earlier.get(resolution["assessment_id"])
+            assigned = next(o for o in lesson["objective_snapshot"] if o["id"] == oid)
+            require(attempt is not None and attempt.get("phase") == "assessment"
+                    and qualifies(attempt, KINDS[assigned["kind"]]), "gap repair requires an actual fresh unaided assessment of the assigned kind")
     require(ids == set(lesson["objective_ids"]), "report must include every assigned objective; use unassessed when skipped")
+    require(isinstance(obj.get("suspected_errors", []), list), "suspected_errors must be a list")
+    for error in obj.get("suspected_errors", []):
+        fields(error, ("objective_ids", "claim", "reasoning", "source_reference"))
+        strings(error["objective_ids"], "affected objectives")
+        require(error["objective_ids"] and set(error["objective_ids"]) <= ids, "unknown error objective")
+        for key in ("claim", "reasoning", "source_reference"):
+            string(error[key], key)
     return obj
 
 

@@ -7,9 +7,10 @@ import sys
 import subprocess
 
 from .contracts import Invalid
-from .engine import Workspace, read_json
+from .engine import Workspace, atomic, read_json
 from .install import bootstrap, upgrade
 from .updates import check_updates, study_update
+from . import quality, revisions, workflow
 
 
 def parser(workspace_default=None):
@@ -25,6 +26,7 @@ def parser(workspace_default=None):
     b.add_argument("--preferences", type=Path, help="optional JSON preferences")
     b.add_argument("--no-git", action="store_true")
     sub.add_parser("status", help="all tracks, gaps and due reviews")
+    sub.add_parser("doctor", help="offline integrity, recovery queue and last operation outcomes")
     sub.add_parser("check-updates", help="read-only GitHub version check; never installs an update")
     su = sub.add_parser("study-update", help="automatically install a compatible trusted release unless opted out")
     su.add_argument("--track")
@@ -77,6 +79,24 @@ def parser(workspace_default=None):
     le.add_argument("track_id")
     le.add_argument("file", type=Path)
     le.add_argument("--skip-update-check", action="store_true", help=argparse.SUPPRESS)
+    replace = sub.add_parser("replace", help="explicitly replace a pending lesson without changing its archive")
+    replace.add_argument("lesson_id")
+    replace.add_argument("file", type=Path)
+    replace.add_argument("--reason", required=True)
+    for command, help_text in (("preflight", "measure selected context and inspect recorded quality checks"),
+                               ("reduce-context", "save a verified reduction of usable material"),
+                               ("record-concern", "record a suspected content error"),
+                               ("plan-decision", "record routine adaptations or substantial plan proposals")):
+        operation = sub.add_parser(command, help=help_text)
+        operation.add_argument("track_id")
+        operation.add_argument("file", type=Path)
+    for command, target in (("investigate", "concern_id"), ("correct", "concern_id"),
+                            ("review-context", "lesson_id"), ("review-import", "import_id")):
+        operation = sub.add_parser(command)
+        operation.add_argument(target)
+        operation.add_argument("file", type=Path)
+    operation = sub.add_parser("review-evidence", help="append a scoped assessment/objective disposition")
+    operation.add_argument("file", type=Path)
     rs = sub.add_parser("restage", help="recover staging of an already prepared handoff")
     rs.add_argument("lesson_id")
     ab = sub.add_parser("abandon")
@@ -84,6 +104,8 @@ def parser(workspace_default=None):
     ab.add_argument("--reason", required=True)
     ing = sub.add_parser("ingest", help="agent saves exact paste to a private file, or passes it on stdin")
     ing.add_argument("file", nargs="?", type=Path)
+    ing.add_argument("--repair-of")
+    ing.add_argument("--repair-note")
     dis = sub.add_parser("dispute")
     dis.add_argument("report_id")
     dis.add_argument("--reason", required=True)
@@ -103,11 +125,14 @@ def execute(args):
     if cmd == "check-updates":
         return check_updates(read_json(ws.root / ".invo-learn/active.json")["version"])
     if cmd == "study-update":
-        return study_update(ws, args.track)
+        result = study_update(ws, args.track)
+        atomic(ws.path(".invo-learn/last-update.json"), result)
+        return result
     update_result = None
     if cmd == "prepare" and not args.skip_update_check:
         before = read_json(ws.root / ".invo-learn/active.json")["version"]
         update_result = study_update(ws, args.track_id)
+        atomic(ws.path(".invo-learn/last-update.json"), update_result)
         after = read_json(ws.root / ".invo-learn/active.json")["version"]
         if before != after:
             # Run the newly active code/templates, even if the old updater reported
@@ -120,12 +145,34 @@ def execute(args):
             return json.loads(prepared.stdout) | {"update": update_result}
     if cmd == "status":
         return ws.status(args.today)
+    if cmd == "doctor":
+        return workflow.doctor(ws, args.today)
+    if cmd == "preflight":
+        return quality.preflight(ws, args.track_id, read_json(args.file))
     with ws.locked():
         if cmd in ("backup", "configure-backup"):
             from .backup import backup, configure
             if cmd == "configure-backup":
                 return configure(ws, args.remote, args.repository)
-            return backup(ws, args.paths, args.message, args.track)
+            result = backup(ws, args.paths, args.message, args.track)
+            atomic(ws.path(".invo-learn/last-backup.json"), result)
+            return result
+        if cmd == "reduce-context":
+            return quality.reduce_context(ws, args.track_id, read_json(args.file))
+        if cmd == "record-concern":
+            return revisions.record_concern(ws, args.track_id, read_json(args.file))
+        if cmd == "investigate":
+            return revisions.investigate(ws, args.concern_id, read_json(args.file))
+        if cmd == "correct":
+            return revisions.correct(ws, args.concern_id, read_json(args.file))
+        if cmd == "review-context":
+            return revisions.review_context(ws, args.lesson_id, read_json(args.file))
+        if cmd == "review-evidence":
+            return revisions.review_evidence(ws, read_json(args.file))
+        if cmd == "review-import":
+            return workflow.review_import(ws, args.import_id, read_json(args.file), args.today)
+        if cmd == "plan-decision":
+            return workflow.plan_decision(ws, args.track_id, read_json(args.file))
         if cmd == "render":
             ws.render()
             return {"status": "rendered"}
@@ -149,6 +196,11 @@ def execute(args):
             return ws.override(args.track_id, args.objective_ids, args.reason)
         if cmd == "prepare":
             return ws.prepare(args.track_id, read_json(args.file), args.today) | {"update": update_result}
+        if cmd == "replace":
+            if args.lesson_id not in ws.state["lessons"]:
+                raise Invalid("unknown lesson")
+            tid = ws.state["lessons"][args.lesson_id]["track_id"]
+            return ws.prepare(tid, read_json(args.file), args.today, args.lesson_id, args.reason)
         if cmd == "restage":
             return ws.stage(args.lesson_id)
         if cmd == "abandon":
@@ -159,7 +211,7 @@ def execute(args):
                     raw = input_file.read()
             else:
                 raw = sys.stdin.read()
-            return ws.ingest(raw, args.today)
+            return ws.ingest(raw, args.today, args.repair_of, args.repair_note)
         if cmd == "dispute":
             return ws.dispute(args.report_id, args.reason)
         if cmd == "review-policy":

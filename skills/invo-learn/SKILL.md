@@ -13,6 +13,13 @@ docs/user/contracts.md for JSON shapes and recovery. `python learn.py --help`
 lists the tools. Use these helpers for durable state; keep flexible lesson plans,
 priorities and notes in `tracks/<id>/plan.md`.
 
+For packet size/relevance checks, verified context reduction, structured gaps,
+report repairs, content concerns, stale-report/evidence review, explicit packet
+replacement, or pacing decisions, read the active release's
+`docs/user/quality-and-recovery.md`. Use status's next_action/work_queue to resume
+unfinished bookkeeping. Use doctor for offline integrity/recovery diagnostics;
+its health result does not establish teaching quality or fresh remote status.
+
 ## New or changed tracks
 
 Use `../invo-learn-add-course/SKILL.md` for a new course or skill and
@@ -66,6 +73,13 @@ retaining the gap. Include due reviews according to relevance and preferences;
 no review backlog locks new work. Match fact/concept/skill reviews to recall,
 explain-back/fresh application and choose unfamiliar tasks where useful.
 
+Record routine changes to practice, explanation depth or pacing within accepted
+scope using plan-decision. Propose substantial scope/workload changes and wait
+for actual approval before applying them; accept scope changes through the map
+workflow too. Use estimates only when timing constraints are supplied, disclose
+workload mismatches, and record the learner's choice. Existing plan.md stays yours
+to maintain; the generated decision log preserves the reasons across chats.
+
 Write a private lesson spec with source-grounded context and selected original
 or derived attachment IDs. Choose a packet, excerpts, originals or combination
 according to fidelity, context size and convenience; include source locators and
@@ -82,6 +96,15 @@ prepared lesson by ID without abandoning other courses. Reports can arrive in
 any course order and are matched by lesson/track IDs. Never infer abandonment
 from a course switch. Inspect and ingest actual returned reports before switching;
 an absent report from a different course is not a blocker.
+
+Inspect size and relevance using preflight, supply quality_review checks in new
+lesson specs, and compare retained critical details against sources. Reduce
+oversized/extraneous usable context through reduce-context with provenance,
+omissions and limitations. Ordinary summaries/excerpts of usable sources are
+authorized packet preparation; a new intake conversion still needs the explicit
+approval above. Check the actual final packet including metadata overhead.
+Inspect the issued folder in isolation using the portable evaluation cases in
+the package; source integrity alone does not prove the lesson can be taught.
 
 Create lessons that stand on their own: include the definitions, reasoning,
 examples and figure descriptions needed to teach the objectives without asking
@@ -154,6 +177,21 @@ fix formatting only when unambiguous, never invent answers, hints or rationale.
 For missing evidence ask the chatbot to regenerate the SAME single report; the
 learner still only pastes it. Report ID conflicts require inspection, not renaming
 the ID to force a second import.
+
+Link supported formatting repairs to their original import ID with --repair-of
+and --repair-note. Handle needs-review imports using objective-by-objective
+relevance decisions. Preserve valid observations from unchanged context. Use
+scoped review-evidence dispositions for individual invalid questions instead of
+withdrawing useful unrelated work. Keep gaps objective-specific; resolve them
+only through matching fresh unaided assessment evidence. Never reinterpret old
+report-wide notes as if the chatbot had associated them with particular objectives.
+
+Investigate suspected_errors against actual governing sources before correcting
+content. Record confirmed corrective addenda, tell the learner the announcement,
+and review every affected packet/evidence flag, including prerequisite dependents.
+Retain original sources, reports and packet bytes. Resume only reviewed-safe
+context; replace a pending packet with a new ID only on the learner's explicit
+choice. Correction/relevance judgments are not new learner observations.
 
 Inspect the updated evidence and next-step recommendations. Hinted, repeated,
 invalid or unresolved contradictory assessments cannot establish independent mastery.

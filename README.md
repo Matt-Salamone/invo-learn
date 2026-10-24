@@ -89,6 +89,11 @@ Do not manually clear the mailbox.
 
 Read the [usage guide](docs/user/guide.md), [contracts](docs/user/contracts.md),
 [documented defaults](docs/user/decisions.md), and [worked example](examples/README.md).
+Packet preflight and verified reductions help keep uploads manageable. Structured
+content investigations and scoped evidence reviews preserve useful work when a
+question or explanation is wrong. Report repairs, objective-specific gaps,
+section inventories, plan decisions and offline health checks are described in
+[quality and recovery](docs/user/quality-and-recovery.md).
 The [setup](skills/invo-learn-setup/SKILL.md), [study](skills/invo-learn/SKILL.md), and
 [update](skills/invo-learn-update/SKILL.md) skills work through ordinary files and
 commands across agent hosts. No API key or application server is required.
@@ -98,6 +103,7 @@ commands across agent hosts. No API key or application server is required.
 ```sh
 python -m unittest discover -s tests -v
 python examples/worked_example.py
+python examples/packet_evaluation.py
 python -m invo_learn --help
 ```
 

@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.5.0
+
+Packet preflight measures context and attachment sizes, records content/relevance
+checks and omissions, and supports verified reductions of already usable sources.
+New packets include a source manifest and prefilled report template; handoff
+history is summarized while full evidence remains durable. Intake conversions
+continue to require explicit material-specific permission.
+
+Content concerns now support investigations, immutable corrective addenda and
+dependent lesson/evidence review. Explicit packet replacement preserves issued
+snapshots. Stale reports wait for objective-by-objective relevance review;
+append-only assessment/objective dispositions preserve unaffected evidence.
+Original reports are never rewritten and retained work keeps the existing
+independence, chronological failure and delayed-review rules.
+
+Optional v1 report fields record objective-specific gaps, evidence-based gap
+resolutions and suspected content errors. Legacy report-wide notes remain
+unscoped. Imports have durable outcomes and linked formatting repairs. Maps can
+record observable success criteria and source-section inventories. Old v1
+workspaces, maps, packets and reports remain readable without a schema migration.
+
+Offline status/doctor expose next actions, pending work, integrity checks and
+recorded backup/update outcomes. Plan decisions distinguish routine adaptation
+from learner-approved scope/workload changes with optional pacing estimates.
+Setup refuses enclosing Git/learner repositories even for --no-git. Installed-CLI
+journeys and portable fresh-chat evaluation cases exercise the new workflows.
+The release preserves 0.4.1's independent pending lessons per course; recovery
+lists every pending course and explicit replacement can target a hidden packet.
+
 ## 0.4.1
 
 Pending lessons are scoped to courses. A different course can prepare a lesson

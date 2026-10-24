@@ -1,5 +1,10 @@
 # Contracts and evidence policy (v1, with optional ordered attempts since 0.3.0)
 
+Version 0.5.0 adds optional criteria/section inventories, packet quality reviews,
+objective-specific gaps/resolutions and suspected errors. Existing v1 inputs
+remain valid. See [quality and recovery](quality-and-recovery.md) for complete
+extension shapes, import repairs, correction impacts and scoped dispositions.
+
 The CLI validates these contracts with the Python standard library. The chatbot
 receives the JSON Schema in every packet; Python additionally checks assigned
 objectives, duplicate keys/IDs, calendar dates, lesson identity and conflicts.
@@ -138,7 +143,8 @@ For example, a failed diagnostic `q-start`, assisted practice `q-guided`, and a
 fresh assessment `q-check` with resolves=["q-start"] can establish understanding.
 The first two attempts remain in the evidence. The identical sequence with an
 empty resolves list remains uncertain. Keep resolved mistakes in attempt history;
-use top-level misconceptions/prerequisite_gaps for gaps still needing attention.
+use objective-specific gaps for known associations and the legacy top-level
+misconceptions/prerequisite_gaps only for notes whose association is unknown.
 
 Legacy v1 reports omit all three fields and retain their original conservative
 semantics, including any-failure blocking. Old records are not rewritten or

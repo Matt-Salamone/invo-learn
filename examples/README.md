@@ -33,3 +33,8 @@ worked examples before practice; bread demonstrates a retained explicit short-st
 override. This offline library example does not perform network updates or Git
 publication. Those are agent workflow steps; focused tests exercise trusted-update
 activation and private backup outcomes with synthetic repositories and mocked APIs.
+
+For 0.5.0 packet quality cases, run `python examples/packet_evaluation.py` or retain
+them with `--output` outside the public checkout. See
+[fresh-chat packet evaluation](packet-evaluations.md). Installed-CLI tests exercise
+correction/relevance, report repair, gap resolution, planning and offline recovery.

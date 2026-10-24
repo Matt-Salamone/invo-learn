@@ -70,6 +70,14 @@ progress; changed objective meaning requires a new ID and deferral of the old on
 Do not reset the course or silently replace the accepted map.
 
 Use propose-map and show the proposed plan/change summary with source locators.
+For new objectives, include observable success_criteria. Inventory the source's
+sections with source_sections and section_inventory: link each section to the
+matching objectives or explain an omission/deferral. Record inspection limits
+explicitly; inventory completeness is not demonstrated learner understanding.
+Read the active release's docs/user/quality-and-recovery.md for the exact shapes.
+Preserve existing evidenced criteria and section identity across later proposals;
+changed objective meaning needs a new ID. Legacy maps remain readable without
+inventing criteria or section associations retrospectively.
 Ask the learner to approve or revise it, then **stop and wait**. Only use
 accept-map after actual approval; an upload alone is not map approval. Update the
 adaptive plan after acceptance, retaining the pending lesson/report barrier within that same course.

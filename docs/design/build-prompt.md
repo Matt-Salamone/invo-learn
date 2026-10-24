@@ -1,5 +1,9 @@
 # Build prompt: invo-learn
 
+Authorized 0.5.0 scope is recorded in requirements.md and implemented/documented
+in docs/user/quality-and-recovery.md. The core manual/private/portable workflow
+and evidence rules below continue to apply.
+
 Onboarding revision: see the first bullet in requirements.md. Learners now open
 one learning folder, receive explained questions one at a time with a wait for
 each answer, and use the same mailbox for incoming resources and outgoing lessons.

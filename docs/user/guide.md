@@ -1,5 +1,10 @@
 # Using invo-learn
 
+For packet checks/reduction, objective-specific gaps, report repair, correction
+investigations, evidence relevance and offline recovery, see
+[quality and recovery](quality-and-recovery.md). The agent handles these operations;
+the learner still uploads one mailbox and returns one pasted report.
+
 Give your planning agent the public repository URL and ask it to use the setup
 skill. It installs **one learning workspace** containing the harness, shared
 profile and all your courses. You do not need a public clone or a second project.
