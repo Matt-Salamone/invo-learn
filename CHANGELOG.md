@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0
+
+Coding lesson specs supply a neutral syntax reference, preserved under the exact
+name syntax-cheatsheet.md in packets and mailbox restaging. Preflight accounts
+for its bytes and digest. Both chat roles explicitly permit neutral lookup during
+coding assessments without counting it as assistance; task-specific hints still
+count. Noncoding lessons omit the sheet. Legacy specs, packets and reports remain
+unchanged. Content neutrality and API accuracy require planner review.
+
 ## 0.6.0
 
 New packets embed lesson/side-chat role selection, useful UML guidance and a

@@ -128,3 +128,7 @@ List pending IDs per course, restore any prepared packet by ID, and accept repor
 in any course order. Require report ingestion or explicit abandonment only before
 preparing another lesson in the same course. active_lesson remains the last staged
 packet for backward compatibility, not a workspace-wide pending-session lock.
+
+Authorized 0.7.0 extension: implement the coding-reference workflow in
+docs/user/syntax-references.md, with exact-name packet/mailbox preservation,
+preflight accounting and backward compatibility for issued packets and specs.

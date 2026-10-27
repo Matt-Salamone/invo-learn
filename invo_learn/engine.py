@@ -331,7 +331,7 @@ class Workspace:
     def prepare(self, tid, spec, today, replace_lesson=None, decision=None):
         t = self.track(tid)
         date(today)
-        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"), ("quality_review",))
+        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"), ("quality_review", "coding", "syntax_cheatsheet"))
         strings(spec["objective_ids"], "objective_ids")
         require(spec["objective_ids"] and len(set(spec["objective_ids"])) == len(spec["objective_ids"]), "unique lesson objectives required")
         require(set(spec["objective_ids"]) <= t["objectives"].keys(), "lesson requires accepted map objectives")
@@ -370,6 +370,8 @@ class Workspace:
             src = self.path(rel)
             require(digest(src.read_bytes()) == checksum, "source checksum changed")
             selected.append((src, checksum, rel))
+        from . import syntax_reference
+        reference = syntax_reference.prepare(spec)
         lid = "lesson-" + uuid.uuid4().hex[:12]
         folder = self.root / "lessons" / lid
         packet = folder / "packet"
@@ -387,9 +389,13 @@ class Workspace:
             name = f"source-{n:02d}-{src.name}"
             shutil.copyfile(src, packet / name)
             source_lines.append({"upload": name, "workspace_path": rel, "sha256": checksum})
+        if reference is not None:
+            (packet / "syntax-cheatsheet.md").write_bytes(reference)
+            source_lines.append({"upload": "syntax-cheatsheet.md", "role": "syntax-reference",
+                                 "origin": "planner-authored neutral reference", "sha256": digest(reference)})
         atomic(packet / "lesson.json", lesson | {"sources": source_lines})
         from .sidechat import instructions
-        template = instructions(lesson) + (Path(__file__).parent / "templates" / "chatbot.md").read_text(encoding="utf-8")
+        template = syntax_reference.instructions(reference is not None) + instructions(lesson) + (Path(__file__).parent / "templates" / "chatbot.md").read_text(encoding="utf-8")
         text = template + "\n\n## Assigned lesson\n\n" + json.dumps({
             "lesson_id": lid, "track_id": tid, "mode": spec["mode"], "prepared_on": today,
             "learner_preferences": lesson["preferences"], "objectives": objectives,

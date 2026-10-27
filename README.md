@@ -136,3 +136,7 @@ Design context: [requirements](docs/design/requirements.md), [build prompt](docs
 
 
 New lesson packets support optional supplemental Q&A: upload the same files to another chat and send Side chat (Go starts the lesson). Main and side reports remain distinct. Both chats favor useful UML. Agent guidance commits and pushes reviewed changes after every interaction; private records remain in independent private repositories. See [side-chat workflow](docs/user/side-chat.md).
+
+Coding lessons include a preserved standalone `syntax-cheatsheet.md`, permitted
+during coding assessments without counting neutral lookup as assistance. Noncoding
+lessons omit it. See [syntax reference workflow](docs/user/syntax-references.md).

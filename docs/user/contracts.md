@@ -48,7 +48,8 @@ be other map objectives and acyclic. Deferred objectives retain all evidence.
   "mode": "lesson",
   "context": "Apply the same inverse operation to both sides to preserve equality. Work through 2x + 3 = 11 with a labeled balance diagram; then assess a fresh equation without hints.",
   "attachments": [{"material_id": "m-from-intake"}],
-  "supplemental_context": ""
+  "supplemental_context": "",
+  "coding": false
 }
 ```
 
@@ -195,3 +196,10 @@ no full transcript is required.
 
 
 Supplemental reports use report_type=side-chat and the embedded template in new START-HERE.md packets. They carry schema_version, report_id, lesson_id, track_id, map_revision, content_revision, discussions, remaining_questions and assessment_help. See [side-chat contract](side-chat.md). They are accepted by ingest without becoming a second formal report or closing the lesson. The existing formal v1 report schema is unchanged.
+
+New lesson specs set `coding` to true or false; true requires
+`syntax_cheatsheet` containing the complete neutral Markdown reference. False
+omits that field. prepare stages `syntax-cheatsheet.md` under that exact name,
+accounts for its bytes in preflight and preserves/restages its digest with the
+packet. Legacy specs without the new fields retain their behavior. See
+[coding lesson syntax references](syntax-references.md) for authoring and assessment rules.

@@ -51,6 +51,11 @@ separately, and cannot expand authoritative uploaded scope on its own.
 
 ## Next lesson or review
 
+Before writing a new lesson/review spec, read the active release's
+`docs/user/syntax-references.md`. Classify whether its exercises require coding
+with `coding`; for coding lessons author `syntax_cheatsheet` so prepare preserves
+a standalone permitted syntax reference in the packet and mailbox.
+
 Before preparing a lesson/review, save and ingest every returned report FIRST,
 update its records and plan, then finish the report backup below. Inspect the
 mailbox for reports/resources before updating or staging. Read

@@ -112,3 +112,10 @@ packet for backward compatibility, not a workspace-wide pending-session lock.
 
 
 October 27, 2026: the user approved shared lesson/side-chat materials with role-specific generated instructions and separate lightweight supplemental reports, useful UML in both roles, conservative accounting for assessment-related help, and automatic commit/push of interaction changes across the public packages and private assignment workspace. Existing immutable packets, evidence provenance, private/public separation and scoped backup checks remain in force.
+
+## Authorized coding-reference extension (October 27, 2026)
+
+New coding lessons/reviews include a standalone neutral syntax sheet, preserved
+and restaged with the packet. Noncoding lessons omit it. Both chats permit lookup
+without counting it as assistance, while task-specific help remains assistance.
+See [the contract and content boundaries](../user/syntax-references.md).

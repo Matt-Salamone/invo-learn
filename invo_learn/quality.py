@@ -1,5 +1,6 @@
 """Source-preserving context reduction and inspectable packet preflight."""
 import copy
+import hashlib
 import uuid
 
 from .contracts import fields, require, string, strings
@@ -93,7 +94,13 @@ def preflight(ws, tid, spec):
         require(all(type(v) is bool for v in review["checks"].values()), "packet checks must be booleans")
         require("budget_bytes" not in review or type(review["budget_bytes"]) is int and review["budget_bytes"] > 0,
                 "budget_bytes must be a positive integer")
+    from .syntax_reference import prepare
+    reference = prepare(spec)
     included, warnings = [], []
+    if reference is not None:
+        included.append({"name": "syntax-cheatsheet.md", "role": "syntax-reference",
+                         "bytes": len(reference), "sha256": hashlib.sha256(reference).hexdigest(),
+                         "text_characters": len(reference.decode("utf-8"))})
     for selection in spec["attachments"]:
         path, data, record = source(ws, tid, selection)
         entry = {**selection, "name": path.name, "bytes": len(data), "sha256": record["sha256"]}

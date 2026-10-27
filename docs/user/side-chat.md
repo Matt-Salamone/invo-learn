@@ -35,3 +35,7 @@ The human approved the interaction model on October 27, 2026. This is an accepte
 design view of the manual handoff, not an automated chat integration. Its sequence
 is illustrative; reporting order is flexible. [Diagram source](https://github.com/Matt-Salamone/invo-learn/blob/main/docs/design/lesson-side-chat-workflow.puml)
 and [SVG preview](https://github.com/Matt-Salamone/invo-learn/blob/main/docs/design/lesson-side-chat-workflow.svg) describe these responsibilities.
+
+Both roles follow [syntax reference rules](syntax-references.md). Merely consulting the
+permitted neutral sheet is not assessment help; task-specific explanations and
+solutions remain reportable assistance with their actual timing.
