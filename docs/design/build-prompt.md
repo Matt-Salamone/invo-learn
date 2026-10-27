@@ -1,5 +1,10 @@
 # Build prompt: invo-learn
 
+Authorized 0.6.0 extension: generated lesson/side-chat role selection, separate
+supplemental reports with assistance qualification, useful UML, and end-of-every-
+interaction commit/push. See requirements.md and docs/user/side-chat.md; the old
+single-main-report contract remains compatible and supplemental reports are optional.
+
 Authorized 0.5.0 scope is recorded in requirements.md and implemented/documented
 in docs/user/quality-and-recovery.md. The core manual/private/portable workflow
 and evidence rules below continue to apply.

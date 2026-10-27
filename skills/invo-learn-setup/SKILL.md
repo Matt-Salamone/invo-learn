@@ -120,3 +120,11 @@ Continue with `.agents/skills/invo-learn-add-course/SKILL.md`. Reuse a supplied
 course name/materials; otherwise ask only "What course or skill would you like to
 add first?" and wait. Do not leave the learner with only a list of CLI commands
 or upload instructions without an actual course/material destination.
+
+## End-of-interaction synchronization
+
+When this interaction changes learner-workspace files, follow its AGENTS.md and
+the active invo-learn skill's commit/push instructions before the final response.
+This includes stopping to wait for an onboarding answer after saving records.
+Keep learner data in the verified private workspace and preserve explicit backup
+opt-outs; a missing remote leaves a local commit with an explained push limitation.

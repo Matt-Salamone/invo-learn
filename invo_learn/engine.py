@@ -388,7 +388,8 @@ class Workspace:
             shutil.copyfile(src, packet / name)
             source_lines.append({"upload": name, "workspace_path": rel, "sha256": checksum})
         atomic(packet / "lesson.json", lesson | {"sources": source_lines})
-        template = (Path(__file__).parent / "templates" / "chatbot.md").read_text(encoding="utf-8")
+        from .sidechat import instructions
+        template = instructions(lesson) + (Path(__file__).parent / "templates" / "chatbot.md").read_text(encoding="utf-8")
         text = template + "\n\n## Assigned lesson\n\n" + json.dumps({
             "lesson_id": lid, "track_id": tid, "mode": spec["mode"], "prepared_on": today,
             "learner_preferences": lesson["preferences"], "objectives": objectives,
@@ -497,6 +498,10 @@ class Workspace:
         lid = obj.get("lesson_id")
         require(isinstance(lid, str) and lid in self.state["lessons"], "unknown lesson; raw report preserved in inbox")
         lesson = self.state["lessons"][lid]
+        if obj.get("report_type") == "side-chat":
+            from .sidechat import ingest
+            return ingest(self, obj, lesson, path)
+        require(obj.get("report_id") not in self.state.get("supplemental_reports", {}), "report_id belongs to a supplemental report")
         report(obj, lesson, today)
         revisions.validate_gap_links(self, obj)
         normalized = digest(json.dumps(obj, sort_keys=True, ensure_ascii=False).encode())
@@ -614,6 +619,8 @@ class Workspace:
                         "last_result": "not-demonstrated", "lapses": (old["lapses"] if old else 0) + (lesson["mode"] == "review")}
 
         revisions.project_gaps(self, tid, reports)
+        from .sidechat import project_coverage
+        project_coverage(self, tid)
 
     def set_policy(self, intervals):
         require(isinstance(intervals, list) and intervals and all(type(x) is int and x > 0 for x in intervals)
@@ -650,7 +657,12 @@ class Workspace:
                                     for tid in self.state["tracks"]},
                 "review_policy": self.state["review_policy"],
                 "work_queue": queue, "next_action": next_action, "concerns": self.state.get("concerns", {}),
-                "corrections": self.state.get("corrections", {}), "last_operations": workflow.last_outcomes(self)}
+                "corrections": self.state.get("corrections", {}),
+                "supplemental_reports": {rid: {"lesson_id": record["lesson_id"], "track_id": record["track_id"],
+                    "remaining_questions": record["report"]["remaining_questions"],
+                    "assessment_help": record["report"]["assessment_help"]}
+                    for rid, record in self.state.get("supplemental_reports", {}).items()},
+                "last_operations": workflow.last_outcomes(self)}
 
     def render(self):
         lines = ["# Learner overview", "", f"Learner: {self.state['profile']['name']}", "",
@@ -678,6 +690,10 @@ class Workspace:
                                    + (", ".join(section["objective_ids"]) or "unmapped: " + section["reason"]))
             for note in t.get("unscoped_notes", []):
                 track_lines.append("- Unscoped report note (not assigned to every objective): " + json.dumps(note, ensure_ascii=False))
+            for rid, record in self.state.get("supplemental_reports", {}).items():
+                if record["track_id"] == tid:
+                    track_lines.append(f"- Supplemental Q&A [{rid}](../../{record['path']}): coverage only; "
+                                       + json.dumps({k: record['report'][k] for k in ('remaining_questions', 'assessment_help')}, ensure_ascii=False))
             for mid, m in t["materials"].items():
                 track_lines.append(f"- Source {mid}: [{m['name']}]({Path(m['original']).relative_to(Path('tracks') / tid).as_posix()}) ({m['role']}, {m['status']})")
             for gap in t.get("source_gaps", []):

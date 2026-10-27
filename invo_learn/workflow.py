@@ -30,7 +30,7 @@ def ingest(ws, raw, today, repair_of=None, repair_note=None, relevance=None):
         else:
             require(repair_note is None, "repair note requires repair_of")
         result = ws._ingest(raw, today, relevance)
-        if (result["status"] == "duplicate" and ledger.get("outcome") in ("imported", "duplicate")
+        if (result["status"] == "duplicate" and ledger.get("outcome") in ("imported", "supplemental-recorded", "duplicate")
                 and repair_of is None and relevance is None):
             return result | {"import_id": rid}
         attempt.update(outcome=result["status"], result=result)
@@ -67,7 +67,7 @@ def imports(ws):
                                "attempts": [{"outcome": "audit-unreadable", "reason": str(exc)}]})
     # Successful linked repairs settle the original rejected input without editing it.
     repaired = {a["repair_of"] for entry in result for a in entry["attempts"]
-                if a.get("repair_of") and a["outcome"] in ("imported", "duplicate")}
+                if a.get("repair_of") and a["outcome"] in ("imported", "supplemental-recorded", "duplicate")}
     return [dict(entry, settled_by_repair=entry["import_id"] in repaired) for entry in result]
 
 
@@ -209,6 +209,12 @@ def doctor(ws, today):
             require(checksum == report["sha256"], "archived report checksum mismatch")
             raw = ws.path(report["raw_path"])
             require(digest(raw.read_bytes()) == raw.stem, "raw report checksum mismatch")
+        for record in ws.state.get("supplemental_reports", {}).values():
+            obj = read_json(ws.path(record["path"]))
+            require(digest(json.dumps(obj, sort_keys=True, ensure_ascii=False).encode()) == record["sha256"], "supplemental archive checksum mismatch")
+            raw = ws.path(record["raw_path"])
+            require(digest(raw.read_bytes()) == raw.stem, "supplemental raw checksum mismatch")
+            count += 1
         return {"verified_artifacts": count}
     check("durable-artifacts", verify_artifacts)
     def verify_audit():

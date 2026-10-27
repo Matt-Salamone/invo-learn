@@ -161,7 +161,8 @@ def effective_item(ws, record, item):
             return None, reviews
         if any(r["status"] == "withdrawn" for r in decisions):
             attempt.update(valid=False, result="ungradable", independent=False)
-    return result, reviews
+    from .sidechat import qualify
+    return qualify(ws, record["lesson_id"], result), reviews
 
 
 def review_evidence(ws, spec):

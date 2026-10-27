@@ -83,3 +83,11 @@ accept-map after actual approval; an upload alone is not map approval. Update th
 adaptive plan after acceptance, retaining the pending lesson/report barrier within that same course.
 Explain the next step: ask for the next lesson when ready; later resources use
 this same "add materials to <course>" → mailbox → "materials ready" process.
+
+## End-of-interaction synchronization
+
+When this interaction changes learner-workspace files, follow its AGENTS.md and
+the active invo-learn skill's commit/push instructions before the final response.
+This includes stopping to wait for an onboarding answer after saving records.
+Keep learner data in the verified private workspace and preserve explicit backup
+opt-outs; a missing remote leaves a local commit with an explained push limitation.

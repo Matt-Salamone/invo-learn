@@ -78,3 +78,11 @@ After a completed handoff or processed report/plan, follow the study skill's
 automatic scoped private backup step. Include related update bundles/exports and
 recovery backups when reviewing the completed file scope. Report installation,
 learning and Git backup outcomes separately.
+
+## End-of-interaction synchronization
+
+When this interaction changes learner-workspace files, follow its AGENTS.md and
+the active invo-learn skill's commit/push instructions before the final response.
+This includes stopping to wait for an onboarding answer after saving records.
+Keep learner data in the verified private workspace and preserve explicit backup
+opt-outs; a missing remote leaves a local commit with an explained push limitation.

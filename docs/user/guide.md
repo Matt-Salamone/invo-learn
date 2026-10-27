@@ -360,3 +360,6 @@ need agent-selected excerpts/chunks. The system coordinates a single learner's
 tracks, not simultaneous users or concurrent agents. File locking prevents concurrent
 writes; network filesystems and hostile filesystem races are outside the guarantee.
 Scheduling is a plan/preference, not calendar API integration or background reminders.
+
+
+Use the same visible upload files in both chats: Go selects the lesson, Side chat selects optional Q&A. Return each report separately; no side report is required when unused. The agent accepts either arrival order. See [side-chat workflow](side-chat.md). Agents now commit and push reviewed changes after every interaction, including planning/intake, while retaining explicit backup opt-outs and existing private-remote checks.

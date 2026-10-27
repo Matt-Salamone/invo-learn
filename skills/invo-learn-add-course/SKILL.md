@@ -40,3 +40,11 @@ Continue to `../invo-learn-add-materials/SKILL.md` with this course selected.
 That skill provides the actual mailbox path, waits for files, preserves originals,
 and proposes a source-linked plan for review. Do not prepare a lesson before the
 learner has reviewed and approved its coverage map.
+
+## End-of-interaction synchronization
+
+When this interaction changes learner-workspace files, follow its AGENTS.md and
+the active invo-learn skill's commit/push instructions before the final response.
+This includes stopping to wait for an onboarding answer after saving records.
+Keep learner data in the verified private workspace and preserve explicit backup
+opt-outs; a missing remote leaves a local commit with an explained push limitation.

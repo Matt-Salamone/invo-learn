@@ -192,3 +192,6 @@ Structural errors reject the whole report, preserving raw input. Semantic confli
 that can be recorded without guessing are stored conservatively with uncertainty.
 Every assessment's full evidence is stored in state.json and the archived report;
 no full transcript is required.
+
+
+Supplemental reports use report_type=side-chat and the embedded template in new START-HERE.md packets. They carry schema_version, report_id, lesson_id, track_id, map_revision, content_revision, discussions, remaining_questions and assessment_help. See [side-chat contract](side-chat.md). They are accepted by ingest without becoming a second formal report or closing the lesson. The existing formal v1 report schema is unchanged.

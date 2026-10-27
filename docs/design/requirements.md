@@ -109,3 +109,6 @@ List pending IDs per course, restore any prepared packet by ID, and accept repor
 in any course order. Require report ingestion or explicit abandonment only before
 preparing another lesson in the same course. active_lesson remains the last staged
 packet for backward compatibility, not a workspace-wide pending-session lock.
+
+
+October 27, 2026: the user approved shared lesson/side-chat materials with role-specific generated instructions and separate lightweight supplemental reports, useful UML in both roles, conservative accounting for assessment-related help, and automatic commit/push of interaction changes across the public packages and private assignment workspace. Existing immutable packets, evidence provenance, private/public separation and scoped backup checks remain in force.

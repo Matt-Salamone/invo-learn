@@ -1,0 +1,57 @@
+@startuml
+' Supporting record: lesson-side-chat-workflow.md
+' Accepted manual interaction design; report arrival order is illustrative.
+title Lesson and side-chat workflow: shared materials, separate responsibilities
+hide footbox
+skinparam defaultFontName Segoe UI
+skinparam defaultFontSize 14
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam maxMessageSize 210
+skinparam ParticipantBackgroundColor #F4F4F4
+skinparam ParticipantBorderColor #555555
+skinparam ActorBorderColor #555555
+skinparam NoteBackgroundColor #F7F7F7
+skinparam NoteBorderColor #999999
+
+actor Learner
+participant Planner
+participant "Lesson chat" as Lesson
+participant "Side chat" as Side
+
+Planner --> Learner: One flat upload set\nShared sources and lesson identifiers\nTwo role instructions
+Learner -> Lesson: Attach files; send "Go"
+Lesson --> Learner: Teach and assess\nPresent sources before questions
+
+opt Learner uses a side chat
+  Learner -> Side: Attach the same files;\nsend "Side chat"
+  loop Learner asks a question
+    Learner -> Side: Ask for clarification or depth
+    Side --> Learner: Explain with source context\nand useful diagrams
+  end
+  note over Learner, Side
+    Answer freely when asked;
+    record help related to an assessment.
+  end note
+  Learner -> Side: Request supplemental report
+  Side --> Learner: Questions, explanations, gaps,\nand assessment-related help
+end
+
+Lesson --> Learner: Main assessment report
+Learner -> Planner: Return main report
+Planner -> Planner: Validate and record\nreported assessment evidence
+
+opt Supplemental report returned, now or later
+  Learner -> Planner: Return side-chat report
+  Planner -> Planner: Link explanations and help\nwithout duplicating assessment
+end
+
+note over Learner, Planner
+  Report order is illustrative; either may arrive first.
+  Main report can close the lesson packet.
+  Side report alone does not certify independent understanding.
+end note
+
+Planner --> Learner: Recommend follow-up\nwithin the approved plan
+@enduml

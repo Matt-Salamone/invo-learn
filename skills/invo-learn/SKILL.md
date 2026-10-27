@@ -161,8 +161,25 @@ reports first. Ask about ambiguous files rather than silently archiving unproces
 uploads. Snapshots are recovery copies, not evidence that intake was completed.
 
 Tell the learner: "Upload every visible file in the mailbox into a fresh chatbot
-conversation. Ask it to teach START-HERE.md and return the JSON report. Paste that
-one report back here." The chatbot teaches; you own curriculum and records.
+conversation and send Go. Optionally upload the same files into a second chat
+and send Side chat. Return the main report and, if used, its separate side report." The chatbot teaches; you own curriculum and records.
+
+## Optional side chat and UML
+
+Read the active release's docs/user/side-chat.md for shared uploads, role selection,
+the lightweight supplemental contract and evidence interpretation. New packets
+embed both setups and the side report template in START-HERE.md. Send Go for the
+lesson or Side chat in a second chat with the same files. Both favor useful UML
+with code/prose and other visuals when clearer. The side chat answers questions
+without advancing the lesson or certifying mastery. Direct help is allowed when
+asked and its relationship/timing to assessed questions must be recorded.
+
+Ingest both report types through the same command, preserving each separately.
+Side reports can arrive before or after the main report and never close a pending
+lesson or add formal assessments. Review remaining_questions and unmatched help;
+matching pre-answer/unknown assistance qualifies independent evidence without
+rewriting archived answers. Unscoped tangents do not expand the accepted map.
+Show the current supplemental report records from state.json when planning.
 
 ## A report pasted into this chat
 
@@ -201,12 +218,17 @@ and progress/reviews are recomputed. Revise plan.md, explain the result briefly,
 and prepare the next agreed lesson/review. Only delayed independent review passes
 establish retention. Prefer concise observable judgments to mastery percentages.
 
-## Automatically back up completed learning work
+## Commit and push after every user interaction
 
-After successful prepare/regeneration or restage recovery, and after successful
-report ingestion AND plan.md updates, automatically run backup unless the effective
-auto_backup preference is false. This is agent bookkeeping; no per-operation
-confirmation is needed. Direct CLI/library calls do not replace this agent step.
+Before the final response to EVERY user interaction that changes workspace files,
+automatically commit and push the reviewed interaction scope, unless the learner
+explicitly opts out with auto_backup=false. This includes planning, preference,
+intake, supplemental-report and recovery work, not only lesson/report milestones.
+Use the scoped backup helper below for a verified private remote; with no remote,
+commit reviewed changes locally and explain that push remains unavailable. No
+empty commit is needed when nothing changed. Retry pending task pushes without
+repeating completed learning operations. Direct helper calls do not replace this
+agent end-of-turn step.
 
 Inspect Git status and diffs first. Enumerate only completed operation files,
 including state, generated views, updated plan, exact raw report, normalized report,

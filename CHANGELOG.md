@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.6.0
+
+New packets embed lesson/side-chat role selection, useful UML guidance and a
+prefilled supplemental report template without additional upload files. ingest
+accepts side reports in either order with the main report, checks lesson/track
+and context revisions, preserves distinct coverage records, and qualifies matching
+pre-answer or unknown-timing assistance in the evidence projection. Archived
+reports and issued packets remain unchanged. Side reports never complete lessons,
+certify understanding/retention, or create formal assessments.
+
+Agent guidance now requires committing and pushing reviewed changes after every
+user interaction, including planning, preferences and intake; unchanged interactions
+need no empty commit. Existing private-destination and scoped-backup checks remain.
+Generated learner AGENTS.md includes the same rule. Public development checkouts
+also commit/push their task changes. Existing private custom guidance is preserved.
+
+
 ## 0.5.0
 
 Packet preflight measures context and attachment sizes, records content/relevance
