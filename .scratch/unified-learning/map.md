@@ -12,6 +12,10 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [07](issues/07-read-legacy-records.md#answer): canonical legacy inspection
+  retains original identities and exact packet/revision associations without
+  converting sources or adding progress. Implementation `538089d`; eight installed
+  S1 legacy tests passed with before/after source hashes.
 - [01](issues/01-canonical-entry-point.md): installed setup, intake, study and
   maintenance share the sole invo-learn entry point. Implementation `a159d2c`;
   all 106 tests and the worked example passed before integration.
