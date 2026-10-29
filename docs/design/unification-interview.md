@@ -1,9 +1,9 @@
 # Learning and assignment unification interview
 
-Status: interview in progress. These are accepted product decisions, not an
-implementation authorization or a complete build brief. Unanswered recommendations
-remain proposals. This work extends the prior requirements; it does not reopen
-unrelated decisions in requirements.md.
+Status: design decisions settled; final shared-understanding confirmation pending.
+Implementation is not yet authorized by the completed interview. Latest-round
+decisions supersede earlier open notes. This work extends the prior requirements;
+it does not reopen unrelated decisions in requirements.md.
 
 ## Accepted decisions (October 29, 2026, round 1)
 
@@ -75,13 +75,46 @@ Temurin 25.0.5; the initial PNG preview and revised discussion preview were insp
   wrappers. Older reports and records remain readable. Workspace migration is
   explicit; ordinary updates must not silently reorganize learner data.
 
-## Open frontier
+## Accepted decisions (October 29, 2026, round 4)
 
-- Concurrent pending handoffs for a course's ordinary study and its assignments.
-- Public implementation, private rehearsal and verified migration order.
-- Legacy repository retirement and removal of obsolete installed entry points.
-- Preservation, behavior and recovery checks required before cutover.
-- Treatment of uncertain evidence mappings versus integrity failures.
+- Allow exactly one pending handoff across the entire learner workspace, including
+  all courses and assignments. Reject the proposed per-course/per-assignment pending
+  slots. This explicitly supersedes the per-course concurrency requirement added in
+  invo-learn 0.4.1. Preserve paused work and issued artifacts without treating them
+  as simultaneously checked-out handoffs.
+- Before final private cutover, remind the learner to visit every checked-out
+  lesson chat and obtain an in-progress report. Wait for the actual reports, save
+  and reconcile them, and retire the old pending handoffs before cutover. Do not
+  fabricate missing reports or mark unfinished lessons complete. Preserve partial
+  progress and history for later resumption through the single pending slot.
+  Public implementation and synthetic verification can proceed while reports
+  are being collected; the private cutover cannot.
+- Implement and test the public combined package first, rehearse migration on
+  private copies, then migrate the actual workspace only after preservation checks
+  pass and the in-progress reports above have been reconciled.
+- After successful migration, add relocation notes and archive the superseded
+  public assignment package and private assignment repository as read-only.
+  Preserve their histories. Remove obsolete installed entry points after the
+  working destination has been verified.
+- Verify all four solution/guidance combinations and explicit choice timing;
+  outstanding/late report readability; conservative assistance/retention semantics;
+  original materials, packets, reports, learner work and provenance preservation;
+  idempotent migration; one user-facing invo-learn entry point; non-reorganizing
+  ordinary updates; and recovery on rehearsal copies. Run the existing tests,
+  worked example and targeted installed-command checks. Update concurrency checks
+  to assert the single workspace-wide pending limit.
+- Do not give the learner a manual mapping-review queue. Preserve ambiguous legacy
+  evidence unchanged, give no unsupported progress credit, and automatically plan
+  fresh demonstration or relearning. Err toward repeated learning rather than
+  uncertain credit. Missing files, changed original bytes and broken report
+  associations are integrity failures: stop cutover and retain usable originals.
+
+## Final confirmation
+
+No further product decisions are currently open. The revised workspace-wide
+pending-boundary sketch v0.2 awaits acceptance with the final plan; the earlier
+per-course/per-assignment sketch was rejected. Final confirmation authorizes public
+implementation and the agreed staged migration, subject to the report/cutover gate.
 
 Private inventories and learner content are deliberately absent from this public
 design record.
