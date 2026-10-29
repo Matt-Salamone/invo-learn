@@ -128,3 +128,54 @@ class MigrationProjectionTests(unittest.TestCase):
         bad = {"links": [{"observation_id": records[0]["observation_id"], "objective_id": "invented", "reason": "No accepted objective exists"}]}
         self.cli("migration-project", self.stage, "--links", self.write(bad), ok=False)
         self.assertEqual(hashes(self.stage), before)
+
+    def test_reconciled_actual_returns_refresh_projection_and_metadata_retries_keep_one_observation(self):
+        self.cli("migration-rehearse", self.write(self.plan()))
+        self.cli("migration-project", self.stage)
+        manifest = self.cli("migration-status", self.stage)["manifest"]
+        key = next(key for key, source in manifest["sources"].items() if source["kind"] == "assignment")
+        source = json.loads((self.assignment / ".invo/state.json").read_text())
+        packet = source["packets"]["packet-original"]
+        report = {key: packet[key] for key in ("assignment_id", "lesson_id", "packet_id", "contract_version", "solution_revision")}
+        observation = {"criterion": "Correct reasoning", "question": "Why subtract both sides?", "learner_response": "To preserve equality",
+                       "assistance": "Actual requested worked example", "evidence_level": "assisted"}
+        report.update(observations=[observation], remaining_gaps=[], suspected_errors=[])
+        request = {"reports": [{"origin_key": key, "file": str(self.write(report))}], "waivers": []}
+        self.cli("migration-reconcile", self.stage, self.write(request))
+        self.assertFalse(self.cli("migration-status", self.stage)["projection_current"])
+        result = self.cli("migration-project", self.stage)
+        self.assertEqual(result["status"], "projected")
+        self.assertTrue(self.cli("migration-status", self.stage)["projection_current"])
+        records = self.staged_status()["tracks"]["math"]["legacy_evidence"]
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["observation"], observation)
+        self.assertEqual(records[0]["credit"], "none")
+        report["session_status"] = "in-progress"
+        request["reports"][0]["file"] = str(self.write(report))
+        self.cli("migration-reconcile", self.stage, self.write(request))
+        self.cli("migration-project", self.stage)
+        records = self.staged_status()["tracks"]["math"]["legacy_evidence"]
+        self.assertEqual(len(records), 1)
+        self.assertEqual(len(records[0]["provenance"]), 2)
+        self.assertEqual(records[0]["credit"], "none")
+
+    def test_late_post_waiver_observation_stays_historical_even_with_a_justified_topic_link(self):
+        self.cli("migration-rehearse", self.write(self.plan()))
+        manifest = self.cli("migration-status", self.stage)["manifest"]
+        key = next(key for key, source in manifest["sources"].items() if source["kind"] == "assignment")
+        self.cli("migration-reconcile", self.stage, self.write({"reports": [], "waivers": [{
+            "origin_key": key, "packet_id": "packet-original", "accept_lost_progress": True,
+            "reason": "Actual synthetic learner accepts loss of this checkout's unreported progress"}]}))
+        packet = json.loads((self.assignment / ".invo/state.json").read_text())["packets"]["packet-original"]
+        report = {field: packet[field] for field in ("assignment_id", "lesson_id", "packet_id", "contract_version", "solution_revision")}
+        report.update(observations=[{"criterion": "Correct reasoning", "question": "Solve 2x+3=11", "learner_response": "x=4",
+            "assistance": "none", "evidence_level": "independent"}], remaining_gaps=[], suspected_errors=[])
+        self.cli("migration-reconcile", self.stage, self.write({"reports": [{"origin_key": key, "file": str(self.write(report))}], "waivers": []}))
+        self.cli("migration-project", self.stage)
+        record = self.staged_status()["tracks"]["math"]["legacy_evidence"][0]
+        link = {"links": [{"observation_id": record["observation_id"], "objective_id": "solve", "reason": "Actual equation task concerns the accepted solve objective"}]}
+        self.cli("migration-project", self.stage, "--links", self.write(link))
+        record = self.staged_status()["tracks"]["math"]["legacy_evidence"][0]
+        self.assertEqual(record["provenance"][0]["outcome"], "historical")
+        self.assertEqual(record["credit"], "none")
+        self.assertFalse(record["coverage_eligible"])

@@ -123,3 +123,63 @@ the canonical reconciliation ledger records their retirement. Stage writes use
 `migration.lock` outside the workspace inventory. After an interrupted process,
 verify that no writer remains before recovering its lock and inspecting the
 preserved stage; never claim activation from an incomplete operation.
+
+## Conservative evidence projection
+
+```text
+python learn.py --today YYYY-MM-DD migration-project <rehearsal-directory>
+python learn.py migration-status <rehearsal-directory>
+```
+
+Use the learner-local date. Projection reads preserved historical assignment
+observations and actual reconciled returns, preserving their original questions,
+answers, assistance and provenance. It does not guess course objective links from
+titles, filenames or deliverable completion. Without a justified link, no mapped
+credit is awarded. Instead, the ordinary study queue receives due-now
+`fresh-demonstration` or `relearn-legacy-topic` actions grounded in the assignment's
+governing material and actual criterion. These are planner study actions, not a
+learner-facing mapping-review queue or a lock on other study.
+
+Old assignment reports do not record all modern freshness, validity, grading and
+assessment-kind evidence. Even an old `independent` label with a justified topic
+link can establish at most coverage; it cannot establish modern independent
+understanding or delayed retention. Assisted work stays assisted. Matching actual
+side-chat help with before-answer or unknown timing qualifies the old task;
+post-answer help alone does not rewrite its earlier answer. Existing compatible
+course evidence, understanding and review dates remain intact.
+
+The projection artifact is `.invo-learn/migration-projection.json` in the staged
+workspace. Canonical status exposes `tracks.<course>.legacy_evidence`, including
+unchanged observations, provenance and any derived coverage credit. Status's
+ordinary work queue exposes the fresh-study needs. Repeating projection with the
+same inputs changes no files or progress. Metadata variants of the same actual
+observation keep distinct return provenance without duplicating the observation.
+Historical late returns remain historical and receive no newly mapped credit.
+
+The planner may add a justified association after inspecting the governing scope
+and accepted course objectives, without asking the learner to review mapping
+flags. Use `migration-project <stage> --links <private-links.json>` with:
+
+```json
+{
+  "links": [{
+    "observation_id": "legacy-observation-from-projection",
+    "objective_id": "accepted-objective-in-the-assignment-course",
+    "reason": "Actual evidence and scope supporting this relationship"
+  }]
+}
+```
+
+Associations are recorded additions, not inferred mappings. They add at most
+coverage and never postpone the existing fresh-study due date. Omitting the
+links file on a retry retains the recorded associations. Unknown objectives and
+conflicting justifications are rejected before writes; preserve the current
+stage and rehearse separately when correcting a mistaken association.
+
+`migration-status` reports `projection_current`. Actual main or supplemental
+returns received after projection can make it false, including a valid empty
+partial return. Run projection again deliberately after reconciliation; a
+completed old projection is insufficient for activation when its inputs changed.
+For implementation, `migration_projection.projection_current(ws, manifest,
+stage)` supplies the same gate. The stage lock serializes projection with report
+reconciliation; source originals and immutable packet/report bytes are untouched.
