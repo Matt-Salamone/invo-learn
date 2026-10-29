@@ -172,3 +172,32 @@ def recompute_track(ws, tid):
     for record in ws.track(tid).get("assignments", {}).values():
         if "implementation" in record:
             update_completion(record, ws.state["reports"])
+
+
+def qualify(ws, lesson_id, item):
+    """Qualify actual task help on a projected copy, retaining the observation."""
+    result = copy.deepcopy(item)
+    help_items = [(record["report"]["report_id"], help_item)
+                  for record in ws.state["reports"].values() if record["lesson_id"] == lesson_id
+                  for help_item in record["report"].get("implementation_progress", {}).get("assistance", [])
+                  if (not help_item["objective_ids"] or item["objective_id"] in help_item["objective_ids"])
+                  and help_item["timing"] != "after-answer"]
+    qualifications = copy.deepcopy(result.get("assistance_qualifications", []))
+    for attempt in result["assessments"]:
+        matches = [(rid, help_item) for rid, help_item in help_items if help_item["question"] == attempt["question"]]
+        if not matches:
+            continue
+        # The exact amount/type of help remains in its original record. At least
+        # some task help is known; it cannot support an unaided-performance claim.
+        attempt["independent"] = False
+        if attempt["assistance"] == "none":
+            attempt["assistance"] = "light"
+        details = [attempt["assistance_details"]] if attempt["assistance_details"].strip() else []
+        details.extend("Implementation assistance: " + help_item["help"] for _, help_item in matches)
+        attempt["assistance_details"] = "; ".join(details)
+        qualifications.extend({"source": "implementation-progress", "report_id": rid,
+            "assessment_id": attempt["assessment_id"], "question": help_item["question"],
+            "help": help_item["help"], "timing": help_item["timing"]} for rid, help_item in matches)
+    if qualifications:
+        result["assistance_qualifications"] = qualifications
+    return result

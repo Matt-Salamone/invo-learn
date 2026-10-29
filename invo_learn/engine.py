@@ -590,7 +590,8 @@ class Workspace:
                 item, dispositions = revisions.effective_item(self, record, original)
                 o["evidence"].append({"report_id": r["report_id"], "lesson_id": r["lesson_id"],
                     "completed_on": r["completed_on"], "mode": lesson["mode"], "invalidated": record["invalidated"],
-                    **copy.deepcopy(original), "dispositions": copy.deepcopy(dispositions)})
+                    **copy.deepcopy(original), "dispositions": copy.deepcopy(dispositions),
+                    "assistance_qualifications": copy.deepcopy(item.get("assistance_qualifications", [])) if item else []})
                 if record["invalidated"]:
                     o["uncertainties"].append(f"{r['report_id']}: withdrawn: {record['invalidation_reason']}")
                     continue
