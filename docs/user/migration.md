@@ -124,6 +124,69 @@ the canonical reconciliation ledger records their retirement. Stage writes use
 verify that no writer remains before recovering its lock and inspecting the
 preserved stage; never claim activation from an incomplete operation.
 
+## Activate and recover
+
+```text
+python learn.py migration-activate <rehearsal-directory> --source <current-trusted-package>
+python learn.py migration-recover <rehearsal-directory> --action resume
+python learn.py migration-recover <rehearsal-directory> --action rollback
+```
+
+Use the current trusted invo-learn bundle as the command controller; an older
+installation may not know these commands. A temporary trusted source download is
+sufficient. The agent handles paths and controller setup. The copied rehearsal
+`workspace/learn.py` is intentionally guarded against execution, including when
+its frozen bundle predates the global pending rule. Inspect it through the current
+controller's read-only commands instead. Customized runners are refused for review
+and preservation; they are never silently overwritten.
+
+Activation rechecks the preservation manifest, exact original report associations,
+explicit waivers, the latest projection and the absence of pending canonical
+checkouts. It builds a separate inactive candidate and installs the checked current
+package through the normal upgrade/customization checks. Older releases remain
+immutable. It applies scoped byte preservation and tests the candidate rules
+against the destination's actual Git metadata before changing destination files.
+Custom conflicting attributes stop the operation. Preserve full raw snapshots and
+history before making any explicit derived-copy change to Git control metadata;
+record that derivation, retain original metadata bytes, and keep learner/material/
+packet/report bytes unchanged. Never normalize or rehash originals to force a pass.
+
+The destination stays the existing learner workspace with its existing `.git`
+directory and remote bindings. An immutable action plan and small progress cursor
+record the file overlay; the large plan is not rewritten for every file. The
+workspace operation lock serializes writes. New code and artifacts arrive before
+the active pointer and state. An `activating` state blocks study mutations until
+installed-command and archive verification passes; only then is active state
+published. Original packets and unrelated/untracked files are retained. A configured
+external mailbox keeps its original binding and contents; it is not cleared.
+
+An interruption reports incomplete activation. Resume revalidates preserved inputs,
+payloads and each owned file's before/after bytes. It preserves new unrelated work
+and refuses to overwrite conflicting newer changes. Rollback restores only the
+journal's owned writes from verified original snapshots, removes only empty owned
+directories, and verifies the original installed runtime. It cannot erase a completed
+activation or newer learner progress. Exact retries reuse the prepared payloads
+without duplicating imports, reviews, migration events or source identities.
+
+If staged records or actual returns change after preparation, the cached plan
+cannot omit those updates: preserve the old journal, roll back interrupted writes
+if needed, and rehearse a fresh stage using the saved actual inputs. After a real
+process crash, the agent must verify that its writers have stopped before clearing
+stale stage/workspace locks. Keep the source repositories and snapshots recoverable
+until final private backup and retirement have been verified separately.
+
+## Late returns after activation
+
+The ordinary `ingest` operation accepts exact original-format returns from retired
+course and assignment contexts after cutover. It uses the activation receipt and
+preserved canonical archives, without requiring the old product or stage paths.
+Original instruction/context hashes, identifiers and solution revisions still
+have to match. Exact raw returns and separate historical JSON archives are retained;
+these historical returns add no mastery or retention credit and never reopen or
+close any pending session. Repeats add no duplicate progress. New ordinary lesson
+reports continue through the normal evidence rules. `status` links historical
+archives separately, and `doctor` verifies their raw and canonical checksums.
+
 ## Conservative evidence projection
 
 ```text

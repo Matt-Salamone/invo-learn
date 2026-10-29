@@ -8,11 +8,15 @@ import shutil
 import subprocess
 
 from .contracts import fields, identifier, require
-from .engine import Workspace, atomic, digest, no_links, read_json, within
+from .engine import Workspace, atomic, atomic_bytes, digest, no_links, read_json, within
 from .legacy import read_snapshot
 
 
 PRESENTATION = "Presentation override for newly issued lessons: self-contained teaching with no source commentary; retain provenance for explicit requests"
+INACTIVE_RUNNER = b'''#!/usr/bin/env python3
+"""Frozen rehearsal guard; use the current invo-learn migration commands."""
+raise SystemExit("Inactive migration rehearsal: use the current invo-learn migration commands for inspection and explicit activation.")
+'''
 
 
 @contextlib.contextmanager
@@ -160,6 +164,7 @@ def stage_path(root, relative):
 
 def verify_rehearsal(stage, verify_sources=True, verify_workspace=True):
     root, manifest = load_rehearsal(stage)
+    verify_sources = verify_sources and not manifest.get("activated", False)
     for source in manifest["sources"].values():
         snapshot = stage_path(root, source["snapshot"])
         require(inventory(snapshot) == source["inventory"], "preserved source inventory/hash mismatch")
@@ -176,7 +181,12 @@ def verify_rehearsal(stage, verify_sources=True, verify_workspace=True):
     from .migration_projection import projection_current
     current_projection = (projection_current(Workspace(stage_path(root, manifest["workspace"])), manifest, root)
                           if verify_workspace else False)
-    return {"status": "verified", "migration_id": manifest["id"], "activated": False,
+    if manifest.get("activated"):
+        active = Workspace(manifest["destination"])
+        require(active.state.get("migration", {}).get("id") == manifest["id"]
+                and active.state["migration"].get("status") == "active",
+                "recorded activation destination receipt differs; inspect later work before recovery")
+    return {"status": "verified", "migration_id": manifest["id"], "activated": bool(manifest.get("activated")),
             "stage": str(root), "workspace": str(stage_path(root, manifest["workspace"])),
             "destination": manifest["destination"], "manifest": manifest, "projection_current": current_projection}
 
@@ -193,6 +203,9 @@ def rehearse(plan):
     require(isinstance(plan["assignments"], list), "assignments must be a list of source/course associations")
     destination = read_snapshot(plan["destination"])
     require(destination.kind == "course", "migration destination basis must be an existing course workspace")
+    from .install import RUNNER, LEGACY_RUNNER
+    require(destination.path("learn.py").read_text(encoding="utf-8") in (RUNNER, LEGACY_RUNNER),
+            "custom workspace runner must be preserved and reviewed before migration; it cannot be silently replaced")
     stage = no_links(plan["stage"]).resolve()
     requested = [(destination, None)]
     for selection in plan["assignments"]:
@@ -250,6 +263,10 @@ def rehearse(plan):
             require(inventory(stage / mailbox["snapshot"]) == mailbox["inventory"], "external mailbox changed during copy")
     workspace = stage / "workspace"
     _copy_tree(stage / sources[origin_key(destination)]["snapshot"], workspace, include_git=False)
+    runner = {"original_path": sources[origin_key(destination)]["snapshot"] + "/learn.py",
+              "original_sha256": digest((workspace / "learn.py").read_bytes()),
+              "guard_sha256": digest(INACTIVE_RUNNER)}
+    atomic_bytes(workspace / "learn.py", INACTIVE_RUNNER)
     state = copy.deepcopy(destination.state)
     associations = {origin_key(destination): {"tracks": {tid: tid for tid in state["tracks"]}}}
     for snapshot, tid in requested[1:]:
@@ -276,6 +293,7 @@ def rehearse(plan):
     manifest = {"schema_version": 1, "id": mid, "request_id": request_id, "request": normalized,
                 "status": "rehearsing", "activated": False, "destination": str(destination.root),
                 "workspace": "workspace", "sources": sources, "associations": associations,
+                "inactive_runner": runner,
                 "projection": {"status": "pending"}, "reconciliation": {"status": "pending"}}
     save_rehearsal(stage, manifest)
     verify_rehearsal(stage)

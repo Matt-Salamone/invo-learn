@@ -35,6 +35,13 @@ def parser(workspace_default=None):
     migration.add_argument("file", type=Path)
     migration_status = sub.add_parser("migration-status", help="verify a preserved rehearsal without activating it")
     migration_status.add_argument("stage", type=Path)
+    migration_activate = sub.add_parser("migration-activate", help="explicitly activate a verified migration into its existing private destination")
+    migration_activate.add_argument("stage", type=Path)
+    migration_activate.add_argument("--source", type=Path, help="current trusted public package; defaults to this running bundle")
+    migration_activate.add_argument("--interrupt-after", type=int, help=argparse.SUPPRESS)
+    migration_recover = sub.add_parser("migration-recover", help="resume or roll back only the owned writes of an interrupted activation")
+    migration_recover.add_argument("stage", type=Path)
+    migration_recover.add_argument("--action", choices=("resume", "rollback"), required=True)
     sub.add_parser("protect-record-bytes", help="explicit maintenance: preserve Git record bytes without replacing custom attribute rules")
     projection = sub.add_parser("migration-project", help="conservatively project preserved observations and plan fresh study")
     projection.add_argument("stage", type=Path)
@@ -170,6 +177,12 @@ def parser(workspace_default=None):
 
 def execute(args):
     cmd = args.command
+    if cmd == "migration-activate":
+        from .migration_activation import activate
+        return activate(args.stage, args.source, args.today, args.interrupt_after)
+    if cmd == "migration-recover":
+        from .migration_activation import recover
+        return recover(args.stage, args.action, args.today)
     if cmd == "migration-project":
         from .migration_projection import project
         return project(args.stage, read_json(args.links) if args.links else None, args.today)
@@ -195,7 +208,7 @@ def execute(args):
         return bootstrap(args.source, args.destination, args.name, args.mailbox,
                          read_json(args.preferences) if args.preferences else None, not args.no_git)
     ws = Workspace(args.workspace)
-    if ws.state.get("migration", {}).get("status") == "rehearsed" and cmd not in ("status", "doctor"):
+    if ws.state.get("migration", {}).get("status") in ("rehearsed", "activating") and cmd not in ("status", "doctor"):
         raise Invalid("staged migration is inactive; complete explicit checks and activation before study changes")
     if cmd == "check-updates":
         return check_updates(read_json(ws.root / ".invo-learn/active.json")["version"])
