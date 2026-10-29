@@ -248,7 +248,8 @@ agent end-of-turn step.
 Inspect Git status and diffs first. Enumerate only completed operation files,
 including state, generated views, updated plan, exact raw report, normalized report,
 new durable packets/snapshots, and related registered originals not yet backed up.
-Include active bundles/exports/backups after an update. Preserve all bytes and
+Include active bundles/exports/backups after an update, plus the reviewed
+.gitattributes policy and .invo-learn/attribute-backups files after byte maintenance. Preserve all bytes and
 checksums; do not rewrite archives to modernize them. Never use git add ., -A,
 a directory scope, an empty commit, or include unrelated edits. If a shared file
 contains unrelated changes, leave it for review instead of committing the mixture.

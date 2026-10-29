@@ -99,6 +99,7 @@ class Workspace:
         self.root = no_links(Path(root)).resolve()
         self.state_path = self.root / "state.json"
         self.state = read_json(self.state_path)
+        require(type(self.state.get("workspace_layout", 1)) is int and self.state.get("workspace_layout", 1) == 1, "unsupported learner-data layout; use an explicit compatible migration")
         require(self.state["schema_version"] == STATE_SCHEMA, "unsupported workspace schema; use compatible harness")
 
     @contextlib.contextmanager
@@ -111,6 +112,7 @@ class Workspace:
         try:
             os.write(fd, str(os.getpid()).encode())
             self.state = read_json(self.state_path)
+            require(type(self.state.get("workspace_layout", 1)) is int and self.state.get("workspace_layout", 1) == 1, "unsupported learner-data layout; use an explicit compatible migration")
             yield
         finally:
             os.close(fd)

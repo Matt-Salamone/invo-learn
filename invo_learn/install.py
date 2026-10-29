@@ -1,4 +1,5 @@
 """Independent workspace bootstrap and explicit, version-pinned harness upgrades."""
+import ast
 import json
 import os
 from pathlib import Path
@@ -56,6 +57,9 @@ preparing another. In-progress returns preserve incomplete history and release t
 slot; resume later with a new packet. Supplemental reports do not close the main
 handoff. prepare/restage preserve snapshots and issued packets. Never infer
 abandonment from switching courses.
+Keep .gitattributes and related attribute-backup files in reviewed maintenance
+commit scopes. protect-record-bytes checks archive integrity and portable Git
+attributes; restore altered originals rather than changing their recorded hashes.
 Never clear the mailbox yourself. Use prepare/restage, which preserve snapshots.
 For a pasted report, save the exact paste privately and call ingest automatically;
 the learner should not have to run an import command. Require explicit permission
@@ -82,12 +86,41 @@ separate supplemental evidence. Favor useful UML with code and prose in both rol
 '''
 
 
+def layout_requirement(ws, source):
+    source = no_links(source).resolve()
+    metadata = read_json(source / "harness.json")
+    required = metadata.get("workspace_layout", 1)
+    require(type(required) is int and required > 0, "workspace_layout must be a positive integer")
+    installed = ws.state.get("workspace_layout", 1)
+    state_schema = metadata.get("state_schema")
+    require(type(state_schema) is int and state_schema > 0, "state_schema must be a positive integer")
+    if required != installed or state_schema != ws.state["schema_version"]:
+        return {"status": "migration-required", "installed_layout": installed, "required_layout": required,
+                "installed_state_schema": ws.state["schema_version"], "required_state_schema": state_schema,
+                "version": (source / "VERSION").read_text(encoding="utf-8").strip(),
+                "instruction": "Keep the existing installation. Rehearse and explicitly activate a workspace migration before changing learner-data layout."}
+    return None
+
+
+def managed_guidance(ws, installed):
+    """Recover the verified old release's literal guidance without executing it."""
+    try:
+        tree = ast.parse((installed / "invo_learn/install.py").read_text(encoding="utf-8"))
+        previous = next((ast.literal_eval(node.value) for node in tree.body if isinstance(node, ast.Assign)
+                         and any(isinstance(target, ast.Name) and target.id == "GUIDANCE" for target in node.targets)), None)
+    except (OSError, SyntaxError, TypeError, ValueError):
+        return False
+    path = ws.root / "AGENTS.md"
+    return bool(isinstance(previous, str) and path.is_file() and path.read_text(encoding="utf-8") == previous)
+
+
 def package(source):
     source = no_links(source).resolve()
     version = (source / "VERSION").read_text(encoding="utf-8").strip()
     require(re.fullmatch(r"\d+\.\d+\.\d+", version), "VERSION must be major.minor.patch")
     metadata = read_json(source / "harness.json")
-    fields(metadata, ("package_schema", "state_schema", "report_schema", "python_min"))
+    fields(metadata, ("package_schema", "state_schema", "report_schema", "python_min"), ("workspace_layout",))
+    require(type(metadata.get("workspace_layout", 1)) is int and metadata.get("workspace_layout", 1) == 1, "unsupported learner-data layout; explicit migration required")
     require(all(type(metadata[key]) is int and metadata[key] == 1 for key in
                 ("package_schema", "state_schema", "report_schema")), "incompatible package/state/report schema; migration required")
     require(isinstance(metadata["python_min"], str) and re.fullmatch(r"\d+\.\d+", metadata["python_min"]), "invalid python_min")
@@ -101,8 +134,9 @@ def package(source):
     if (source / "LICENSE").exists():
         files["LICENSE"] = (source / "LICENSE").read_bytes()
     for expected in ("invo_learn/cli.py", "invo_learn/engine.py", "invo_learn/install.py",
-                     "invo_learn/updates.py", "invo_learn/backup.py", "invo_learn/assignments.py", "invo_learn/reference_solution.py", "invo_learn/implementation.py",
+                     "invo_learn/updates.py", "invo_learn/backup.py", "invo_learn/git_bytes.py", "invo_learn/assignments.py", "invo_learn/reference_solution.py", "invo_learn/implementation.py",
                      "invo_learn/contracts.py", "invo_learn/templates/chatbot.md",
+                     "invo_learn/legacy.py", "invo_learn/migration.py", "invo_learn/sidechat.py", "invo_learn/syntax_reference.py",
                      "invo_learn/quality.py", "invo_learn/revisions.py", "invo_learn/workflow.py", "invo_learn/coverage.py",
                      "invo_learn/templates/report.schema.json", "skills/invo-learn/SKILL.md",
                      "skills/invo-learn/references/setup.md", "skills/invo-learn/references/update.md",
@@ -156,6 +190,7 @@ def bootstrap(source, root, name, mailbox=None, prefs=None, git=True):
     require(not box.exists() or (box.is_dir() and not any(box.iterdir())),
             "mailbox must be new or empty; never adopt an unrelated nonempty directory")
     state = initial_state(root, box, name, prefs)
+    state["workspace_layout"] = 1
     if git:
         require(shutil.which("git") is not None, "Git is required for default repository setup; install Git or explicitly use --no-git")
     root.mkdir(parents=True, exist_ok=True)
@@ -193,12 +228,18 @@ def bootstrap(source, root, name, mailbox=None, prefs=None, git=True):
     if git:
         result = subprocess.run(["git", "init", "--initial-branch=main", str(root)], capture_output=True, text=True)
         require(result.returncode == 0, f"Git initialization failed: {result.stderr}; files are preserved for recovery")
-    Workspace(root).render()
+    workspace = Workspace(root)
+    workspace.render()
+    from .git_bytes import protect
+    protect(workspace)
     return {"workspace": str(root), "mailbox": str(box), "version": version, "git": git,
             "next": "Stay in this workspace. Read START-HERE.md and ask your agent to add a course."}
 
 
 def upgrade(ws, source):
+    migration = layout_requirement(ws, source)
+    if migration is not None:
+        return migration
     source, version, files, hashes = package(source)
     current = read_json(ws.root / ".invo-learn" / "active.json")
     installed = ws.path(current["release"])
@@ -211,9 +252,12 @@ def upgrade(ws, source):
         p = ws.path(name)
         require(p.is_file() and digest(p.read_bytes()) == checksum, "installed skill modified; preserve custom changes before upgrade")
     require((ws.root / "learn.py").read_text(encoding="utf-8") in (RUNNER, LEGACY_RUNNER), "workspace runner modified; preserve custom changes before upgrade")
+    from .git_bytes import protect
+    byte_policy = protect(ws)
+    update_guidance = managed_guidance(ws, installed)
     if current["version"] == version:
         require(manifest["files"] == hashes, "same-version package differs; publish a new version rather than overwrite")
-        return {"status": "already-current", "version": version}
+        return {"status": "already-current", "version": version, "byte_policy": byte_policy}
     require(tuple(map(int, version.split("."))) > tuple(map(int, current["version"].split("."))), "downgrades are not supported")
     target = ws.root / ".invo-learn" / "releases" / version
     if target.exists():
@@ -228,6 +272,8 @@ def upgrade(ws, source):
     for name in set(new_exports) - set(current["managed_exports"]):
         require(not (ws.root / name).exists(), "new harness skill conflicts with an unmanaged private file")
     all_paths = set(current["managed_exports"]) | set(new_exports) | {"learn.py"}
+    if update_guidance:
+        all_paths.add("AGENTS.md")
     before = {name: (ws.root / name).read_bytes() if (ws.root / name).exists() else None for name in all_paths}
     backup = ws.root / ".invo-learn" / "upgrade-backups" / uuid.uuid4().hex
     backup.mkdir(parents=True)
@@ -235,6 +281,8 @@ def upgrade(ws, source):
     atomic(backup / "active.json", current)
     try:
         (ws.root / "learn.py").write_text(RUNNER, encoding="utf-8")
+        if update_guidance:
+            (ws.root / "AGENTS.md").write_text(GUIDANCE, encoding="utf-8")
         for name, data in new_exports.items():
             dest = ws.root / name
             dest.parent.mkdir(parents=True, exist_ok=True)
@@ -252,4 +300,10 @@ def upgrade(ws, source):
                 (ws.root / name).write_bytes(data)
         raise
     ws.save("harness-upgraded", {"from": current["version"], "to": version, "backup": str(backup)})
-    return {"status": "upgraded", "from": current["version"], "version": version, "backup": str(backup)}
+    for name in set(current["managed_exports"]) - set(new_exports):
+        directory = (ws.root / name).parent
+        while directory != ws.root / ".agents/skills" and directory.is_dir() and not any(directory.iterdir()):
+            directory.rmdir()
+            directory = directory.parent
+    return {"status": "upgraded", "from": current["version"], "version": version, "backup": str(backup),
+            "byte_policy": byte_policy, "guidance": "updated" if update_guidance else "customized-preserved"}

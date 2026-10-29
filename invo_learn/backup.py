@@ -93,7 +93,11 @@ def backup(ws, paths, message, tid=None):
             for revision in pending:
                 names = git(ws, "diff-tree", "--root", "--no-commit-id", "--name-only", "--no-renames", "-r", "-m", revision).splitlines()
                 require(set(names) <= scope, "Unpushed history contains files outside the completed scope; review it before backup")
+        from .git_bytes import verify_archives, verify_attributes
+        verify_archives(ws)
+        verify_attributes(ws)
         git(ws, "add", "--", *sorted(scope))
+        verify_attributes(ws, cached=True)
         if git(ws, "diff", "--cached", "--name-only"):
             git(ws, "commit", "-m", message)
         commit = git(ws, "rev-parse", "--verify", "HEAD")
