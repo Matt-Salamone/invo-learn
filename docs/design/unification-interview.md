@@ -51,15 +51,37 @@ Temurin 25.0.5; the initial PNG preview and revised discussion preview were insp
   presentation, not source grounding or durable provenance. Explicit overrides
   remain possible. Treatment of already issued immutable packets remains open.
 
+## Accepted decisions (October 29, 2026, round 3)
+
+- Ask about upfront solution generation before planning lessons. Ask about guided
+  implementation when the learner reaches implementation. Each new decision
+  requires an answer; resuming the same already-answered step retains that answer.
+  The learner explicitly accepted the proposed-design timing view v0.3:
+  [source](assignment-modes-v03.puml), [SVG](assignment-modes-v03.svg).
+- Preserve outstanding handoffs and accept reports from their original packets.
+  Update stored presentation settings immediately during migration. New or
+  regenerated packets use the new presentation style; issued originals remain
+  immutable and can retain their old commentary.
+- Preserve original assessments and assistance records. Connect legacy evidence
+  conservatively to course objectives and reviews. Independent assignment evidence
+  can establish demonstrated understanding where justified, not delayed retention.
+  Existing reference solutions and their provenance remain historical facts.
+- Import complete files and records, including untracked learner work, into the
+  destination repositories. Record originating commits. The destinations get
+  explicit migration commits; the original repositories retain their complete
+  recoverable Git histories rather than interleaving their commit graphs.
+- invo-learn is the single user-facing entry point, with one combined installer
+  and updater. Remove obsolete skill and command names; provide no compatibility
+  wrappers. Older reports and records remain readable. Workspace migration is
+  explicit; ordinary updates must not silently reorganize learner data.
+
 ## Open frontier
 
-- Timing of the two explicit choices and behavior when resuming an answered step.
-- Outstanding handoffs and late reports versus new presentation settings.
-- Conservative mapping of existing evidence and preservation of original sources.
-- Git-history preservation and migration recovery.
-- Compatibility for installed skills, commands and existing workspaces.
+- Concurrent pending handoffs for a course's ordinary study and its assignments.
+- Public implementation, private rehearsal and verified migration order.
+- Legacy repository retirement and removal of obsolete installed entry points.
+- Preservation, behavior and recovery checks required before cutover.
+- Treatment of uncertain evidence mappings versus integrity failures.
 
-Later decisions include legacy packets/reports and evidence, migration recovery,
-compatibility entry points, distribution, repository retirement and verification.
 Private inventories and learner content are deliberately absent from this public
 design record.

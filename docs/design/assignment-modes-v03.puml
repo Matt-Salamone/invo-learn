@@ -1,0 +1,29 @@
+' Supporting decision record: unification-interview.md
+@startuml
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam backgroundColor white
+skinparam shadowing false
+title Proposed timing v0.3 - question 1
+start
+:Save assignment requirements and materials;
+:Before planning: ask whether to\ngenerate a reference solution;
+if (Learner chooses solution?) then (Yes)
+  :Generate and verify reference;
+else (No)
+endif
+:Plan lessons; teach and assess\nneeded concepts via handoffs;
+:When ready to implement: ask whether\nto guide the final implementation;
+if (Learner chooses guidance?) then (Yes)
+  :Chatbot guides; learner edits and runs;\nrecord actual assistance;
+else (No)
+  :Learner implements independently;
+endif
+:Update assignment progress and\nshared course evidence / reviews;
+stop
+legend bottom
+  No stored or inferred yes/no defaults.
+  Proposal: resume an answered step without asking again;
+  ask for each new assignment or implementation decision.
+endlegend
+@enduml
