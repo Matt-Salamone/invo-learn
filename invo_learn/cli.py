@@ -26,6 +26,11 @@ def parser(workspace_default=None):
     b.add_argument("--preferences", type=Path, help="optional JSON preferences")
     b.add_argument("--no-git", action="store_true")
     sub.add_parser("status", help="all tracks, gaps and due reviews")
+    legacy = sub.add_parser("legacy-status", help="read an older course or assignment snapshot without converting it")
+    legacy.add_argument("source", type=Path)
+    legacy_report = sub.add_parser("legacy-report", help="inspect an older returned report against its exact issued packet")
+    legacy_report.add_argument("source", type=Path)
+    legacy_report.add_argument("file", type=Path)
     sub.add_parser("doctor", help="offline integrity, recovery queue and last operation outcomes")
     sub.add_parser("check-updates", help="read-only GitHub version check; never installs an update")
     su = sub.add_parser("study-update", help="automatically install a compatible trusted release unless opted out")
@@ -118,6 +123,12 @@ def parser(workspace_default=None):
 
 def execute(args):
     cmd = args.command
+    if cmd == "legacy-status":
+        from .legacy import read_snapshot
+        return read_snapshot(args.source).status()
+    if cmd == "legacy-report":
+        from .legacy import read_snapshot
+        return read_snapshot(args.source).inspect_report(args.file, args.today)
     if cmd == "bootstrap":
         return bootstrap(args.source, args.destination, args.name, args.mailbox,
                          read_json(args.preferences) if args.preferences else None, not args.no_git)
