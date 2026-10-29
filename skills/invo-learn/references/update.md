@@ -1,12 +1,7 @@
----
-name: invo-learn-update
-description: Automatically update before lessons or reviews, handle explicit upgrades, and recover failed invo-learn installations without losing learner records.
----
-
 # Trusted harness updates
 
 Save and ingest returned reports FIRST, update records and plan.md, and finish
-that report's backup using the study skill. Inspect mailbox uploads before reuse.
+that report's backup using the invo-learn instructions. Inspect mailbox uploads before reuse.
 Never make a network update the first action on a returned report.
 
 Before planning/preparing a lesson or review, run:
@@ -44,7 +39,7 @@ if incompatible, stay on the installed version rather than bypass checks.
 
 prepare also checks automatically. After activation it invokes the new learn.py
 process, so generated packets use newly active code/templates. After study-update,
-reread newly active skills/docs before writing the lesson spec. Never edit old
+reread the newly active invo-learn instructions and docs before writing the lesson spec. Never edit old
 packet archives: restage is byte-preserving recovery; regeneration requires a new
 prepare and lesson ID after report ingestion or explicitly requested abandonment.
 
@@ -74,7 +69,7 @@ If activation succeeded but preparation failed, retain the new activation and
 retry preparation or restage its completed packet as appropriate. Do not duplicate
 a pending lesson or repeat evidence ingestion to fix a backup failure.
 
-After a completed handoff or processed report/plan, follow the study skill's
+After a completed handoff or processed report/plan, follow the invo-learn instructions for
 automatic scoped private backup step. Include related update bundles/exports and
 recovery backups when reviewing the completed file scope. Report installation,
 learning and Git backup outcomes separately.
@@ -82,7 +77,7 @@ learning and Git backup outcomes separately.
 ## End-of-interaction synchronization
 
 When this interaction changes learner-workspace files, follow its AGENTS.md and
-the active invo-learn skill's commit/push instructions before the final response.
+the active invo-learn commit/push instructions before the final response.
 This includes stopping to wait for an onboarding answer after saving records.
 Keep learner data in the verified private workspace and preserve explicit backup
 opt-outs; a missing remote leaves a local commit with an explained push limitation.

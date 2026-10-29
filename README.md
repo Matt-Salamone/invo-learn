@@ -10,7 +10,7 @@ then paste the report back; your agent handles the bookkeeping.
 Give your agent this request:
 
 > Set up invo-learn in this folder using
-> https://github.com/Matt-Salamone/invo-learn and skills/invo-learn-setup/SKILL.md.
+> https://github.com/Matt-Salamone/invo-learn and skills/invo-learn/SKILL.md.
 > Explain each choice, ask me one question at a time, and wait for my answer.
 > Then help me add my first course.
 
@@ -42,7 +42,7 @@ out of the public package; a hosted private backup is optional.
 ## Add your first course
 
 In your learning workspace, tell your agent **"Add a course"** (or name a skill).
-It uses [invo-learn-add-course](skills/invo-learn-add-course/SKILL.md), asking and
+The [invo-learn skill](skills/invo-learn/SKILL.md) guides this operation, asking and
 explaining one choice at a time. When it gives you your mailbox path, put the
 course's syllabus, notes, slides, or other resources there and say **"materials
 ready."** You can also attach files or give paths. The agent saves the originals
@@ -52,7 +52,7 @@ and proposes a source-linked plan for you to review before starting a lesson.
 
 Say **"Add materials to [course name]"**, put the new resources in the **same mailbox**,
 and say **"materials ready."** The
-[add-materials skill](skills/invo-learn-add-materials/SKILL.md) files them in the
+[invo-learn skill](skills/invo-learn/SKILL.md) files them in the
 existing course and proposes plan changes without resetting your progress.
 You review changes before they become the accepted plan.
 
@@ -94,8 +94,8 @@ content investigations and scoped evidence reviews preserve useful work when a
 question or explanation is wrong. Report repairs, objective-specific gaps,
 section inventories, plan decisions and offline health checks are described in
 [quality and recovery](docs/user/quality-and-recovery.md).
-The [setup](skills/invo-learn-setup/SKILL.md), [study](skills/invo-learn/SKILL.md), and
-[update](skills/invo-learn-update/SKILL.md) skills work through ordinary files and
+The single [invo-learn skill](skills/invo-learn/SKILL.md) covers setup, study and
+maintenance and works through ordinary files and
 commands across agent hosts. No API key or application server is required.
 
 ## Verify or develop

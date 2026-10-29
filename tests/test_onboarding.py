@@ -33,7 +33,8 @@ class OnboardingTests(unittest.TestCase):
 
     def test_standalone_install_leaves_one_usable_workspace_and_no_source_clone(self):
         prefs = self.base / "preferences.json"
-        prefs.write_text(json.dumps({"teaching_style": "examples then practice", "supplemental_research": True}))
+        prefs.write_text(json.dumps({"teaching_style": "examples then practice", "supplemental_research": True,
+                                     "auto_update": False, "auto_backup": False}))
         mailbox = self.base / "Desktop/learning-mailbox"
         with patch("setup_workspace.urlopen", return_value=io.BytesIO(self.archive())):
             result = install(self.root, "Synthetic learner", mailbox, prefs)
@@ -51,13 +52,61 @@ class OnboardingTests(unittest.TestCase):
         self.assertTrue(active["source"].startswith("https://codeload.github.com/"))
         self.assertEqual(sorted(p.name for p in self.base.iterdir()),
                          ["Desktop", "learning", "preferences.json"])
-        for skill in ("invo-learn-add-course", "invo-learn-add-materials"):
-            installed = self.root / ".agents/skills" / skill / "SKILL.md"
-            self.assertEqual(installed.read_bytes(), (PUBLIC / "skills" / skill / "SKILL.md").read_bytes())
+        skill_file = self.root / ".agents/skills/invo-learn/SKILL.md"
+        self.assertEqual(skill_file.read_bytes(), (PUBLIC / "skills/invo-learn/SKILL.md").read_bytes())
+        self.assertEqual(sorted(p.name for p in (self.root / ".agents/skills").iterdir()), ["invo-learn"])
+        self.assertEqual(sorted(p.name for p in (self.root / ".invo-learn/releases" / active["version"] / "skills").iterdir()), ["invo-learn"])
         self.assertIn(str(mailbox), (self.root / "START-HERE.md").read_text())
         out = subprocess.run([sys.executable, str(self.root / "learn.py"), "status"],
                              capture_output=True, text=True, check=True)
         self.assertEqual(json.loads(out.stdout)["mailbox"], str(mailbox))
+
+        # The downloaded public source is gone: every subsequent operation uses
+        # the installed command from an unrelated working directory (seam S1).
+        def installed(*args):
+            result = subprocess.run([sys.executable, str(self.root / "learn.py"),
+                                     "--today", "2026-10-14", *map(str, args)],
+                                    cwd=self.base, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            return json.loads(result.stdout)
+
+        def private_json(name, data):
+            path = self.base / name
+            path.write_text(json.dumps(data), encoding="utf-8")
+            return path
+
+        installed("add-course", "math", "--title", "Synthetic math")
+        source = mailbox / "lecture.any-extension"
+        source.write_text("Solve equations using inverse operations on both sides.", encoding="utf-8")
+        original = source.read_bytes()
+        material = installed("add-material", "math", source)
+        mapping = map_spec(material["id"], [("solve", "Solve a linear equation", "skill", "whole file", [])])
+        proposal = installed("propose-map", "math", private_json("map.json", mapping))
+        installed("accept-map", "math", proposal["proposal_id"], "--approval", "Synthetic approval")
+        prepared = installed("prepare", "math", private_json("lesson.json", spec(["solve"])))
+        packet = self.root / "lessons" / prepared["lesson_id"] / "packet"
+        packet_before = {p.name: p.read_bytes() for p in packet.iterdir() if p.is_file()}
+        report = make_report({"id": prepared["lesson_id"], "track_id": "math"},
+                             "2026-10-14", [item("solve")])
+        raw = json.dumps(report)
+        report_file = self.base / "returned-report.json"
+        report_file.write_text(raw, encoding="utf-8")
+        installed("ingest", report_file)
+        status = installed("status")
+        self.assertEqual(status["tracks"]["math"]["objectives"]["solve"]["understanding"], "demonstrated")
+        self.assertTrue(status["tracks"]["math"]["objectives"]["solve"]["review"])
+        self.assertTrue(any(p.read_bytes() == original for p in self.root.rglob("lecture.any-extension")))
+        self.assertTrue(any(p.read_text(encoding="utf-8") == raw for p in (self.root / "inbox").rglob("*.txt")))
+        self.assertEqual(packet_before, {p.name: p.read_bytes() for p in packet.iterdir() if p.is_file()})
+
+    def test_obsolete_course_alias_is_not_delivered(self):
+        bootstrap(PUBLIC, self.root, "Synthetic", git=False)
+        out = subprocess.run([sys.executable, str(self.root / "learn.py"), "add-track",
+                              "math", "--title", "Math"], capture_output=True, text=True)
+        self.assertEqual(out.returncode, 2)
+        status = subprocess.run([sys.executable, str(self.root / "learn.py"), "status"],
+                                capture_output=True, text=True, check=True)
+        self.assertNotIn("math", json.loads(status.stdout)["tracks"])
 
     def test_install_refuses_nonempty_destination_without_touching_files(self):
         self.root.mkdir()

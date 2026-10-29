@@ -1,6 +1,6 @@
 # 01: Install and use the single invo-learn entry point
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -16,8 +16,31 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] One canonical learner skill/command is installed; setup, course/material intake, reporting and maintenance are operations within it. Obsolete public names and aliases are not delivered as wrappers.
-- [ ] A fresh installed journey remains usable after temporary public source downloads are removed, with explained setup choices and existing material-intake permissions preserved.
-- [ ] Existing course lessons, raw reports, mailbox originals, coverage and reviews remain usable; legacy data is not silently reorganized by installation.
-- [ ] Include any necessary command/installer prefactoring within this end-to-end slice, preserving existing meaningful regression checks.
-- [ ] Verify at S1 with a real temporary private workspace and an installed subprocess command; keep all fixtures synthetic and public/private isolation intact.
+- [x] One canonical learner skill/command is installed; setup, course/material intake, reporting and maintenance are operations within it. Obsolete public names and aliases are not delivered as wrappers.
+- [x] A fresh installed journey remains usable after temporary public source downloads are removed, with explained setup choices and existing material-intake permissions preserved.
+- [x] Existing course lessons, raw reports, mailbox originals, coverage and reviews remain usable; legacy data is not silently reorganized by installation.
+- [x] Include any necessary command/installer prefactoring within this end-to-end slice, preserving existing meaningful regression checks.
+- [x] Verify at S1 with a real temporary private workspace and an installed subprocess command; keep all fixtures synthetic and public/private isolation intact.
+
+## Answer
+
+The package and installer now deliver only `skills/invo-learn/SKILL.md` as the
+learner skill. Setup, course intake, material intake and maintenance instructions
+live in its internal `references/` directory, with existing explained questions,
+actual conversion consent, private isolation and update/backup rules preserved.
+The obsolete `add-track` command alias was removed; `add-course` remains the
+course/standalone-track operation. README, generated workspace guidance and the
+usage guide point to the canonical entry.
+
+S1 verification extends `tests/test_onboarding.py`: install from a controlled
+archive, verify temporary source removal, invoke installed subprocess commands
+from an unrelated directory, intake an arbitrary-extension original, accept a
+coverage map, prepare a lesson, ingest its exact return, inspect understanding
+and review state, and verify originals/raw report/packet bytes remain preserved.
+Single-skill delivery and obsolete-alias refusal were observed failing before
+implementation, then passing. The accepted component view v0.1 and S1 remain
+unchanged. The parent re-probed the local renderer and inspected the accepted view.
+
+Validation: onboarding tests (7), complete unittest suite (106), and
+`python examples/worked_example.py`. No learner layout conversion or real data
+was involved. Release version publication is deferred to ticket 13.

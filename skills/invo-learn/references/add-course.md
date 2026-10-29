@@ -1,13 +1,8 @@
----
-name: invo-learn-add-course
-description: Add a course or other learning track to an existing invo-learn workspace with guided questions and first materials exchanged through the mailbox.
----
-
 # Add a course
 
 Read AGENTS.md, state.json, OVERVIEW.md and `python learn.py status` in the learner
 workspace. Reuse an existing course when the learner is adding resources to it;
-route that request directly to `../invo-learn-add-materials/SKILL.md`.
+route that request directly to `add-materials.md`.
 "Course" is the learner-facing name for a track, including a non-school skill.
 
 Ask **one question per turn**, explain it briefly, and **stop and wait for an
@@ -36,15 +31,15 @@ prerequisite lesson is a recommendation; the learner may still choose to advance
 Supplemental research means opt-in extra explanations/examples, labeled separately
 from uploaded sources and unable to silently enlarge course requirements.
 
-Continue to `../invo-learn-add-materials/SKILL.md` with this course selected.
-That skill provides the actual mailbox path, waits for files, preserves originals,
+Continue to `add-materials.md` with this course selected.
+That operation provides the actual mailbox path, waits for files, preserves originals,
 and proposes a source-linked plan for review. Do not prepare a lesson before the
 learner has reviewed and approved its coverage map.
 
 ## End-of-interaction synchronization
 
 When this interaction changes learner-workspace files, follow its AGENTS.md and
-the active invo-learn skill's commit/push instructions before the final response.
+the active invo-learn commit/push instructions before the final response.
 This includes stopping to wait for an onboarding answer after saving records.
 Keep learner data in the verified private workspace and preserve explicit backup
 opt-outs; a missing remote leaves a local commit with an explained push limitation.

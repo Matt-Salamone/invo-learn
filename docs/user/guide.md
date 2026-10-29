@@ -5,8 +5,8 @@ investigations, evidence relevance and offline recovery, see
 [quality and recovery](quality-and-recovery.md). The agent handles these operations;
 the learner still uploads one mailbox and returns one pasted report.
 
-Give your planning agent the public repository URL and ask it to use the setup
-skill. It installs **one learning workspace** containing the harness, shared
+Give your planning agent the public repository URL and ask it to use the invo-learn
+skill for setup. It installs **one learning workspace** containing the harness, shared
 profile and all your courses. You do not need a public clone or a second project.
 Python 3.10+ and Git are the only dependencies. No
 paid chatbot session, API key, server, dashboard, or proprietary model is needed
@@ -76,8 +76,8 @@ bootstrap <new-learner-folder> --name "Learner"`; learner records must not go in
 the public developer checkout. Setup never alters an existing nonempty folder.
 
 Stay in the learning workspace with your agent. START-HERE.md explains how to begin.
-AGENTS.md routes to the installed
-skills in `.agents/skills/`. For hosts that do not discover that location, ask
+AGENTS.md routes to the installed invo-learn
+skill in `.agents/skills/invo-learn/`. For hosts that do not discover that location, ask
 them to read AGENTS.md and the skill directly, or configure their project skill
 search path to `.agents/skills`. There is no global configuration modification.
 The versioned bundle includes reference docs at the release path in
@@ -85,7 +85,7 @@ The versioned bundle includes reference docs at the release path in
 
 ## Normal learner workflow
 
-1. Say **"Add a course"** or name the course/skill. The add-course skill explains
+1. Say **"Add a course"** or name the course/skill. The invo-learn skill explains
    each choice, asks one question at a time, and waits. It inherits global settings,
    supports course overrides, and offers optional scheduling. The agent gives you
    the actual mailbox path. Put the course resources there and say **"materials
@@ -104,8 +104,8 @@ The versioned bundle includes reference docs at the release path in
 5. Review the outcome and next steps. The agent recommends catch-up help when
    needed; you can explicitly override progression while retaining the gaps.
 6. For additional uploads, say **"Add materials to [course name]"**, drop the new
-   resources in the same mailbox, and say **"materials ready."** The add-materials
-   skill files them in that existing course and proposes coverage changes for your
+   resources in the same mailbox, and say **"materials ready."** The invo-learn skill
+   files them in that existing course and proposes coverage changes for your
    review. Existing objective IDs, evidence, and review progress are preserved.
    Uploading files alone does not approve a new plan.
 
@@ -205,7 +205,7 @@ python learn.py prepare algebra /private/path/lesson.json
 python learn.py ingest /private/path/exact-pasted-report.txt
 ```
 
-`add-track` remains an alias for add-course; internal track IDs and record paths
+`add-course` adds courses or standalone learning tracks; internal track IDs and record paths
 are unchanged. Direct mailbox intake copies bytes into durable storage, retaining
 the staging copy. Retrying identical mailbox bytes for the same course and role
 reuses the material record. The agent checks original integrity before reuse.
