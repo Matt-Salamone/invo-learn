@@ -37,3 +37,24 @@ intake and report work; direct helper calls do not perform it automatically.
 Read `docs/user/side-chat.md` when changing packet generation, supplemental reports or evidence
 projection. Favor useful UML with accompanying code/prose; choose another visual
 when clearer. Preserve existing issued packets and original assessment records.
+
+## Agent skills
+
+### Issue tracker
+
+Before creating, reading, or updating issues and wayfinding maps, read
+`docs/agents/issue-tracker.md`. Issues use local Markdown under `.scratch/`.
+
+### Triage labels
+
+Before triaging issues, read `docs/agents/triage-labels.md` for the status vocabulary.
+
+### Domain docs
+
+Before exploring domain behavior or terminology, read `docs/agents/domain.md`.
+This repo uses a single-context glossary and ADR layout.
+
+### UML rendering
+
+Before rendering UML, read `docs/agents/uml-rendering.md` and use the `uml` skill
+to verify local availability.
