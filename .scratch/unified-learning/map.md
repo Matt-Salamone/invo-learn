@@ -12,6 +12,12 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [11](issues/11-activate-and-recover-migration.md#answer): activation requires
+  preservation, projection and reconciliation gates, journals owned writes for
+  recovery and retains late returns as historical evidence. Implementation
+  `7f7490e`; 11 activation, eight rehearsal, nine reconciliation and five projection
+  checks passed. Ticket 13 must require both migration_activation.py and
+  migration_late.py in release completeness checks.
 - [12 CI correction](issues/12-updates-without-data-reorganization.md#answer):
   `b6665a2` canonicalizes Windows temporary-directory aliases before portable
   attribute containment checks. All 14 maintenance tests passed, including the
