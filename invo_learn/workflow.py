@@ -119,6 +119,8 @@ def plan_decision(ws, tid, spec):
 def work_queue(ws, today):
     from .revisions import context_ready
     queue = []
+    queue.extend(copy.deepcopy(need) for need in ws.state.get("migration", {}).get("reconciliation", {}).get("fresh_study", {}).values()
+                 if need.get("status") == "pending")
     for item in imports(ws):
         if item["outcome"] == "audit-unreadable":
             queue.append({"action": "inspect-import-audit", "import_id": item["import_id"], "reason": item["attempts"][-1]["reason"]})
