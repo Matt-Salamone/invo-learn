@@ -1,5 +1,11 @@
 # Build prompt: invo-learn
 
+Authorized 0.8.0 consolidation supersedes the historical dedicated course/material
+skills and per-course pending rule below: one invo-learn entry point routes setup,
+intake, assignments, study, migration and recovery, with one pending main handoff
+across the workspace. See .scratch/unified-learning/spec.md and
+docs/user/migration.md for the current contract.
+
 Authorized 0.6.0 extension: generated lesson/side-chat role selection, separate
 supplemental reports with assistance qualification, useful UML, and end-of-every-
 interaction commit/push. See requirements.md and docs/user/side-chat.md; the old

@@ -125,19 +125,24 @@ def package(source):
                 ("package_schema", "state_schema", "report_schema")), "incompatible package/state/report schema; migration required")
     require(isinstance(metadata["python_min"], str) and re.fullmatch(r"\d+\.\d+", metadata["python_min"]), "invalid python_min")
     require(sys.version_info[:2] >= tuple(map(int, metadata["python_min"].split("."))), "harness requires a newer Python interpreter")
-    files = {"VERSION": (source / "VERSION").read_bytes(), "harness.json": (source / "harness.json").read_bytes()}
+    # Public package text has one deterministic representation across Git checkouts.
+    # This boundary never reads learner materials, old bundles or issued packets.
+    def public_text(path):
+        return path.read_bytes().replace(b"\r\n", b"\n")
+
+    files = {"VERSION": public_text(source / "VERSION"), "harness.json": public_text(source / "harness.json")}
     for directory in ("invo_learn", "skills", "docs/user"):
         require((source / directory).is_dir(), f"missing package directory: {directory}")
         for p in sorted((source / directory).rglob("*")):
             if p.is_file() and "__pycache__" not in p.parts and p.suffix in (".py", ".md", ".json"):
-                files[p.relative_to(source).as_posix()] = p.read_bytes()
+                files[p.relative_to(source).as_posix()] = public_text(p)
     if (source / "LICENSE").exists():
-        files["LICENSE"] = (source / "LICENSE").read_bytes()
-    for expected in ("invo_learn/cli.py", "invo_learn/engine.py", "invo_learn/install.py",
+        files["LICENSE"] = public_text(source / "LICENSE")
+    for expected in ("LICENSE", "invo_learn/__init__.py", "invo_learn/__main__.py", "invo_learn/cli.py", "invo_learn/engine.py", "invo_learn/install.py",
                      "invo_learn/updates.py", "invo_learn/backup.py", "invo_learn/git_bytes.py", "invo_learn/assignments.py", "invo_learn/reference_solution.py", "invo_learn/implementation.py",
                      "invo_learn/contracts.py", "invo_learn/templates/chatbot.md",
-                     "invo_learn/legacy.py", "invo_learn/migration.py", "invo_learn/migration_projection.py",
-                     "invo_learn/migration_reconciliation.py", "invo_learn/sidechat.py", "invo_learn/syntax_reference.py",
+                     "invo_learn/legacy.py", "invo_learn/migration.py", "invo_learn/migration_projection.py", "invo_learn/migration_study.py",
+                     "invo_learn/migration_activation.py", "invo_learn/migration_late.py", "invo_learn/migration_reconciliation.py", "invo_learn/sidechat.py", "invo_learn/syntax_reference.py",
                      "invo_learn/quality.py", "invo_learn/revisions.py", "invo_learn/workflow.py", "invo_learn/coverage.py",
                      "invo_learn/templates/report.schema.json", "skills/invo-learn/SKILL.md",
                      "skills/invo-learn/references/setup.md", "skills/invo-learn/references/update.md",

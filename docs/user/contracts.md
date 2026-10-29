@@ -1,5 +1,11 @@
 # Contracts and evidence policy (v1, with optional ordered attempts since 0.3.0)
 
+Version 0.8.0 keeps report schema v1, adds assignment lineage and implementation
+progress for new guided implementation packets, and allows planner links from
+new lessons to migration study needs. Existing issued packets retain their
+contracts. Read the canonical skill's `references/assignments.md` for assignment
+inputs and `references/reference-solutions.md` for verified reference inputs.
+
 Version 0.5.0 adds optional criteria/section inventories, packet quality reviews,
 objective-specific gaps/resolutions and suspected errors. Existing v1 inputs
 remain valid. See [quality and recovery](quality-and-recovery.md) for complete
@@ -255,3 +261,42 @@ for unchanged lesson specs. Original artifacts, issued packets and reports remai
 unchanged. Superseded first returns require existing objective-specific relevance
 review before adding credit. No-reference lessons retain their absent optional
 reference fields and continue to require no solution artifact or revision.
+
+
+## Implementation progress and fresh migration study
+
+An implementation lesson's `assignment` selector adds `phase: "implementation"`.
+It requires the explicit guidance choice at the implementation transition. The
+issued `assignment_context.implementation` freezes that decision and registered
+deliverables/criteria. Its main report includes `implementation_progress` with
+actual deliverable status, check results/evidence, assistance question/help/timing
+and affected objective IDs, and limitations. Copy the issued template; the
+canonical assignments reference defines the complete shape. Deliverable progress
+and completed checks do not replace objective assessments or prove mastery.
+Independent implementation creates no handoff and records progress separately.
+
+After explicit migration activation, a new prepare spec may include
+`legacy_study_links`, an array of objects with `study_need_id`, `objective_ids`
+and a nonempty `reason` grounded in governing requirements. The need ID is an
+opaque ID copied from status's work queue; it may contain source identity
+separators. Each link belongs to the assigned course and selects nonempty unique
+assigned objectives. The packet freezes it; reports need no additional fields.
+See [migration](migration.md) for a complete example.
+
+Known need targets and all previously linked targets remain obligations even
+when separate new handoffs assess only subsets. Only actual effective fresh,
+independent, valid and consistent assessment evidence can complete all targets.
+The same evidence qualification and failure-resolution rules used for ordinary
+understanding apply. No-work placeholders or withdrawn later items preserve
+earlier proof; withdrawing or qualifying that proof, or an actual later failure,
+can reopen the need. Progress and history remain under status's
+`migration_study_needs`. Clearing a need supplies no extra mastery or retention.
+
+Returns for waived course packets and original legacy assignment packets use
+the historical late-return path through ordinary `ingest`. They are preserved
+without new credit, do not reopen the current handoff, and need no fabricated
+report repair. When an actual reconciled course main report already supplies
+formal evidence, its valid late side reports follow normal supplemental ingestion:
+pre-answer/unknown help qualifies that evidence, while after-answer explanations
+preserve its original independence. Exact duplicate mains remain normal duplicates.
+This differs from relevance review for an ordinary newly retired non-migration packet.

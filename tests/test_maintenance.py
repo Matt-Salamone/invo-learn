@@ -63,6 +63,44 @@ class MaintenanceJourneys(unittest.TestCase):
                 for directory in ("tracks", "lessons", "reports", "inbox", "legacy", "migration-records", ".invo-learn/releases")
                 for p in (root / directory).rglob("*") if p.is_file() and "__pycache__" not in p.parts}
 
+    def test_equivalent_public_lf_and_crlf_sources_have_identical_installed_payload(self):
+        from invo_learn.install import package
+        _, _, files, _ = package(PUBLIC)
+        sources = []
+        for label, newline in (("lf", b"\n"), ("crlf", b"\r\n")):
+            source = self.base / label
+            for name, data in files.items():
+                path = source / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(data.replace(b"\r\n", b"\n").replace(b"\n", newline))
+            sources.append(source)
+        original = self.immutable()
+        first = self.cli("upgrade", "--source", sources[0])
+        second = self.cli("upgrade", "--source", sources[1])
+        self.assertEqual(first["status"], "already-current")
+        self.assertEqual(second["status"], "already-current")
+        self.assertEqual(package(sources[0])[2:], package(sources[1])[2:])
+        self.assertEqual(self.immutable(), original)
+
+    def test_missing_runtime_module_refuses_install_before_creating_workspace(self):
+        from invo_learn.install import package
+        _, _, files, _ = package(PUBLIC)
+        source = self.base / "incomplete-public"
+        for name, content in files.items():
+            path = source / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+        required = [name for name in files if name.startswith("invo_learn/") and name.endswith(".py")]
+        for name in required + ["LICENSE"]:
+            path = source / name
+            raw = path.read_bytes()
+            path.unlink()
+            target = self.base / "must-not-create"
+            result = self.cli("bootstrap", target, "--source", source, "--name", "Synthetic", "--no-git", ok=False)
+            self.assertIn("incomplete harness package", result["error"])
+            self.assertFalse(target.exists())
+            path.write_bytes(raw)
+
     def future(self, layout=1):
         from invo_learn.install import package
         source = self.base / "future"

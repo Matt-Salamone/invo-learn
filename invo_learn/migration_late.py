@@ -59,6 +59,14 @@ def ingest(ws, obj, raw_path, today):
     require(inspected["status"] == "associated", "late original return is not associated: " + inspected.get("reason", "invalid original context"))
     require(inspected["report"] == obj, "late raw return differs from parsed original")
     canonical = digest(json.dumps(obj, sort_keys=True, ensure_ascii=False).encode())
+    if retired is not None and retired["resolution"] == "report":
+        lesson = ws.state["lessons"][retired["packet_id"]]
+        formal = ws.state["reports"].get(lesson.get("report_id"))
+        if formal is not None:
+            # This actual reconciled main already participates in normal evidence.
+            # Its valid supplements must qualify that evidence in either arrival order.
+            if obj.get("report_type") == "side-chat" or formal["sha256"] == canonical:
+                return None
     hid = "historical-" + digest((origin + ":" + canonical).encode())[:20]
     existing = ws.state.get("historical_reports", {}).get(hid)
     if existing:
