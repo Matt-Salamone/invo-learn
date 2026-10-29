@@ -145,10 +145,15 @@ then asks whether you want a verified upfront reference before planning lessons.
 A no answer plans directly from your requirements and materials. Each assignment
 starts with an unanswered choice; resuming keeps its recorded answer. Review and
 approve the proposed lessons, then use the same mailbox and report workflow.
-Conceptual lesson success contributes evidence to the course without marking the
-assignment deliverable complete. Optional implementation guidance is a separate
-later decision. See the installed skill's internal assignments reference for the
-agent command shapes and exact packet/report lineage.
+At the transition to implementation, the agent separately asks whether you want
+guidance while you edit and run your deliverable. Upfront reference yes/no and
+implementation guidance yes/no support all four combinations. Neither choice has
+a default or inherits the other answer. Resume stored answers; a later explicitly
+requested decision retains the earlier choices, reference exposure and issued
+packets. Conceptual lesson success contributes evidence to the course without
+marking the assignment deliverable complete. Completion, independent understanding
+and delayed retention remain separate. See the installed skill's internal
+assignments reference for command shapes and exact packet/report lineage.
 
 ## How lessons teach
 
@@ -316,8 +321,20 @@ migration rewrites records. A preferences change does not rewrite old packets.
 A different declared learner-data layout or state schema returns
 migration-required before installation or record changes. Explicitly rehearse and
 activate an invo-learn migration rather than reorganizing data during an update.
+Use [legacy inspection](legacy-records.md) to read older course/assignment records
+without changing them. Follow [migration](migration.md) to preserve source trees,
+reconcile actual reports or explicit loss waivers, project conservative evidence,
+and [activate or recover](migration.md#activate-and-recover) a combined workspace.
+[Late historical returns](migration.md#late-returns-after-activation) retain their
+original identity without reopening sessions or adding mastery credit.
 Known generated AGENTS.md guidance is refreshed on upgrade; custom guidance is
 preserved and reported for careful pointer maintenance.
+
+New public releases canonicalize selected public harness text from CRLF to LF
+at packaging time, so archive and Windows-checkout sources produce the same
+payload. This affects newly packaged code/docs/contracts, metadata and license;
+learner originals, raw reports, issued packets and older installed bundles retain
+their exact bytes. Existing customized exports still receive conflict checks.
 
 Setup and compatible maintenance install scoped .gitattributes rules preserving
 checksum-bearing records and installed bytes through Git checkout, including
@@ -341,9 +358,9 @@ preparation fails; retry preparation or recover its pending packet, not the upda
 
 ## Automatic private Git backup
 
-The agent, rather than the teaching chatbot or low-level record mutation, performs
-this default step after a prepared/regenerated lesson (including successful
-restage recovery), or a successfully ingested report AND updated plan. It reviews
+The agent performs this default step after every interaction that changes the
+workspace, including planning, intake, preferences, maintenance, handoffs and
+processed reports/plans. Honor explicit backup opt-outs. It reviews
 Git status/diffs and lists only the completed operation files, including related
 originals, exact raw input, normalized report, archive, views, plan and any update
 bundles/backups. It then runs:

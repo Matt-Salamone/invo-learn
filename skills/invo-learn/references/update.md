@@ -86,7 +86,10 @@ opt-outs; a missing remote leaves a local commit with an explained push limitati
 A trusted code/template update preserves records and their layout. A candidate
 requiring a different workspace_layout or state_schema returns migration-required,
 keeps the installed release and learner records intact, and requires explicit
-rehearsal/activation through invo-learn migration operations. Do not rewrite state,
+rehearsal/activation through invo-learn migration operations. Read the active
+release's `docs/user/migration.md` for preservation, actual-report or waiver gates,
+activation/recovery and historical late returns; read `docs/user/legacy-records.md`
+for inspection without migration. Do not rewrite state,
 move learner folders, fake a compatible marker or rehash archives to make an
 ordinary update succeed. Offline checks remain unavailable/unknown and safe
 installed-version study remains possible.
@@ -134,3 +137,15 @@ cannot leave a later clone unprotected. It retains the existing private-remote
 identity/visibility checks, explicit file scopes, ordinary pushes and remote SHA
 verification. It creates no remote and does not change visibility. Report local
 maintenance success separately from backup status.
+
+## Public package text and immutable learner bytes
+
+New releases canonicalize CRLF to LF only while reading selected public package
+text: runtime `.py`, documentation/skill `.md`, contract `.json`, VERSION,
+harness metadata and LICENSE. Thus a public source archive and a Windows checkout
+can install the same immutable release payload and hashes. This is a source
+packaging rule, not learner-data cleanup. Existing installed bundles, registered
+originals, reference artifacts, issued packets, raw returns and their checksums
+remain unchanged. Preserve customized exports and resolve upgrade conflicts
+through the normal checks. Never rewrite an old release to make it resemble a
+new package.
