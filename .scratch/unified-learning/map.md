@@ -12,6 +12,11 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [03](issues/03-assignment-without-reference.md#answer): course-owned
+  assignments retain explicit solution decisions and approved requirements-led
+  plans; no-reference lessons use the shared pending slot and exact lineage.
+  Implementation `6fd8584`; installed assignment and relevant regression checks
+  plus the worked example passed.
 - [02](issues/02-single-pending-and-partial-reports.md#answer): all courses
   share one serialized pending slot; partial returns retain incomplete history
   and release the checkout. Implementation `70c3d0c`; six installed S1 checks,
