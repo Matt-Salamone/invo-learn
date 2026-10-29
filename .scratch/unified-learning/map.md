@@ -12,6 +12,10 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [13 documentation](issues/13-verify-and-release-combined-harness.md): interim
+  slice `317cf91` routes unified study, migration and maintenance through invo-learn
+  and documents release verification limits. Static links, frontmatter and diff
+  checks passed; ticket 13 remains claimed until runtime/release verification.
 - [11](issues/11-activate-and-recover-migration.md#answer): activation requires
   preservation, projection and reconciliation gates, journals owned writes for
   recovery and retains late returns as historical evidence. Implementation
