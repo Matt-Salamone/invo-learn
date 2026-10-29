@@ -165,7 +165,8 @@ def prepare_context(ws, tid, spec):
     if "assignment" not in spec:
         return spec, None
     selection = spec["assignment"]
-    fields(selection, ("assignment_id", "plan_id", "lesson_id"))
+    fields(selection, ("assignment_id", "plan_id", "lesson_id"), ("phase",))
+    require(selection.get("phase", "study") in ("study", "implementation"), "invalid assignment session phase")
     record = checked_assignment(ws, tid, selection["assignment_id"])
     basis = planning_basis(record)
     plan = checked_plan(ws, record, selection["plan_id"])
@@ -194,7 +195,8 @@ def prepare_context(ws, tid, spec):
     text += reference_text
     enriched = copy.deepcopy(spec)
     enriched["context"] += text
-    return enriched, context
+    from .implementation import prepare_context as implementation_context
+    return implementation_context(ws, tid, record, selection, enriched, context)
 
 
 def validate_report_context(obj, lesson):
@@ -211,6 +213,8 @@ def next_actions(ws):
     for tid, track in ws.state["tracks"].items():
         for aid, record in track.get("assignments", {}).items():
             context = {"track_id": tid, "assignment_id": aid}
+            from .implementation import next_actions as implementation_actions
+            actions.extend(implementation_actions(record, context))
             if record["solution_choice"] is None:
                 actions.append({"action": "ask-assignment-solution-choice", **context,
                     "question": "Would you like me to generate and verify a reference solution before planning the assignment lessons?"})

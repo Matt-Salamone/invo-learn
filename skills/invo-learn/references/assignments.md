@@ -100,3 +100,84 @@ deliverable complete. A requested reference or assisted work cannot prove
 independent understanding or delayed retention. Ask about implementation guidance
 only at the later transition to implementation, separately from this upfront
 solution decision. The learner edits and runs their final work.
+
+## Implementation and the second decision
+
+When conceptual lessons are complete, or the learner explicitly chooses to start
+their implementation, record that actual transition. Do not ask about guidance
+during intake and do not infer an answer from the reference-solution choice.
+
+```sh
+python learn.py begin-implementation <course> <assignment> --reason "<actual transition or learner override>"
+```
+
+Ask the returned question, **"Would you like guidance while implementing your own
+assignment deliverable?"** Explain that the chatbot can guide manageable steps
+while the learner edits and runs their work, or the learner can implement
+independently. Wait for the answer, then record only the matching choice:
+
+```sh
+python learn.py implementation-choice <course> <assignment> --guidance yes --reason "<actual answer>"
+python learn.py implementation-choice <course> <assignment> --guidance no --reason "<actual answer>"
+```
+
+Resume the same stored answer. A later explicitly requested change uses
+`--new-decision`; this retains earlier decisions, issued packet identities and
+assistance. It does not retire a pending handoff or erase prior exposure.
+
+For guidance, prepare an existing accepted assignment lesson with
+`"phase": "implementation"` inside the lesson spec's `assignment` selection.
+Use the normal preflight, mailbox, report and global pending-slot operations.
+The packet pins the guidance decision and deliverable criteria. The chatbot
+starts with explanations, prompts and hints, gives direct code or worked steps
+when requested, and records actual help with its timing. The learner edits and
+runs the deliverable; the planner records evidence and future study decisions.
+An earlier no to an upfront reference does not prohibit requested help now.
+
+For independent implementation, create no chatbot checkout. Inspect the learner's
+actual work and runs, then save a private progress JSON and record it:
+
+```sh
+python learn.py record-implementation <course> <assignment> <actual-progress.json>
+```
+
+Both that JSON and a guided main report's `implementation_progress` use:
+
+```json
+{
+  "deliverables": [{
+    "deliverable": "Exact registered deliverable text",
+    "status": "in-progress",
+    "evidence": "What the learner actually produced or ran"
+  }],
+  "checks": [{
+    "criterion": "Exact registered criterion text",
+    "result": "limited",
+    "method": "The check actually performed",
+    "evidence": "Its observed result"
+  }],
+  "assistance": [{
+    "question": "Actual task or question helped with",
+    "help": "Actual explanation, hint, requested code or worked step",
+    "timing": "before-answer",
+    "objective_ids": ["assigned-objective-id"]
+  }],
+  "limitations": ["Unchecked behavior or missing evidence"]
+}
+```
+
+Deliverable status is `not-started`, `in-progress` or `completed`; criterion result
+is `passed`, `failed` or `limited`. Assistance timing is `before-answer`,
+`after-answer` or `unknown`. Empty lists preserve an interrupted session with no
+evaluated work. Neutral syntax lookup alone does not count as assistance.
+Use only actual returns and checks; save no invented work to fill a template.
+
+The main report also keeps its ordinary objective assessments and exact
+`assignment_context`. Return `session_status: "in-progress"` when interrupted.
+Side reports remain supplemental and never certify implementation completion.
+Deliverables are complete only when all registered deliverables have recorded
+completion evidence and every criterion has a recorded passing check. Session
+completion alone is insufficient. Neither independent-work records nor assisted
+deliverable completion establishes course mastery. Use fresh independent
+assessment and later delayed review for understanding and retention, preserving
+all prior assistance and failures.

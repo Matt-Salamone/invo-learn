@@ -548,6 +548,8 @@ class Workspace:
             lesson["status"] = "paused" if obj.get("session_status") == "in-progress" else "reported"
         lesson["session_status"] = obj.get("session_status", "completed")
         lesson["report_id"] = report_id
+        from .implementation import record_report
+        record_report(self, lesson, obj)
         for oid, choice in (relevance or {}).items():
             self.state.setdefault("evidence_reviews", []).append({"report_id": report_id, "objective_id": oid,
                 "assessment_ids": [], **copy.deepcopy(choice)})
@@ -569,6 +571,8 @@ class Workspace:
         return {"status": "invalidated", "next": "prepare a fresh assessment; original report is retained"}
 
     def recompute(self, tid):
+        from .implementation import recompute_track
+        recompute_track(self, tid)
         t = self.track(tid)
         intervals = self.state["review_policy"]["interval_days"]
         for o in t["objectives"].values():

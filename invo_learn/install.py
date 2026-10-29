@@ -101,7 +101,7 @@ def package(source):
     if (source / "LICENSE").exists():
         files["LICENSE"] = (source / "LICENSE").read_bytes()
     for expected in ("invo_learn/cli.py", "invo_learn/engine.py", "invo_learn/install.py",
-                     "invo_learn/updates.py", "invo_learn/backup.py", "invo_learn/assignments.py", "invo_learn/reference_solution.py",
+                     "invo_learn/updates.py", "invo_learn/backup.py", "invo_learn/assignments.py", "invo_learn/reference_solution.py", "invo_learn/implementation.py",
                      "invo_learn/contracts.py", "invo_learn/templates/chatbot.md",
                      "invo_learn/quality.py", "invo_learn/revisions.py", "invo_learn/workflow.py", "invo_learn/coverage.py",
                      "invo_learn/templates/report.schema.json", "skills/invo-learn/SKILL.md",
