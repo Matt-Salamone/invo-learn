@@ -1,0 +1,26 @@
+' Supporting decision record: unification-interview.md
+@startuml
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activityBackgroundColor #F3F6FA
+skinparam activityBorderColor #526172
+skinparam ArrowColor #526172
+title Proposed workflow v0.1 - question 1
+start
+:Save assignment requirements\nand learning materials;
+if (Assignment mode?) then (Reference solution)
+  :Planner completes and verifies\na reference solution;
+  :Plan lessons using requirements,\nmaterials and reference solution;
+else (No upfront solution)
+  :Plan lessons directly from\nrequirements and materials;
+endif
+:Teach and assess needed concepts\nthrough mailbox / chat / report cycles;
+:Learner completes their own assignment;
+stop
+legend bottom
+  Proposal for discussion, not an accepted design.
+  Help during the learner's assignment work is still undecided.
+endlegend
+@enduml
