@@ -292,7 +292,11 @@ earlier proof; withdrawing or qualifying that proof, or an actual later failure,
 can reopen the need. Progress and history remain under status's
 `migration_study_needs`. Clearing a need supplies no extra mastery or retention.
 
-Reports from original packets retired by migration use the historical late-return
-path through ordinary `ingest`. They are preserved without new credit, do not
-reopen the current handoff, and need no fabricated report repair. This differs
-from relevance review for an ordinary newly retired non-migration packet.
+Returns for waived course packets and original legacy assignment packets use
+the historical late-return path through ordinary `ingest`. They are preserved
+without new credit, do not reopen the current handoff, and need no fabricated
+report repair. When an actual reconciled course main report already supplies
+formal evidence, its valid late side reports follow normal supplemental ingestion:
+pre-answer/unknown help qualifies that evidence, while after-answer explanations
+preserve its original independence. Exact duplicate mains remain normal duplicates.
+This differs from relevance review for an ordinary newly retired non-migration packet.

@@ -289,3 +289,12 @@ not erase an earlier valid fresh proof. A valid later failure can contradict it.
 withdrawal can reopen the need without changing original reports. These actions
 are advisory study choices, not a lock on unrelated learning, and closing one
 does not establish delayed retention without the ordinary cold-review evidence.
+
+
+A course main report actually reconciled before cutover remains formal evidence.
+A valid supplemental report for that same issued lesson follows ordinary side-chat
+rules even when received after activation: prior/unknown-timing help qualifies the
+original assessment and updates review needs; after-answer explanation does not
+downgrade it. Exact main duplicates stay duplicates. This exception supplies no
+new assessment or checkout. Waived course sessions and original legacy assignment
+returns retain the historical, zero-credit path described above.

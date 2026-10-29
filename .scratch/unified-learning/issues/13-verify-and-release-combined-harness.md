@@ -64,3 +64,12 @@ format readers were authored for this harness. The source distribution and its
 own frozen 0.7.0 public fixture carry MIT licensing. All fixtures are synthetic.
 No live learner records, chatbot efficacy/independence, paid service, hosted
 private-remote creation or live unreleased archive download was tested.
+
+
+A further installed regression reproduced late course supplements being intercepted
+as historical after an actual main report had already been reconciled. Valid late
+supplements now reach the normal side-chat projection after exact association
+checks, so prior/unknown help qualifies the credited original and after-answer
+explanations preserve independence. Exact reconciled main duplicates stay normal
+duplicates. Waived course and legacy assignment returns remain historical with no
+new credit or reopened slot. The original main archive/raw bytes remain unchanged.

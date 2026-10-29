@@ -280,5 +280,44 @@ class ActivationJourneys(unittest.TestCase):
         self.assertNotEqual(json.loads((self.root / "state.json").read_text())["migration"]["status"], "active")
 
 
+    def test_late_side_help_qualifies_actual_reconciled_course_evidence_without_reopening_checkout(self):
+        prepared = self.cli("prepare", "math", self.write(spec(["solve"])))
+        lesson = json.loads((self.root / "lessons" / prepared["lesson_id"] / "packet/lesson.json").read_text())
+        main = make_report(lesson, "2026-10-29", [item("solve")], "actual-course-before-cutover")
+        main_path = self.write(main)
+        self.cli("migration-rehearse", self.write(self.plan()))
+        checkout = self.cli("migration-checkouts", self.stage)
+        course = next(row for row in checkout["sessions"].values() if row["kind"] == "course")
+        assignment = next(row for row in checkout["sessions"].values() if row["kind"] == "assignment")
+        self.cli("migration-reconcile", self.stage, self.write({
+            "reports": [{"origin_key": course["origin_key"], "file": str(main_path)}],
+            "waivers": [{"origin_key": assignment["origin_key"], "packet_id": assignment["packet_id"],
+                         "accept_lost_progress": True, "reason": "Actual synthetic acceptance"}]}))
+        self.cli("migration-project", self.stage)
+        self.cli("migration-activate", self.stage, "--source", self.future())
+        current = self.cli("prepare", "math", self.write(spec(["solve"])))
+        state = json.loads((self.root / "state.json").read_text())
+        saved = state["reports"][main["report_id"]]
+        originals = {key: (self.root / saved[key]).read_bytes() for key in ("path", "raw_path")}
+        self.assertEqual(self.cli("status")["tracks"]["math"]["objectives"]["solve"]["understanding"], "demonstrated")
+        for timing in ("after-answer", "unknown", "before-answer"):
+            side = {"schema_version": 1, "report_type": "side-chat", "report_id": "late-side-" + timing,
+                "lesson_id": lesson["id"], "track_id": "math", "map_revision": lesson["map_revision"],
+                "content_revision": lesson.get("content_revision", 0), "remaining_questions": [],
+                "discussions": [{"question": "Explain the assessed equation", "explanation": "Actual requested equality explanation",
+                                 "source_reference": "Synthetic source", "objective_ids": ["solve"]}],
+                "assessment_help": [{"objective_id": "solve", "question": main["objectives"][0]["assessments"][0]["question"],
+                                     "help": "Task-specific explanation", "timing": timing}]}
+            returned = self.cli("ingest", self.write(side))
+            self.assertEqual(returned["status"], "supplemental-recorded")
+            status = self.cli("status")
+            objective = status["tracks"]["math"]["objectives"]["solve"]
+            self.assertEqual(objective["understanding"], "demonstrated" if timing == "after-answer" else "needs-practice")
+            self.assertEqual(objective["review"]["last_result"], "independent-pass" if timing == "after-answer" else "not-demonstrated")
+            self.assertEqual(status["pending_lessons"]["math"], [current["lesson_id"]])
+            self.assertEqual({key: (self.root / saved[key]).read_bytes() for key in originals}, originals)
+        self.assertEqual(self.cli("ingest", main_path)["status"], "duplicate")
+
+
 if __name__ == "__main__":
     unittest.main()
