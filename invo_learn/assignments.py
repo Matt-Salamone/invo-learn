@@ -152,7 +152,8 @@ def prepare_context(ws, tid, spec):
     if "assignment" not in spec:
         return spec, None
     selection = spec["assignment"]
-    fields(selection, ("assignment_id", "plan_id", "lesson_id"))
+    fields(selection, ("assignment_id", "plan_id", "lesson_id"), ("phase",))
+    require(selection.get("phase", "study") in ("study", "implementation"), "invalid assignment session phase")
     record = checked_assignment(ws, tid, selection["assignment_id"])
     basis = planning_basis(record)
     plan = checked_plan(ws, record, selection["plan_id"])
@@ -172,12 +173,13 @@ def prepare_context(ws, tid, spec):
         "lesson": lesson, "basis": basis, "lineage": context}, indent=2, ensure_ascii=False)
     text += ("\nTeach this self-contained conceptual lesson from the governing requirements and selected material. "
              "Keep provenance for tutor reference and provide it separately when asked; omit source-title/page commentary in teaching. "
-             "The learner declined an upfront reference solution. Do not generate or inject a task-specific completed solution. "
+             "The learner declined an upfront reference solution. During conceptual study do not generate or inject a task-specific completed solution. "
              "Use meaningful visuals with readable alternatives and neutral syntax lookup when coding. "
              "Assignment deliverable completion is separate from independent understanding and delayed retention.\n")
     enriched = copy.deepcopy(spec)
     enriched["context"] += text
-    return enriched, context
+    from .implementation import prepare_context as implementation_context
+    return implementation_context(ws, tid, record, selection, enriched, context)
 
 
 def validate_report_context(obj, lesson):
@@ -193,6 +195,8 @@ def next_actions(ws):
     for tid, track in ws.state["tracks"].items():
         for aid, record in track.get("assignments", {}).items():
             context = {"track_id": tid, "assignment_id": aid}
+            from .implementation import next_actions as implementation_actions
+            actions.extend(implementation_actions(record, context))
             if record["solution_choice"] is None:
                 actions.append({"action": "ask-assignment-solution-choice", **context,
                     "question": "Would you like me to generate and verify a reference solution before planning the assignment lessons?"})

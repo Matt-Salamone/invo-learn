@@ -157,7 +157,8 @@ def objective_context(obj):
 
 
 def report_template(lesson):
-    return ({"assignment_context": copy.deepcopy(lesson["assignment_context"])} if "assignment_context" in lesson else {}) | {"schema_version": 1, "report_id": "report-" + uuid.uuid4().hex[:12],
+    from .implementation import report_template as implementation_template
+    return implementation_template(lesson) | ({"assignment_context": copy.deepcopy(lesson["assignment_context"])} if "assignment_context" in lesson else {}) | {"schema_version": 1, "report_id": "report-" + uuid.uuid4().hex[:12],
             "lesson_id": lesson["id"], "track_id": lesson["track_id"], "completed_on": None, "session_status": "in-progress",
             "objectives": [{"objective_id": oid, "coverage": "unassessed", "judgment": "uncertain",
                             "assessments": [], "gaps": [], "resolved_gaps": []} for oid in lesson["objective_ids"]],

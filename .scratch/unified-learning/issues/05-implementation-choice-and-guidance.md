@@ -1,6 +1,6 @@
 # 05: Choose and complete guided or independent implementation
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -16,9 +16,30 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] The guidance decision is asked when implementation is reached, without a saved/inferred yes or no; resumption retains an answer to the same decision.
-- [ ] Guide in manageable steps using explanations, prompts and hints first; permit direct code or worked steps when requested, recording actual help and timing.
-- [ ] An independent choice does not create a spurious chatbot checkout. A guided session uses the one global pending slot and records partial as well as completed work.
-- [ ] Implementation completion is inspectable against assignment deliverables but does not itself establish independent understanding.
-- [ ] The guidance decision does not depend on whether an upfront solution exists. Demonstrate the no-reference path now; the release matrix combines it with ticket 04.
-- [ ] Verify the installed decision → packet/work → report/status paths at S1, including the learner/planner/chatbot responsibility split.
+- [x] The guidance decision is asked when implementation is reached, without a saved/inferred yes or no; resumption retains an answer to the same decision.
+- [x] Guide in manageable steps using explanations, prompts and hints first; permit direct code or worked steps when requested, recording actual help and timing.
+- [x] An independent choice does not create a spurious chatbot checkout. A guided session uses the one global pending slot and records partial as well as completed work.
+- [x] Implementation completion is inspectable against assignment deliverables but does not itself establish independent understanding.
+- [x] The guidance decision does not depend on whether an upfront solution exists. Demonstrate the no-reference path now; the release matrix combines it with ticket 04.
+- [x] Verify the installed decision → packet/work → report/status paths at S1, including the learner/planner/chatbot responsibility split.
+
+## Answer
+
+Implemented explicit `begin-implementation`, `implementation-choice` and
+`record-implementation` operations through the canonical installed command seam.
+Guidance starts unanswered at the actual transition; resumed answers persist and
+an explicitly requested later decision preserves earlier choices and help.
+Guided packets select `assignment.phase: implementation`, pin the decision and
+criteria, and retain the global pending slot. Main reports record partial or
+completed deliverables, actual criterion checks, help and timing separately from
+course assessments. Independent work creates no chatbot checkout or mastery.
+All deliverables and criteria require actual completion/check evidence; session
+completion alone does not complete the assignment. Invalidated completion remains
+withdrawn even when later independent partial work is recorded.
+
+Verification: five installed S1 implementation journeys passed, plus four
+assignment, six global pending-slot and six side-report regression journeys and
+the worked example. Tests use only synthetic workspaces and reports. Reused
+accepted component v0.1 / timing v0.3 / pending-boundary v0.2; the local renderer
+was probed and the unchanged accepted component preview inspected. The four-mode
+reference/guidance matrix remains the release ticket's integrated verification.

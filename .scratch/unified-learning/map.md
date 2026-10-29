@@ -12,6 +12,10 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [05](issues/05-implementation-choice-and-guidance.md#answer): a fresh guidance
+  decision at implementation supports guided handoffs and independent work;
+  progress remains separate from mastery. Implementation `c8e3754`; five installed
+  implementation journeys, relevant regressions and the worked example passed.
 - [03](issues/03-assignment-without-reference.md#answer): course-owned
   assignments retain explicit solution decisions and approved requirements-led
   plans; no-reference lessons use the shared pending slot and exact lineage.
