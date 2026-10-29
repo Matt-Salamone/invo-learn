@@ -1,10 +1,10 @@
 # Unified learning and assignment workflows
 
-Status: needs-info
+Status: ready-for-agent
 
-Draft: product decisions are confirmed. Finalization and `ready-for-agent` status
-await confirmation of the proposed S1 testing seam and component view v0.1.
-This is a reusable public specification; private learner inventories are excluded.
+Product decisions, testing seam S1 and component view v0.1 were confirmed by the
+owner on October 29, 2026. This is a reusable public specification; private learner
+inventories are excluded. Ticket decomposition is a separate approval step.
 
 ## Problem Statement
 
@@ -240,7 +240,7 @@ review task for the learner.
 
 ## Testing Decisions
 
-### Proposed main seam S1 (confirmation pending)
+### Accepted main seam S1
 
 Use the public invo-learn command workflow as the main behavioral test seam.
 Exercise installed commands and their observable results, including bootstrap,
@@ -320,12 +320,14 @@ for deterministic acceptance of the package.
 
 ## Diagrams
 
-- Proposed component view **v0.1**, scope: command seam S1, study, explicit
-  migration, installer/updater and their private artifact dependencies. It is
-  awaiting confirmation; no new module layout is yet an accepted implementation
-  decision. Save its authoritative source and SVG beside this spec, with reciprocal
-  links and an agreed version identity, after confirmation. Temporary previews do
-  not constitute accepted diagram references for downstream tickets.
+- Accepted proposed-design component view **v0.1**, explicitly confirmed on
+  October 29, 2026: [source](unification-components-v01.puml),
+  [SVG](unification-components-v01.svg), [PNG](unification-components-v01.png).
+  Scope: command seam S1, study, explicit migration, installer/updater and their
+  private artifact dependencies. The source links back to this specification.
+  The locally regenerated preview was inspected using PlantUML 1.2024.8,
+  Temurin 25.0.5 and Smetana. This agreement covers responsibilities and the public
+  testing seam, not a prescribed internal file/module layout.
 - Accepted proposed-design timing view **v0.3**:
   [source](../../docs/design/assignment-modes-v03.puml),
   [SVG](../../docs/design/assignment-modes-v03.svg).
@@ -373,6 +375,7 @@ The private destination remains the owner's existing private learning workspace;
 the existing assignment joins its corresponding course. Concrete private paths,
 inventories and materials belong in private migration records, not this public spec.
 
-After testing-seam confirmation, finalize this spec with `Status: ready-for-agent`
-and durable accepted component artifacts. Then derive dependency-ordered vertical
-tickets; ticket decomposition and implementation are subsequent phases.
+Testing-seam confirmation and durable component preservation are complete. Derive
+dependency-ordered vertical tickets from this specification; ticket decomposition
+approval and implementation are subsequent phases. Do not modify this parent
+specification while publishing child tickets.

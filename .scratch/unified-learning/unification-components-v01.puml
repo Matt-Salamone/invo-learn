@@ -1,0 +1,43 @@
+' Supporting specification: spec.md
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+skinparam nodesep 50
+skinparam ranksep 75
+title Unified learning: proposed component view v0.1
+component "Synthetic journey tests" as Tests
+component "invo-learn skill" as Skill
+interface "S1: invo-learn commands" as Commands
+component "Command adapter" as CLI
+component "Study module\ncourses / assignments\npackets / evidence" as Study
+component "Explicit migration\nlegacy readers" as Migrate
+component "Installer / updater" as Update
+artifact "Private records, archives\nand shared mailbox" as Records
+artifact "Legacy snapshots\nread-only originals" as Legacy
+artifact "Installed harness\nbundle" as Bundle
+Tests -[hidden]right-> Skill
+Tests ..> Commands : exercises
+Skill ..> Commands : invokes
+CLI -up- Commands
+CLI ..> Study : study / reports
+CLI ..> Migrate : explicit migration
+CLI ..> Update : setup / update
+Study -[hidden]right-> Migrate
+Migrate -[hidden]right-> Update
+Study ..> Records : reads / writes
+Migrate ..> Legacy : reads
+Migrate ..> Records : verified import
+Update ..> Bundle : replaces bundle
+legend bottom
+  Proposed dependencies, not runtime execution order. All files stay private.
+  S1: exercise public commands; assert returned results, files and installed behavior.
+  Real temporary files / Git; controlled release / remote responses.
+  Migration requires report reconciliation, rehearsal, preservation and recovery checks.
+  Ordinary updates never reorganize learner records.
+  Portable teaching evaluations complement S1; no automated chatbot integration.
+endlegend
+@enduml
