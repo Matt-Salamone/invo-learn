@@ -22,3 +22,7 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 - [ ] Offline/unavailable checks stay truthful and do not prevent safe installed-version study or imply that an update was checked successfully.
 - [ ] Verify compatible, incompatible, customized, opted-out, unavailable and failed-update cases through installed S1 commands with controlled release responses.
 - [ ] Retain scoped backups to verified existing private remotes; no public learner publication, new remote, visibility change or forced history rewrite.
+- [ ] Protect checksum-bearing originals, issued packets, reports and installed
+  bundle bytes from Git line-ending conversion in fresh workspaces and explicit
+  maintenance/migration. Preserve existing custom attribute rules and verify a
+  synthetic checkout/clone round trip; never silently rehash altered archives.
