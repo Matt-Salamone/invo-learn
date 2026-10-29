@@ -194,3 +194,36 @@ class ReferenceJourneys(unittest.TestCase):
         template = json.loads((self.root / "lessons" / prepared["lesson_id"] / "packet/report-template.json").read_text())
         self.assertNotIn("reference", template["assignment_context"])
         self.assertIn(reference["reference_id"], self.assignment()["references"])
+
+    def test_verified_reference_supports_guided_and_independent_implementation(self):
+        for guided, aid in ((True, "solver"), (False, "independent")):
+            with self.subTest(guided=guided):
+                if aid != "solver":
+                    self.cli("add-assignment", "math", aid, self.write(self.assignment_spec))
+                self.cli("assignment-choice", "math", aid, "--solution", "yes", "--reason", "Actual explicit reference choice")
+                self.cli("record-reference", "math", aid, self.write(self.reference_spec()))
+                plan = self.cli("propose-assignment-plan", "math", aid, self.write(self.plan_spec()))
+                self.cli("accept-assignment-plan", "math", aid, plan["plan_id"], "--approval", "Explicit accepted reference-led plan")
+                self.cli("begin-implementation", "math", aid, "--reason", "Learner reaches final implementation")
+                self.cli("implementation-choice", "math", aid, "--guidance", "yes" if guided else "no", "--reason", "Actual independent guidance answer")
+                progress = {"deliverables": [{"deliverable": self.assignment_spec["deliverables"][0], "status": "completed",
+                                "evidence": "Synthetic learner-owned solver submitted with substitution check"}],
+                            "checks": [{"criterion": self.assignment_spec["criteria"][0], "result": "passed", "method": "Synthetic actual-work check",
+                                "evidence": "Synthetic return records x=4 and substitution result 11"}],
+                            "assistance": [], "limitations": ["Synthetic contract fixture, not live learner verification"]}
+                if guided:
+                    lesson = spec(["solve"])
+                    lesson["assignment"] = {"assignment_id": aid, "plan_id": plan["plan_id"], "lesson_id": "inverse", "phase": "implementation"}
+                    prepared = self.cli("prepare", "math", self.write(lesson))
+                    packet = self.root / "lessons" / prepared["lesson_id"] / "packet"
+                    report = json.loads((packet / "report-template.json").read_text())
+                    self.assertIn("reference", report["assignment_context"])
+                    self.assertTrue(report["assignment_context"]["implementation"]["guided"])
+                    report.update(completed_on="2026-10-29", session_status="completed", implementation_progress=progress)
+                    self.cli("ingest", self.write(report))
+                else:
+                    self.cli("record-implementation", "math", aid, self.write(progress))
+                status = self.cli("status")
+                self.assertEqual(status["tracks"]["math"]["assignments"][aid]["completion"], "completed")
+                self.assertEqual(status["tracks"]["math"]["objectives"]["solve"]["understanding"], "unassessed")
+                self.assertEqual(status["tracks"]["math"]["objectives"]["solve"]["retention"], "unassessed")

@@ -188,7 +188,7 @@ def prepare_context(ws, tid, spec):
         "title": record["spec"]["title"], "requirements": record["spec"]["requirements"],
         "deliverables": record["spec"]["deliverables"], "criteria": record["spec"]["criteria"],
         "lesson": lesson, "basis": basis, "lineage": context}, indent=2, ensure_ascii=False)
-    text += ("\nTeach this self-contained conceptual lesson from the governing requirements and selected material. "
+    text += ("\nUse this self-contained assignment context for the selected study or implementation session. "
              "Keep provenance for tutor reference and provide it separately when asked; omit source-title/page commentary in teaching. "
              "Use meaningful visuals with readable alternatives and neutral syntax lookup when coding. "
              "Assignment deliverable completion is separate from independent understanding and delayed retention.\n")
