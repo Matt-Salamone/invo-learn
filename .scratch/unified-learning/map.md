@@ -12,6 +12,10 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [12 CI correction](issues/12-updates-without-data-reorganization.md#answer):
+  `b6665a2` canonicalizes Windows temporary-directory aliases before portable
+  attribute containment checks. All 14 maintenance tests passed, including the
+  real-alias regression and an external Git-listing escape guard.
 - [12](issues/12-updates-without-data-reorganization.md#answer): compatible
   maintenance preserves records and portable Git bytes; layout changes require
   explicit migration and managed guidance respects customization. Implementation
