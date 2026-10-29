@@ -122,7 +122,8 @@ def stale_reasons(ws, lesson):
         reasons.append("Report belongs to a replaced packet")
     elif lesson["status"] == "abandoned":
         reasons.append("Late report belongs to an explicitly retired packet")
-    return reasons
+    from .reference_solution import stale_reasons as reference_stale_reasons
+    return reasons + reference_stale_reasons(ws, lesson)
 
 
 def correction_context(ws, tid, oids):
@@ -164,7 +165,8 @@ def effective_item(ws, record, item):
         if any(r["status"] == "withdrawn" for r in decisions):
             attempt.update(valid=False, result="ungradable", independent=False)
     from .sidechat import qualify
-    return qualify(ws, record["lesson_id"], result), reviews
+    from .implementation import qualify as implementation_qualify
+    return implementation_qualify(ws, record["lesson_id"], qualify(ws, record["lesson_id"], result)), reviews
 
 
 def review_evidence(ws, spec):

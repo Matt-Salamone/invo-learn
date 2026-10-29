@@ -1,6 +1,6 @@
 # 06: Turn assignment work into conservative course evidence and reviews
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -16,9 +16,34 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] Use justified objective associations to share assignment learning with course coverage, gaps and spaced reviews; do not infer mastery merely from deliverable completion.
-- [ ] Requested solutions, hints and task-specific side-chat help qualify the affected evidence with actual timing. Neutral syntax lookup follows its existing allowance.
-- [ ] Preserve failed and assisted observations; a fresh independent check can establish understanding without deleting prior attempts.
-- [ ] Later review distinguishes independent retention from success after reteaching. A side report alone never certifies mastery or closes another handoff.
-- [ ] Include late main/side report order, duplicate imports and relevant context corrections while preserving original records.
-- [ ] Verify an installed sequence from guided work to fresh assessment and later review at S1, with corresponding inspectable course outcomes.
+- [x] Use justified objective associations to share assignment learning with course coverage, gaps and spaced reviews; do not infer mastery merely from deliverable completion.
+- [x] Requested solutions, hints and task-specific side-chat help qualify the affected evidence with actual timing. Neutral syntax lookup follows its existing allowance.
+- [x] Preserve failed and assisted observations; a fresh independent check can establish understanding without deleting prior attempts.
+- [x] Later review distinguishes independent retention from success after reteaching. A side report alone never certifies mastery or closes another handoff.
+- [x] Include late main/side report order, duplicate imports and relevant context corrections while preserving original records.
+- [x] Verify an installed sequence from guided work to fresh assessment and later review at S1, with corresponding inspectable course outcomes.
+
+## Answer
+
+Actual task-specific help from implementation progress now qualifies the matching
+course assessment on a projected copy. Exact question/objective matches with
+before-answer or unknown timing cannot certify independence; an unknown objective
+scope still qualifies the exact task without broadening to unrelated questions.
+Post-answer help alone leaves the prior answer independent. Supplemental and main
+reports work in either order, and inspectable `assistance_qualifications` link
+effective judgments to the original help records without rewriting observations.
+Reference context alone is tutor material, not proof of learner exposure; actual
+help annotations govern. Neutral syntax lookup remains permitted.
+
+Five synthetic installed S1 journeys passed, covering guided completion versus
+fresh understanding and delayed retention; late side help and both return orders;
+failed/guided review attempts followed by relearning; content correction, scoped
+review, duplicates and disputes; and unknown-scope help with exact/unrelated tasks.
+Five implementation, six supplemental and seventeen quality/recovery regressions
+plus the worked example also passed. Accepted component v0.1, timing v0.3 and
+pending-boundary v0.2 continue to cover the seam. These tests validate conservative
+bookkeeping, not the honesty or quality of actual learner/chatbot judgments.
+
+After merging the reference-path and migration-rehearsal integration tip, all
+five evidence journeys and seven reference-solution journeys also passed,
+including reference-led guided and independent implementation.

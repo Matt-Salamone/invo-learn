@@ -38,8 +38,13 @@ python learn.py assignment-choice <course> <assignment> --solution no --reason "
 
 Run only the command matching the answer. Repeating that answer is harmless;
 a conflicting answer requires an explicit new decision preserving exposure
-history. If yes, complete and verify the requested reference before proposing
-a reference-led plan. If no, generate no task-specific completed solution and
+history. When the learner explicitly requests a later change, explain and ask the
+solution question again, wait for the actual answer, then pass `--new-decision`
+with that answer and reason. Prior choices, reference artifacts, issued packets
+and actual help remain in history; do not pretend earlier exposure never occurred.
+A new choice requires a newly proposed/accepted plan, even if its answer matches
+an earlier decision. If yes, read `reference-solutions.md`, complete and verify the requested reference,
+then propose a reference-led plan. If no, generate no task-specific completed solution and
 create no dummy solution revision or placeholder artifact.
 
 ## Requirements-led lessons
@@ -176,3 +181,39 @@ completion alone is insufficient. Neither independent-work records nor assisted
 deliverable completion establishes course mastery. Use fresh independent
 assessment and later delayed review for understanding and retention, preserving
 all prior assistance and failures.
+
+## Shared course evidence
+
+Use the accepted course objective links in the assignment plan; matching a
+deliverable title or finishing a project does not establish understanding.
+Ordinary course lessons, assignment lessons and implementation sessions share
+the same objective evidence, gaps and spaced-review policy.
+
+Record all actual requested solutions, hints, worked steps and task-specific
+explanations with the affected objective and exact assessed question. In a guided
+main report, `implementation_progress.assistance` supplements the ordinary
+assessment assistance fields. Known before-answer help or unknown timing on the
+same objective and task qualifies the claim of independence, even if the raw
+assessment incorrectly says `independent: true`. Post-answer explanation alone
+does not downgrade an earlier independent answer. The projection keeps original
+questions/answers unchanged and exposes `assistance_qualifications` in the course
+evidence summary, linking the recorded help and its source report.
+An empty objective scope does not erase known help: an exact question match in
+the same issued session still qualifies that task, while the original unknown
+scope remains recorded. Unrelated questions do not qualify other assessments.
+
+The same rules apply to supplemental side reports, regardless of whether they
+arrive before or after the main report. A late supplement qualifies its original
+task without downgrading a later fresh task. Inspect unmatched task descriptions
+as planner bookkeeping, preserving uncertainty rather than guessing that all
+questions received the same help. Neutral syntax lookup alone remains permitted.
+Tutor-only reference excerpts and generating a reference are not proof the
+learner saw a solution; record actual learner exposure/help instead of inferring
+it merely from packet lineage.
+
+After assisted work, use a fresh independent task to demonstrate understanding.
+Keep prior failed and guided attempts in their original reports. A fresh pass
+after repair during a review is relearning; only a later cold independent review
+can demonstrate retention. Context corrections, relevance dispositions and
+disputes apply through the existing append-only review workflow; original packets
+and reports stay recoverable.

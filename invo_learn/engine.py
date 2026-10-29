@@ -413,7 +413,7 @@ class Workspace:
         if corrections:
             text += "\n\n## Verified teaching corrections (apply in revision order)\n\n" + corrections
         text += "\n\n## Packet quality and limitations\n\n" + json.dumps(preflight, indent=2, ensure_ascii=False)
-        (packet / "START-HERE.md").write_text(text + "\n", encoding="utf-8")
+        atomic_bytes(packet / "START-HERE.md", (text + "\n").encode("utf-8"))
         shutil.copyfile(Path(__file__).parent / "templates" / "report.schema.json", packet / "report.schema.json")
         atomic(packet / "report-template.json", quality.report_template(lesson))
         files = [{"name": p.name, "bytes": p.stat().st_size, "sha256": digest(p.read_bytes())} for p in sorted(packet.iterdir())]
@@ -590,7 +590,8 @@ class Workspace:
                 item, dispositions = revisions.effective_item(self, record, original)
                 o["evidence"].append({"report_id": r["report_id"], "lesson_id": r["lesson_id"],
                     "completed_on": r["completed_on"], "mode": lesson["mode"], "invalidated": record["invalidated"],
-                    **copy.deepcopy(original), "dispositions": copy.deepcopy(dispositions)})
+                    **copy.deepcopy(original), "dispositions": copy.deepcopy(dispositions),
+                    "assistance_qualifications": copy.deepcopy(item.get("assistance_qualifications", [])) if item else []})
                 if record["invalidated"]:
                     o["uncertainties"].append(f"{r['report_id']}: withdrawn: {record['invalidation_reason']}")
                     continue
