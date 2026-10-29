@@ -60,7 +60,9 @@ def preferences(prefs):
 
 def report(obj, lesson, today):
     fields(obj, ("schema_version", "report_id", "lesson_id", "track_id", "completed_on",
-                 "objectives", "misconceptions", "recommended_next_steps", "prerequisite_gaps"), ("suspected_errors", "session_status"))
+                 "objectives", "misconceptions", "recommended_next_steps", "prerequisite_gaps"), ("suspected_errors", "session_status", "assignment_context"))
+    from .assignments import validate_report_context
+    validate_report_context(obj, lesson)
     require(type(obj["schema_version"]) is int and obj["schema_version"] == 1, "unsupported report schema")
     for key in ("report_id", "lesson_id", "track_id"):
         identifier(obj[key])

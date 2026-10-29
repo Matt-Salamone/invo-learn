@@ -156,6 +156,8 @@ def work_queue(ws, today):
         unaccounted = {mid for mid, material in track["materials"].items() if material["role"] == "primary"} - mapped - {g["material_id"] for g in gaps}
         if unaccounted and not any(p["status"] == "pending" for p in track["proposals"].values()):
             queue.append({"action": "propose-map", "track_id": tid, "material_ids": sorted(unaccounted)})
+    from .assignments import next_actions
+    queue.extend(next_actions(ws))
     for name, outcome in last_outcomes(ws).items():
         if outcome.get("status") in ("backup-failed", "failed", "unavailable"):
             queue.append({"action": "retry-" + name, "reason": outcome.get("reason", "previous operation unsuccessful")})

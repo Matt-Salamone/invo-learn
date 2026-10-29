@@ -217,3 +217,22 @@ completion and delayed retention remain separate. A future packet resumes study.
 One accepted main report per original packet remains the contract; repairs retain
 originals and use the existing import-repair audit. Late first returns for retired
 packets are archived and quarantined for relevance review before progress changes.
+
+## Assignment packet lineage
+
+An assignment lesson spec optionally adds `assignment` with `assignment_id`,
+`plan_id` and the stable assignment-plan `lesson_id`. The plan must be explicitly
+accepted, the assignment's solution choice answered, and packet objectives must
+match the selected planned lesson. The no-reference path has no solution record
+or solution revision requirement. The standard prepare operation keeps its
+workspace-wide pending-slot, source-integrity, preflight and immutable-archive rules.
+
+The resulting packet, main report template and optional side-report template
+carry `assignment_context`: assignment ID and immutable requirements hash, plan
+ID/hash, selected plan-lesson ID, and material IDs/hashes. Copy it exactly into
+returned reports. Import requires equality with the issued packet's context;
+missing/foreign lineage adds no evidence and preserves raw input for diagnosis.
+Ordinary older course packets remain readable without that field. Assignment
+requirements, plan snapshots and deliverable completion remain separate from
+course objectives and their evidence/review projection. The canonical skill's
+internal assignments reference documents the command input shapes and decisions.

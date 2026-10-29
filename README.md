@@ -56,6 +56,15 @@ and say **"materials ready."** The
 existing course and proposes plan changes without resetting your progress.
 You review changes before they become the accepted plan.
 
+## Study an assignment
+
+Tell your agent which course owns the assignment, or ask for a standalone project
+track. The invo-learn skill records its requirements and deliverables, then asks
+whether you want an upfront verified reference solution. An explicit no plans
+lessons directly from your materials. Review the proposed lessons before they
+are prepared. Assignment completion, independent understanding and delayed
+retention remain separate. The same mailbox and report workflow applies.
+
 ## Take a lesson
 
 Ask for the next lesson. When your agent says the mailbox is ready, upload every

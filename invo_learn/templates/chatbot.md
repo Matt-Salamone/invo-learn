@@ -3,8 +3,10 @@
 Use report-template.json for the exact lesson/track/objective IDs and proposed
 report ID, and report.schema.json for the contract. The template is empty of
 learner evidence: fill completed_on with the actual local completion date and
-record only interactions that occur. An unchanged template is not a completed
-report. Read packet-manifest.json and the packet quality section for selected
+record only interactions that occur. When report-template.json includes
+assignment_context, copy it exactly into the main report. It identifies immutable
+assignment, plan and material lineage; it is not evidence of learner understanding.
+An unchanged template is not a completed report. Read packet-manifest.json and the packet quality section for selected
 context, derivation provenance, omissions and limitations. If a missing critical
 detail prevents teaching or assessment, stop that objective and report uncertainty.
 

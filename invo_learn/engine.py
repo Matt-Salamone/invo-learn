@@ -331,7 +331,10 @@ class Workspace:
     def prepare(self, tid, spec, today, replace_lesson=None, decision=None):
         t = self.track(tid)
         date(today)
-        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"), ("quality_review", "coding", "syntax_cheatsheet"))
+        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"), ("quality_review", "coding", "syntax_cheatsheet", "assignment"))
+        original_spec = copy.deepcopy(spec)
+        from .assignments import prepare_context
+        spec, assignment_context = prepare_context(self, tid, spec)
         strings(spec["objective_ids"], "objective_ids")
         require(spec["objective_ids"] and len(set(spec["objective_ids"])) == len(spec["objective_ids"]), "unique lesson objectives required")
         require(set(spec["objective_ids"]) <= t["objectives"].keys(), "lesson requires accepted map objectives")
@@ -380,10 +383,12 @@ class Workspace:
         lesson = {"id": lid, "track_id": tid, "prepared_on": today, "mode": spec["mode"],
                   "sequence": len(self.state["lessons"]),
                   "objective_ids": spec["objective_ids"], "map_revision": t["map_revision"],
-                  "status": "prepared", "report_id": None, "spec": copy.deepcopy(spec),
+                  "status": "prepared", "report_id": None, "spec": original_spec,
                   "preferences": copy.deepcopy(self.effective_preferences(tid)),
                   "objective_snapshot": objectives, "staged_files": {}, "content_revision": t.get("content_revision", 0),
                   "preflight": preflight}
+        if assignment_context is not None:
+            lesson["assignment_context"] = assignment_context
         source_lines = []
         for n, (src, checksum, rel) in enumerate(selected, 1):
             name = f"source-{n:02d}-{src.name}"
@@ -400,6 +405,8 @@ class Workspace:
             "lesson_id": lid, "track_id": tid, "mode": spec["mode"], "prepared_on": today,
             "learner_preferences": lesson["preferences"], "objectives": objectives,
             "source_attachments": source_lines}, indent=2, ensure_ascii=False)
+        if assignment_context is not None:
+            text += "\n\n## Exact assignment packet lineage\n\n" + json.dumps(assignment_context, indent=2)
         text += "\n\n## Uploaded-source teaching context\n\n" + spec["context"]
         if spec["supplemental_context"]:
             text += "\n\n## Optional supplemental context (outside uploaded scope)\n\n" + spec["supplemental_context"]
@@ -644,6 +651,7 @@ class Workspace:
         for tid, t in self.state["tracks"].items():
             tracks[tid] = {"title": t["title"], "active": t["active"], "preferences": self.effective_preferences(tid),
                            "materials": t["materials"], "objectives": t["objectives"], "source_gaps": t.get("source_gaps", []),
+                           "assignments": copy.deepcopy(t.get("assignments", {})),
                            "pending_maps": [pid for pid, p in t["proposals"].items() if p["status"] == "pending"],
                            "overrides": t["overrides"], "source_sections": t.get("source_sections", []),
                            "section_inventory": t.get("section_inventory", []), "unscoped_notes": t.get("unscoped_notes", []),

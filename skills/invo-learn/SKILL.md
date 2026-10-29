@@ -11,7 +11,9 @@ asks one question per turn, and waits for each answer. For an existing workspace
 continue below. For a new course read `references/add-course.md`; for first or
 later uploads read `references/add-materials.md`. For automatic updates, explicit
 upgrades or recovery read `references/update.md`. These are internal operation
-instructions, not separately invoked skills.
+instructions, not separately invoked skills. For assignments, read
+`references/assignments.md` before intake, solution decisions, assignment planning
+or assignment packet/report work.
 
 Work from the private workspace root. Read AGENTS.md, state.json, OVERVIEW.md and
 all active tracks' plan.md files. `python learn.py status` lists inherited
