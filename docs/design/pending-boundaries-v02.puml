@@ -1,0 +1,22 @@
+' Supporting decision record: unification-interview.md
+@startuml
+!pragma layout smetana
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam backgroundColor white
+hide empty members
+title Proposed pending-session boundary v0.2
+class "Learner workspace" as Workspace
+class "Course / track" as Course
+class Assignment
+class "Pending handoff" as Handoff
+Workspace "1" -- "0..*" Course : contains
+Course "1" -- "0..*" Assignment : groups
+Workspace "1" -- "0..1" Handoff : only pending handoff
+note bottom of Handoff
+  One across ALL courses and assignments.
+  Report or explicitly retire it before another.
+  Paused work and archived packets are preserved.
+end note
+@enduml

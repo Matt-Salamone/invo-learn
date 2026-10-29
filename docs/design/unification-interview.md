@@ -1,9 +1,10 @@
 # Learning and assignment unification interview
 
-Status: design decisions settled; final shared-understanding confirmation pending.
-Implementation is not yet authorized by the completed interview. Latest-round
-decisions supersede earlier open notes. This work extends the prior requirements;
-it does not reopen unrelated decisions in requirements.md.
+Status: final plan and revised diagram confirmed on October 29, 2026.
+The interview is complete and implementation is authorized, subject to the private
+report/cutover gate below. Latest-round decisions supersede earlier open notes.
+This work extends the prior requirements; it does not reopen unrelated decisions
+in requirements.md.
 
 ## Accepted decisions (October 29, 2026, round 1)
 
@@ -111,10 +112,17 @@ Temurin 25.0.5; the initial PNG preview and revised discussion preview were insp
 
 ## Final confirmation
 
-No further product decisions are currently open. The revised workspace-wide
-pending-boundary sketch v0.2 awaits acceptance with the final plan; the earlier
-per-course/per-assignment sketch was rejected. Final confirmation authorizes public
-implementation and the agreed staged migration, subject to the report/cutover gate.
+The learner explicitly confirmed the final plan and revised workspace-wide
+pending-boundary view v0.2 on October 29, 2026. This is an accepted proposed design,
+not a current-implementation claim: [source](pending-boundaries-v02.puml),
+[SVG preview](pending-boundaries-v02.svg). The earlier per-course/per-assignment
+sketch was rejected. The source links back to this record; its regenerated local
+PNG preview was inspected before saving the accepted artifacts.
+
+Confirmation authorizes public implementation and the agreed staged migration,
+subject to the report/cutover gate. Subsequent spec synthesis should carry forward
+these decisions and define implementation/testing seams without reopening the
+completed product interview.
 
 Private inventories and learner content are deliberately absent from this public
 design record.
