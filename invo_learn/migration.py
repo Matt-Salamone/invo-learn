@@ -173,9 +173,12 @@ def verify_rehearsal(stage, verify_sources=True, verify_workspace=True):
     if verify_workspace:
         require(inventory(stage_path(root, manifest["workspace"])) == manifest["workspace_inventory"],
                 "staged workspace inventory/hash mismatch; inspect staged changes")
+    from .migration_projection import projection_current
+    current_projection = (projection_current(Workspace(stage_path(root, manifest["workspace"])), manifest, root)
+                          if verify_workspace else False)
     return {"status": "verified", "migration_id": manifest["id"], "activated": False,
             "stage": str(root), "workspace": str(stage_path(root, manifest["workspace"])),
-            "destination": manifest["destination"], "manifest": manifest}
+            "destination": manifest["destination"], "manifest": manifest, "projection_current": current_projection}
 
 
 def save_rehearsal(stage, manifest):
