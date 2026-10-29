@@ -12,6 +12,12 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [13 verification ready](issues/13-verify-and-release-combined-harness.md#final-verification--ready-for-publication):
+  candidate `50fe174` records 197 passing tests with none skipped on final runtime
+  `b1c2dbd`, both examples passing and repaired review findings. Version/changelog
+  agree on 0.8.0; ticket 13 remains claimed until verified immutable publication
+  and release CI. Standards review reported no findings; spec/integrity regressions
+  were fixed and independently checked before the final suite.
 - [13 documentation](issues/13-verify-and-release-combined-harness.md): interim
   slice `317cf91` routes unified study, migration and maintenance through invo-learn
   and documents release verification limits. Static links, frontmatter and diff
