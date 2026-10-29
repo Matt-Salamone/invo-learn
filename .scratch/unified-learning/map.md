@@ -12,6 +12,10 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [02](issues/02-single-pending-and-partial-reports.md#answer): all courses
+  share one serialized pending slot; partial returns retain incomplete history
+  and release the checkout. Implementation `70c3d0c`; six installed S1 checks,
+  lifecycle/automation/side-chat regressions and the worked example passed.
 - [07](issues/07-read-legacy-records.md#answer): canonical legacy inspection
   retains original identities and exact packet/revision associations without
   converting sources or adding progress. Implementation `538089d`; eight installed
