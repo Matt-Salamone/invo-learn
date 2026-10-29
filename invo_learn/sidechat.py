@@ -7,7 +7,7 @@ from .contracts import fields, identifier, require, string, strings
 
 
 def template(lesson):
-    return {'schema_version': 1, 'report_type': 'side-chat',
+    return ({'assignment_context': copy.deepcopy(lesson['assignment_context'])} if 'assignment_context' in lesson else {}) | {'schema_version': 1, 'report_type': 'side-chat',
             'report_id': 'side-' + uuid.uuid4().hex[:12], 'lesson_id': lesson['id'],
             'track_id': lesson['track_id'], 'map_revision': lesson['map_revision'],
             'content_revision': lesson.get('content_revision', 0),
@@ -59,7 +59,9 @@ is required. The planning agent combines context while preserving separate repor
 def ingest(ws, obj, lesson, raw_path):
     from .engine import atomic, digest
     fields(obj, ('schema_version', 'report_type', 'report_id', 'lesson_id', 'track_id',
-                 'map_revision', 'content_revision', 'discussions', 'remaining_questions', 'assessment_help'))
+                 'map_revision', 'content_revision', 'discussions', 'remaining_questions', 'assessment_help'), ('assignment_context',))
+    from .assignments import validate_report_context
+    validate_report_context(obj, lesson)
     require(type(obj['schema_version']) is int and obj['schema_version'] == 1, 'unsupported supplemental schema')
     for key in ('report_id', 'lesson_id', 'track_id'):
         identifier(obj[key])

@@ -47,6 +47,21 @@ def parser(workspace_default=None):
     t.add_argument("track_id")
     t.add_argument("--title", required=True)
     t.add_argument("--preferences", type=Path)
+    for command in ("add-assignment", "propose-assignment-plan"):
+        operation = sub.add_parser(command)
+        operation.add_argument("track_id")
+        operation.add_argument("assignment_id")
+        operation.add_argument("file", type=Path)
+    choice = sub.add_parser("assignment-choice", help="record this assignment's explicit upfront-solution answer")
+    choice.add_argument("track_id")
+    choice.add_argument("assignment_id")
+    choice.add_argument("--solution", choices=("yes", "no"), required=True)
+    choice.add_argument("--reason", required=True)
+    accept_assignment = sub.add_parser("accept-assignment-plan")
+    accept_assignment.add_argument("track_id")
+    accept_assignment.add_argument("assignment_id")
+    accept_assignment.add_argument("plan_id")
+    accept_assignment.add_argument("--approval", required=True)
     pr = sub.add_parser("preferences")
     pr.add_argument("file", type=Path)
     pr.add_argument("--track")
@@ -159,7 +174,9 @@ def execute(args):
     if cmd == "doctor":
         return workflow.doctor(ws, args.today)
     if cmd == "preflight":
-        return quality.preflight(ws, args.track_id, read_json(args.file))
+        from .assignments import prepare_context
+        enriched, _ = prepare_context(ws, args.track_id, read_json(args.file))
+        return quality.preflight(ws, args.track_id, enriched)
     with ws.locked():
         if cmd in ("backup", "configure-backup"):
             from .backup import backup, configure
@@ -189,6 +206,15 @@ def execute(args):
             return {"status": "rendered"}
         if cmd == "add-course":
             return ws.add_track(args.track_id, args.title, read_json(args.preferences) if args.preferences else None)
+        if cmd in ("add-assignment", "assignment-choice", "propose-assignment-plan", "accept-assignment-plan"):
+            from . import assignments
+            if cmd == "accept-assignment-plan":
+                return assignments.accept_plan(ws, args.track_id, args.assignment_id, args.plan_id, args.approval)
+            if cmd == "add-assignment":
+                return assignments.add(ws, args.track_id, args.assignment_id, read_json(args.file))
+            if cmd == "assignment-choice":
+                return assignments.choose_solution(ws, args.track_id, args.assignment_id, args.solution == "yes", args.reason)
+            return assignments.propose_plan(ws, args.track_id, args.assignment_id, read_json(args.file))
         if cmd == "preferences":
             return ws.set_preferences(args.track, read_json(args.file))
         if cmd == "add-material":

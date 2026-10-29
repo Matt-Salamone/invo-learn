@@ -10,6 +10,7 @@
     "lesson_id": {"$ref": "#/$defs/id"},
     "track_id": {"$ref": "#/$defs/id"},
     "completed_on": {"type": "string", "format": "date"},
+    "assignment_context": {"type": "object"},
     "session_status": {"enum": ["completed", "in-progress"]},
     "objectives": {"type": "array", "items": {"$ref": "#/$defs/objective"}},
     "misconceptions": {"$ref": "#/$defs/strings"},

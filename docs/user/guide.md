@@ -137,6 +137,19 @@ inbox/mailbox-snapshots before any clearing. Snapshots are preserved but do not
 automatically become learning evidence; the agent inspects/ingests returned reports.
 Do not repurpose the mailbox or put unrelated personal files there.
 
+## Assignments
+
+Name the owning course, or ask for a standalone project track. The same invo-learn
+skill records authoritative requirements, deliverables and acceptance criteria,
+then asks whether you want a verified upfront reference before planning lessons.
+A no answer plans directly from your requirements and materials. Each assignment
+starts with an unanswered choice; resuming keeps its recorded answer. Review and
+approve the proposed lessons, then use the same mailbox and report workflow.
+Conceptual lesson success contributes evidence to the course without marking the
+assignment deliverable complete. Optional implementation guidance is a separate
+later decision. See the installed skill's internal assignments reference for the
+agent command shapes and exact packet/report lineage.
+
 ## How lessons teach
 
 The default gives longer, detailed, comprehensive explanations before practice:
