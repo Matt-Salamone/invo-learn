@@ -56,7 +56,7 @@ def study_update(ws, tid=None):
                                     capture_output=True, text=True, timeout=10)
             if config.returncode not in (0, 1) or config.stdout.strip():
                 raise Invalid("Cannot verify direct trusted source: Git URL rewrites or unreadable configuration")
-            fetch = subprocess.run(["git", "clone", "--depth=1", "--single-branch", "--branch", "main",
+            fetch = subprocess.run(["git", "clone", "--config", "core.autocrlf=false", "--depth=1", "--single-branch", "--branch", "main",
                                     TRUSTED_REPOSITORY, str(source)], cwd=scratch,
                                    capture_output=True, text=True, timeout=60)
             if fetch.returncode:
@@ -64,11 +64,19 @@ def study_update(ws, tid=None):
             # Refuse a race between the checked VERSION and the downloaded snapshot.
             if (source / "VERSION").read_text(encoding="utf-8").strip() != result["latest_version"]:
                 raise Invalid("Trusted release changed during download; retry on the next preparation")
-            upgraded = subprocess.run([sys.executable, str(ws.root / "learn.py"), "upgrade", "--source", str(source)],
-                                     capture_output=True, text=True, timeout=60)
+            from .install import layout_requirement, package
+            migration = layout_requirement(ws, source)
+            if migration is not None:
+                return result | migration
+            package(source)  # Validate compatibility before running trusted candidate code.
+            upgraded = subprocess.run([sys.executable, "-m", "invo_learn", "--workspace", str(ws.root),
+                                       "upgrade", "--source", str(source)], cwd=source,
+                                      capture_output=True, text=True, timeout=60)
             if upgraded.returncode:
                 raise Invalid(upgraded.stderr.strip() or "Upgrade failed")
             outcome = json.loads(upgraded.stdout)
+            if outcome.get("status") == "migration-required":
+                return result | outcome
             active = read_json(ws.root / ".invo-learn/active.json")
             if active["version"] != result["latest_version"]:
                 raise Invalid("Upgrade activation could not be verified")

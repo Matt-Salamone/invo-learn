@@ -80,3 +80,57 @@ the active invo-learn commit/push instructions before the final response.
 This includes stopping to wait for an onboarding answer after saving records.
 Keep learner data in the verified private workspace and preserve explicit backup
 opt-outs; a missing remote leaves a local commit with an explained push limitation.
+
+## Layout compatibility and older installed bundles
+
+A trusted code/template update preserves records and their layout. A candidate
+requiring a different workspace_layout or state_schema returns migration-required,
+keeps the installed release and learner records intact, and requires explicit
+rehearsal/activation through invo-learn migration operations. Do not rewrite state,
+move learner folders, fake a compatible marker or rehash archives to make an
+ordinary update succeed. Offline checks remain unavailable/unknown and safe
+installed-version study remains possible.
+
+The automatic updater validates the downloaded candidate before running its
+upgrader in a fresh source interpreter. Preparation then uses the newly active
+installed runner. This permits compatible packaging changes while retaining old
+immutable bundles and current customization/backup checks.
+
+For an older installed runner that cannot understand the combined package,
+use the same temporary trusted setup helper in explicit upgrade mode:
+
+```sh
+python <temporary-tools>/setup_workspace.py <existing-private-workspace> --upgrade
+```
+
+Read the helper before executing it and obtain it from the trusted public repo.
+It downloads temporary source, runs the current canonical upgrade operation and
+removes the source afterward. Existing name, mailbox, preferences and opt-outs
+are retained; this is maintenance, not another setup interview. Do not edit old
+installed releases or add wrappers for their obsolete names. Known generated
+workspace guidance is refreshed; custom AGENTS.md stays unchanged and its result
+identifies any guidance that needs a careful pointer merge.
+
+## Exact bytes through private Git backup
+
+New setup installs a scoped managed block in .gitattributes so immutable originals,
+packets, raw/normalized reports, reference artifacts, migration returns and
+installed bundles survive Git checkout without newline conversion. The policy
+preserves existing custom rule bytes and unrelated rule effects. Effective rules
+that conflict with protected bytes are reported without overwriting those rules.
+
+For an existing workspace use `python learn.py protect-record-bytes` during
+explicit maintenance. It verifies existing archive checksums first, preserves
+prior attribute bytes in .invo-learn/attribute-backups/, appends the scoped policy,
+and verifies effective Git rules. No Git workspace still gets the tracked policy;
+effective rules can be verified after Git initialization. If archived bytes have
+already changed, preserve them for diagnosis and restore the correct original
+copy; never silently update recorded checksums to accept changed evidence.
+
+Include .gitattributes and related attribute-backup files in the individually
+reviewed upgrade/maintenance commit scope. The private backup helper checks both
+working and staged attribute rules before publishing, so an uncommitted policy
+cannot leave a later clone unprotected. It retains the existing private-remote
+identity/visibility checks, explicit file scopes, ordinary pushes and remote SHA
+verification. It creates no remote and does not change visibility. Report local
+maintenance success separately from backup status.

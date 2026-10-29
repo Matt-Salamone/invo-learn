@@ -35,6 +35,7 @@ def parser(workspace_default=None):
     migration.add_argument("file", type=Path)
     migration_status = sub.add_parser("migration-status", help="verify a preserved rehearsal without activating it")
     migration_status.add_argument("stage", type=Path)
+    sub.add_parser("protect-record-bytes", help="explicit maintenance: preserve Git record bytes without replacing custom attribute rules")
     projection = sub.add_parser("migration-project", help="conservatively project preserved observations and plan fresh study")
     projection.add_argument("stage", type=Path)
     projection.add_argument("--links", type=Path, help="optional planner-justified objective associations")
@@ -226,6 +227,9 @@ def execute(args):
         enriched, _ = prepare_context(ws, args.track_id, read_json(args.file))
         return quality.preflight(ws, args.track_id, enriched)
     with ws.locked():
+        if cmd == "protect-record-bytes":
+            from .git_bytes import protect
+            return protect(ws, args.today)
         if cmd in ("backup", "configure-backup"):
             from .backup import backup, configure
             if cmd == "configure-backup":

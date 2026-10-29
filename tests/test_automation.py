@@ -118,7 +118,7 @@ class AutomationTests(unittest.TestCase):
         self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.new_version)
         self.assertIn("SYNTHETIC NEW ACTIVE TEMPLATE", (self.ws.mailbox() / "START-HERE.md").read_text(encoding="utf-8"))
 
-    def test_update_failures_continue_without_false_current_or_lost_records(self):
+    def test_migration_requirement_continues_without_false_current_or_lost_records(self):
         future = self.future()
         metadata = read_json(future / "harness.json")
         metadata["state_schema"] = 2
@@ -126,14 +126,14 @@ class AutomationTests(unittest.TestCase):
         before = self.ws.state_path.read_bytes()
         with patch("invo_learn.updates.check_updates", return_value={"status": "available", "latest_version": self.new_version}), self.downloaded_update(future):
             result = study_update(self.ws, "math")
-        self.assertEqual(result["status"], "failed")
+        self.assertEqual(result["status"], "migration-required")
         self.assertEqual(self.ws.state_path.read_bytes(), before)
         self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.version)
         lesson_spec = self.base / "spec.json"
         atomic(lesson_spec, spec(["solve"]))
         with patch("invo_learn.cli.study_update", return_value=result):
             prepared = self.cli("prepare", "math", str(lesson_spec))
-        self.assertEqual(prepared["update"]["status"], "failed")
+        self.assertEqual(prepared["update"]["status"], "migration-required")
         self.assertTrue((self.root / "lessons" / prepared["lesson_id"] / "packet/START-HERE.md").exists())
 
     def test_customization_and_download_version_race_are_not_bypassed(self):

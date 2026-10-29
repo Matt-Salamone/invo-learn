@@ -290,7 +290,11 @@ request once this default is chosen. `check-updates` remains read-only.
 
 Use `preferences <private.json>` with `{"auto_update": false}` to opt out (or
 `--track <id>` for a course override). A manually requested update still uses
-`upgrade --source <trusted-public-checkout>`. No learner records are sent upstream.
+`upgrade --source <trusted-public-checkout>`. If an older installed runner cannot
+read the combined package, the same temporary setup helper supports
+`python setup_workspace.py <existing-workspace> --upgrade`; it runs the current
+trusted upgrader without modifying older saved releases. Existing preferences and
+opt-outs remain intact. No learner records are sent upstream.
 The trusted main snapshot is not cryptographically signed. A version/download
 race, unavailable Git/network, incompatible candidate or modified managed file
 leaves study on the installed version when safe. The result is explained; failed
@@ -308,6 +312,21 @@ workspace, explicitly set teaching_style to the detailed style above (or ask the
 agent to do it). Missing teaching_style inherits the new default. New tracks
 inherit effective global settings, and track overrides still win. No schema
 migration rewrites records. A preferences change does not rewrite old packets.
+
+A different declared learner-data layout or state schema returns
+migration-required before installation or record changes. Explicitly rehearse and
+activate an invo-learn migration rather than reorganizing data during an update.
+Known generated AGENTS.md guidance is refreshed on upgrade; custom guidance is
+preserved and reported for careful pointer maintenance.
+
+Setup and compatible maintenance install scoped .gitattributes rules preserving
+checksum-bearing records and installed bytes through Git checkout, including
+core.autocrlf=true. Existing custom rule bytes are preserved; conflicting nested,
+filter or encoding rules require inspection. `protect-record-bytes` is the
+explicit maintenance operation for older workspaces. It verifies existing
+archives before changing attributes and never rehashes altered originals. Include
+the policy and its attribute backups in reviewed commit scopes; backup verifies
+staged rules as well as working-tree rules. See the skill's update reference.
 
 Existing compatibility/customization checks, immutable releases, pre-update
 state/activation backups and export rollback remain. Reports, source bytes and

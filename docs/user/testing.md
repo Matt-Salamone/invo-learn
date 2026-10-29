@@ -112,3 +112,21 @@ exports portable fresh-chat learner scripts and observation criteria when reques
 No live teaching conversation or learning-efficacy evaluation was performed. The
 four-case protocol is included in installed user docs. CI runs the generator
 alongside the required unit suite and original worked example.
+
+## Installed maintenance and Git-byte checks
+
+`tests/test_maintenance.py` exercises the accepted S1 seam with real installed
+subprocess commands and controlled version/download/filesystem boundaries:
+compatible updates and a fresh active teaching template, layout/state-schema
+migration requirements, opt-outs, unavailable checks with safe study, modified
+exports, activation rollback, failed downloads, and preserved custom guidance.
+The frozen public 0.7.0 fixture bootstraps an actual older installation and upgrades
+it via the temporary canonical helper while retaining the old release bytes.
+
+Synthetic Git journeys enable core.autocrlf=true and compare original, packet,
+report and installed-bundle hashes after a real clone/checkout. Attribute
+maintenance preserves root/local custom rules, rejects conflicting effective
+rules, and refuses to rehash corrupt archives. A scoped installed backup uses a
+controlled private-metadata response and local bare transport, verifies the remote
+SHA, and confirms the committed policy protects cloned records. These controlled
+boundaries do not establish live account permissions or real network availability.

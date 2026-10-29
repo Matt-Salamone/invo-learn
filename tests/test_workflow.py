@@ -649,8 +649,9 @@ class WorkflowTests(unittest.TestCase):
         metadata["state_schema"] = 2
         atomic(future / "harness.json", metadata)
         before = copy.deepcopy(self.ws.state)
-        with self.ws.locked(), self.assertRaisesRegex(Invalid, "incompatible"):
-            upgrade(self.ws, future)
+        with self.ws.locked():
+            result = upgrade(self.ws, future)
+        self.assertEqual(result["status"], "migration-required")
         self.assertEqual(self.ws.state, before)
         self.assertEqual(read_json(self.root / ".invo-learn/active.json")["version"], self.version)
 
