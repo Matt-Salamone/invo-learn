@@ -70,8 +70,11 @@ python learn.py migration-reconcile <rehearsal-directory> <returns-and-waivers.j
 
 The read-only inventory lists every originally prepared course lesson and
 outstanding assignment packet, including checkouts absent from the last-staged
-pointer. Offer collecting their actual in-progress chatbot returns. The agent
-saves actual input files privately outside the frozen source trees and staged
+pointer. Offer collecting their actual in-progress chatbot returns unless an
+explicit loss waiver already covers those checkouts. A recorded waiver satisfies
+that gate: proceed with incomplete retirement and fresh study needs rather than
+asking for the same missing reports again. For actual returns, the agent saves
+input files privately outside the frozen source trees and staged
 workspace, then supplies a payload with a `reports` list. Each selection is
 `{origin_key, file}`; use the exact origin key returned by the inventory and the
 absolute private path of the actual return. Empty reports lists are allowed.
@@ -149,7 +152,14 @@ against the destination's actual Git metadata before changing destination files.
 Custom conflicting attributes stop the operation. Preserve full raw snapshots and
 history before making any explicit derived-copy change to Git control metadata;
 record that derivation, retain original metadata bytes, and keep learner/material/
-packet/report bytes unchanged. Never normalize or rehash originals to force a pass.
+packet/report bytes unchanged. For a nested Git-attribute conflict, preserve and
+verify a complete raw source archive (including its Git history) before preparing
+a separate derived migration view. In that view, change only the identified Git
+control metadata needed for safe byte preservation, keep its before bytes and
+a written derivation record, then rehearse and verify again. Raw source archives,
+original repositories and learner artifacts retain their exact bytes. A derived
+view is not permission to weaken effective-attribute checks or rewrite recorded
+checksums. Never normalize or rehash originals to force a pass.
 
 The destination stays the existing learner workspace with its existing `.git`
 directory and remote bindings. An immutable action plan and small progress cursor
@@ -246,3 +256,33 @@ completed old projection is insufficient for activation when its inputs changed.
 For implementation, `migration_projection.projection_current(ws, manifest,
 stage)` supplies the same gate. The stage lock serializes projection with report
 reconciliation; source originals and immutable packet/report bytes are untouched.
+
+## Follow fresh study needs after activation
+
+The ordinary work queue keeps conservative `fresh-demonstration` and
+`relearn-legacy-topic` needs visible after activation. The planner inspects the
+governing requirements and accepted course map, then may link a new lesson to
+one or more needs using this optional private prepare-spec field:
+
+```json
+{
+  "legacy_study_links": [{
+    "study_need_id": "<study_need_id from status.work_queue>",
+    "objective_ids": ["<assigned accepted course objective>"],
+    "reason": "Actual justification from the governing requirements"
+  }]
+}
+```
+
+The need and lesson must belong to the same course in an active migrated
+workspace. The packet freezes these links. A retry retains earlier linked target
+scope and can extend it. The planner makes this association from actual scope;
+the learner need not review a technical mapping queue.
+
+A linked need closes only when all its target objectives have actual fresh,
+independent, valid and consistent effective report evidence. Prior/imported
+mastery alone, a lesson completion label or an unlinked report leaves it pending.
+Study progress and history remain inspectable. Later assistance, invalidation or
+withdrawal can reopen the need without changing original reports. These actions
+are advisory study choices, not a lock on unrelated learning, and closing one
+does not establish delayed retention without the ordinary cold-review evidence.
