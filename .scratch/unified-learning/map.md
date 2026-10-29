@@ -12,6 +12,11 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [10](issues/10-reconcile-cutover-reports.md#answer): source checkouts require
+  exact actual returns or explicit lost-progress waivers; reconciliation preserves
+  incomplete history and does not itself authorize activation. Implementation
+  `f911426`; nine reconciliation and eight legacy checks passed. Shared stage
+  locking is `5d8ce83`; evidence projection remains ticket 09's separate gate.
 - [06](issues/06-shared-assignment-evidence.md#answer): shared course evidence
   qualifies task-specific implementation and side-chat help using actual timing,
   preserving raw attempts and separate fresh assessment/review outcomes.
