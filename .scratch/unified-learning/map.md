@@ -12,6 +12,12 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [09](issues/09-conservative-legacy-evidence.md#answer): preserved legacy
+  observations earn no unsupported mastery; uncertain associations schedule fresh
+  demonstration or relearning, while compatible course progress stays intact.
+  Implementation `f3c14e3` / `7e40a2d`; projection, reconciliation, rehearsal and
+  evidence checks plus the worked example passed. Ticket 13 must link advisory
+  needs to planner-selected packets and close them only from actual fresh evidence.
 - [10](issues/10-reconcile-cutover-reports.md#answer): source checkouts require
   exact actual returns or explicit lost-progress waivers; reconciliation preserves
   incomplete history and does not itself authorize activation. Implementation
