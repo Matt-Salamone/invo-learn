@@ -1,6 +1,6 @@
 # 09: Replace uncertain migration credit with fresh study automatically
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
