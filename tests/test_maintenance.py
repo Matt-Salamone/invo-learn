@@ -99,6 +99,8 @@ def _urlopen(url, *args, **kwargs):
         return io.BytesIO(Path(os.environ["INVO_TEST_ARCHIVE"]).read_bytes())
     return io.BytesIO(os.environ["INVO_TEST_LATEST"].encode())
 def _run(command, **kwargs):
+    if os.environ.get("INVO_TEST_UNSAFE_INDEX") and command[0] == "git" and command[-2:] == ["ls-files", "-z"]:
+        return subprocess.CompletedProcess(command, 0, b"../escaped/.gitattributes\x00", b"")
     if os.environ.get("INVO_TEST_BARE") and command[:2] == ["gh", "api"]:
         return subprocess.CompletedProcess(command, 0, '{"private":true,"full_name":"synthetic/private","permissions":{"push":true},"fork":false}', "")
     if os.environ.get("INVO_TEST_BARE") and command[0] == "git" and any(value in command for value in ("push", "ls-remote")):
@@ -314,3 +316,62 @@ os.replace = _replace
         local.write_bytes(custom)
         self.assertEqual(self.cli("protect-record-bytes")["status"], "already-protected")
         self.assertEqual(local.read_bytes(), custom)
+
+    @unittest.skipUnless(os.name == "nt", "Windows temporary-path alias regression")
+    def test_scoped_private_backup_accepts_windows_temp_path_alias(self):
+        import ctypes
+        from ctypes import wintypes
+        target = self.base / "Long temporary directory alias target"
+        target.mkdir()
+        short_path = ctypes.WinDLL("kernel32", use_last_error=True).GetShortPathNameW
+        short_path.argtypes = (wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD)
+        short_path.restype = wintypes.DWORD
+        size = short_path(str(target), None, 0)
+        alias = target
+        if size:
+            buffer = ctypes.create_unicode_buffer(size)
+            if short_path(str(target), buffer, size):
+                alias = Path(buffer.value)
+        if alias == alias.resolve():
+            alias = self.base / "temporary-junction-alias"
+            linked = subprocess.run(["cmd", "/c", "mklink", "/J", str(alias), str(target)], capture_output=True, text=True)
+            if linked.returncode:
+                self.skipTest("A Windows short-name or junction alias is unavailable: " + linked.stderr.strip())
+            self.addCleanup(alias.rmdir)
+        self.assertNotEqual(alias, alias.resolve())
+        self.assertTrue(alias.samefile(target))
+        bare = self.base / "alias-backup.git"
+        self.git("init", "--bare", bare, root=self.base)
+        for key, value in (("user.name", "Synthetic"), ("user.email", "synthetic@example.invalid")):
+            self.git("config", key, value)
+        self.git("remote", "add", "origin", "https://github.com/synthetic/private.git")
+        env = self.transport(self.base / "unused-source")
+        env.update(INVO_TEST_BARE=str(bare), TMPDIR=str(alias), TEMP=str(alias), TMP=str(alias))
+        (self.root / ".git/info/attributes").write_bytes(b"user-notes/** text eol=lf\n")
+        self.cli("configure-backup", "--repository", "synthetic/private", env=env)
+        self.cli("preferences", self.write({"auto_backup": True}))
+        files = [name for name in self.git("ls-files", "--others", "--exclude-standard", "-z").split("\x00") if name]
+        before = self.immutable()
+        result = self.cli("backup", "--paths", *files, "--message", "Synthetic aliased temporary directory", env=env)
+        self.assertEqual(result["status"], "pushed", result)
+        self.assertEqual(result["commit"], self.git("rev-parse", "refs/heads/main", root=bare).strip())
+        self.assertEqual(before, self.immutable())
+
+    def test_scoped_private_backup_rejects_escaping_staged_attribute_path(self):
+        bare = self.base / "guard-backup.git"
+        self.git("init", "--bare", bare, root=self.base)
+        for key, value in (("user.name", "Synthetic"), ("user.email", "synthetic@example.invalid")):
+            self.git("config", key, value)
+        self.git("remote", "add", "origin", "https://github.com/synthetic/private.git")
+        env = self.transport(self.base / "unused-source")
+        env.update(INVO_TEST_BARE=str(bare), INVO_TEST_UNSAFE_INDEX="1")
+        (self.root / ".git/info/attributes").write_bytes(b"user-notes/** text eol=lf\n")
+        self.cli("configure-backup", "--repository", "synthetic/private", env=env)
+        self.cli("preferences", self.write({"auto_backup": True}))
+        files = [name for name in self.git("ls-files", "--others", "--exclude-standard", "-z").split("\x00") if name]
+        before = self.immutable()
+        result = self.cli("backup", "--paths", *files, "--message", "Synthetic corrupt external index listing", env=env)
+        self.assertEqual(result["status"], "backup-failed")
+        self.assertEqual(result["reason"], "unsafe staged attribute path")
+        self.assertEqual(self.git("ls-remote", bare, "refs/heads/main", root=self.base), "")
+        self.assertEqual(before, self.immutable())

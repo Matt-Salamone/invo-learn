@@ -31,7 +31,7 @@ def protected_paths(root):
 def portable_attributes(ws, names, cached):
     """Check the same tracked/worktree rules without local info/attributes overrides."""
     with tempfile.TemporaryDirectory(prefix="invo-git-attributes-") as folder:
-        base = Path(folder)
+        base = Path(folder).resolve()
         metadata = base / "metadata.git"
         initialized = subprocess.run(["git", "-c", "init.templateDir=", "init", "--bare", "--quiet", str(metadata)], capture_output=True)
         require(initialized.returncode == 0, "cannot verify portable Git attributes")
