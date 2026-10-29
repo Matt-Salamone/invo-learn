@@ -38,6 +38,11 @@ def parser(workspace_default=None):
     projection = sub.add_parser("migration-project", help="conservatively project preserved observations and plan fresh study")
     projection.add_argument("stage", type=Path)
     projection.add_argument("--links", type=Path, help="optional planner-justified objective associations")
+    checkout_status = sub.add_parser("migration-checkouts", help="inventory source lesson checkouts and report/waiver requirements")
+    checkout_status.add_argument("stage", type=Path)
+    reconcile_migration = sub.add_parser("migration-reconcile", help="save actual returns or explicit lost-progress waivers before cutover")
+    reconcile_migration.add_argument("stage", type=Path)
+    reconcile_migration.add_argument("file", type=Path)
     sub.add_parser("doctor", help="offline integrity, recovery queue and last operation outcomes")
     sub.add_parser("check-updates", help="read-only GitHub version check; never installs an update")
     su = sub.add_parser("study-update", help="automatically install a compatible trusted release unless opted out")
@@ -167,6 +172,12 @@ def execute(args):
     if cmd == "migration-project":
         from .migration_projection import project
         return project(args.stage, read_json(args.links) if args.links else None, args.today)
+    if cmd == "migration-checkouts":
+        from .migration_reconciliation import checkouts
+        return checkouts(args.stage)
+    if cmd == "migration-reconcile":
+        from .migration_reconciliation import reconcile
+        return reconcile(args.stage, read_json(args.file), args.today)
     if cmd == "migration-rehearse":
         from .migration import rehearse
         return rehearse(read_json(args.file))

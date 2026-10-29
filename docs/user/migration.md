@@ -60,3 +60,66 @@ For implementation, `invo_learn.migration.load_rehearsal(stage)` returns the sta
 root and manifest. Later explicit projection/reconciliation operations verify the
 stage, make scoped changes, and use `save_rehearsal(stage, manifest)` to record the
 resulting workspace inventory. Immutable source snapshots remain unchanged.
+
+## Reconcile checked-out lessons
+
+```text
+python learn.py migration-checkouts <rehearsal-directory>
+python learn.py migration-reconcile <rehearsal-directory> <returns-and-waivers.json>
+```
+
+The read-only inventory lists every originally prepared course lesson and
+outstanding assignment packet, including checkouts absent from the last-staged
+pointer. Offer collecting their actual in-progress chatbot returns. The agent
+saves actual input files privately outside the frozen source trees and staged
+workspace, then supplies a payload with a `reports` list. Each selection is
+`{origin_key, file}`; use the exact origin key returned by the inventory and the
+absolute private path of the actual return. Empty reports lists are allowed.
+
+Returned bytes are archived unchanged inside the canonical workspace under
+`migration-records/<migration-id>/returns/`. Original packet, assignment and
+solution-revision associations are validated before any checkout is resolved.
+Malformed, incorrectly associated or canonically conflicting returns remain
+preserved with actionable diagnostics and block reconciliation. An evidence-backed
+repair selection adds `repair_of` (the rejected raw SHA-256) and `repair_note`;
+it must supply an actual corrected file. The original stays unchanged. Never
+invent an answer or alter an association by guessing to satisfy validation.
+
+If the learner explicitly accepts losing unreported progress, the payload may
+also contain `waivers`, with one selection per identified checkout:
+
+```json
+{
+  "reports": [],
+  "waivers": [
+    {
+      "origin_key": "<inventoried origin key>",
+      "packet_id": "<original checkout ID>",
+      "accept_lost_progress": true,
+      "reason": "Actual learner acceptance of losing this checkout's unreported progress"
+    }
+  ]
+}
+```
+
+This is an explicit decision record, never a saved or inferred default. Waivers
+retain all existing observations and artifacts, retire the selected checkout as
+incomplete, and schedule a fresh demonstration or relearning in the ordinary
+study queue. They add no reports, learner responses, mastery or retention credit.
+Waivers do not override source damage or a malformed/broken actual return.
+
+Actual course returns follow existing evidence rules. Assignment returns retain
+their original observations for separate conservative evidence projection. An
+old return without an explicit completion field remains incomplete; an explicit
+`session_status: "in-progress"` may represent no observations yet. Main and
+supplemental returns remain distinct: a side report never closes the main checkout.
+Valid late main returns after retirement remain historical and cannot reopen the
+pending slot. Repeating exact returns or decisions adds no duplicate progress.
+
+Reconciliation `eligible: true` satisfies only the report/waiver gate. Preservation,
+evidence projection, installed-code checks and explicit activation are still
+required. The frozen source snapshots retain their original pending statuses;
+the canonical reconciliation ledger records their retirement. Stage writes use
+`migration.lock` outside the workspace inventory. After an interrupted process,
+verify that no writer remains before recovering its lock and inspecting the
+preserved stage; never claim activation from an incomplete operation.
