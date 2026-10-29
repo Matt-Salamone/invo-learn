@@ -203,6 +203,18 @@ def doctor(ws, today):
         for lesson in ws.state["lessons"].values():
             for name, checksum in lesson["staged_files"].items():
                 verify(f"lessons/{lesson['id']}/packet/{name}", checksum)
+        from .assignments import checked_assignment, checked_plan
+        from .reference_solution import checked as checked_reference
+        for tid, track in ws.state["tracks"].items():
+            for aid, assignment in track.get("assignments", {}).items():
+                checked_assignment(ws, tid, aid)
+                count += 1
+                for pid in assignment["plans"]:
+                    checked_plan(ws, assignment, pid)
+                    count += 1
+                for reference_id in assignment.get("references", {}):
+                    reference = checked_reference(ws, assignment, reference_id, verified=False)
+                    count += 1 + len(reference["artifacts"])
         for correction in ws.state.get("corrections", {}).values():
             verify(correction["path"], correction["sha256"])
         for report in ws.state["reports"].values():

@@ -39,22 +39,27 @@ def add(ws, tid, aid, spec):
     return {"status": "added", "track_id": tid, "assignment_id": aid}
 
 
-def choose_solution(ws, tid, aid, generate, reason):
+def choose_solution(ws, tid, aid, generate, reason, new_decision=False):
     record = get(ws, tid, aid)
     require(type(generate) is bool, "solution choice requires explicit yes or no")
     string(reason, "actual learner solution choice")
     existing = record["solution_choice"]
-    if existing is not None:
+    if existing is not None and not new_decision:
         require(existing["generate"] == generate, "solution choice already recorded; changing it requires a new explicit decision with preserved exposure history")
         return {"status": "already-recorded", "choice": copy.deepcopy(existing)}
-    record["solution_choice"] = {"generate": generate, "reason": reason}
+    if existing is not None:
+        record.setdefault("solution_choice_history", []).append(copy.deepcopy(existing))
+    record["solution_choice"] = {"id": "solution-decision-" + uuid.uuid4().hex[:12], "generate": generate, "reason": reason}
     ws.save("assignment-solution-choice", {"track_id": tid, "assignment_id": aid, "generate": generate})
     return {"status": "recorded", "choice": copy.deepcopy(record["solution_choice"])}
 
 
 def planning_basis(record):
     require(record["solution_choice"] is not None, "record an explicit solution choice before assignment planning")
-    require(record["solution_choice"]["generate"] is False, "requested reference must be completed and verified before planning")
+    if record["solution_choice"]["generate"]:
+        from .reference_solution import ready
+        require(ready(record), "requested reference must be completed and verified before planning")
+        return "reference"
     return "requirements"
 
 
@@ -86,7 +91,9 @@ def validate_plan(ws, tid, record, spec):
     seen = set()
     objectives = ws.track(tid)["objectives"]
     for lesson in spec["lessons"]:
-        fields(lesson, ("id", "title", "objective_ids", "material_ids"))
+        fields(lesson, ("id", "title", "objective_ids", "material_ids"), ("reference_sections",))
+        from .reference_solution import validate_sections
+        validate_sections(ws, record, lesson)
         identifier(lesson["id"])
         require(lesson["id"] not in seen, "duplicate assignment plan lesson")
         seen.add(lesson["id"])
@@ -108,14 +115,18 @@ def propose_plan(ws, tid, aid, spec):
     record = checked_assignment(ws, tid, aid)
     basis = planning_basis(record)
     validate_plan(ws, tid, record, spec)
+    from .reference_solution import planning_reference
+    reference = planning_reference(ws, record)
     for pid, prior in record["plans"].items():
-        if prior["spec"] == spec and prior["basis"] == basis:
+        if prior["spec"] == spec and prior["basis"] == basis and prior.get("reference") == reference and prior["solution_choice"] == record["solution_choice"]:
             return {"status": "already-recorded", "plan_id": pid, "basis": basis}
     pid = "plan-" + uuid.uuid4().hex[:12]
     path = f"tracks/{tid}/assignments/{aid}/plans/{pid}.json"
     snapshot = {"id": pid, "assignment_id": aid, "basis": basis, "spec": copy.deepcopy(spec),
                 "assignment_sha256": record["sha256"], "solution_choice": copy.deepcopy(record["solution_choice"]),
                 "materials": check_materials(ws, tid, record["spec"]["material_ids"])}
+    if reference is not None:
+        snapshot["reference"] = reference
     atomic(ws.path(path), snapshot)
     record["plans"][pid] = {**snapshot, "path": path, "sha256": digest(ws.path(path).read_bytes()), "status": "proposed"}
     ws.save("assignment-plan-proposed", {"track_id": tid, "assignment_id": aid, "plan_id": pid})
@@ -138,6 +149,8 @@ def accept_plan(ws, tid, aid, pid, approval):
     plan = checked_plan(ws, record, pid)
     string(approval, "actual learner assignment-plan approval")
     validate_plan(ws, tid, record, plan["spec"])
+    from .reference_solution import require_current_plan
+    require_current_plan(ws, record, plan)
     if record["active_plan"] == pid:
         return {"status": "already-accepted", "plan_id": pid}
     plan.update(status="accepted", approval=approval)
@@ -166,15 +179,19 @@ def prepare_context(ws, tid, spec):
     require(all(expected_materials[m["material_id"]] == m["sha256"] for m in materials), "assignment material differs from accepted plan lineage")
     context = {"assignment_id": record["id"], "assignment_sha256": record["sha256"], "plan_id": plan["id"],
                "plan_sha256": plan["sha256"], "plan_lesson_id": lesson["id"], "materials": materials}
+    from .reference_solution import selected_context
+    reference, reference_text = selected_context(ws, record, plan, lesson)
+    if reference is not None:
+        context["reference"] = reference
     text = "\n\n## Assignment requirements and selected learning context\n\n" + json.dumps({
         "title": record["spec"]["title"], "requirements": record["spec"]["requirements"],
         "deliverables": record["spec"]["deliverables"], "criteria": record["spec"]["criteria"],
         "lesson": lesson, "basis": basis, "lineage": context}, indent=2, ensure_ascii=False)
     text += ("\nTeach this self-contained conceptual lesson from the governing requirements and selected material. "
              "Keep provenance for tutor reference and provide it separately when asked; omit source-title/page commentary in teaching. "
-             "The learner declined an upfront reference solution. Do not generate or inject a task-specific completed solution. "
              "Use meaningful visuals with readable alternatives and neutral syntax lookup when coding. "
              "Assignment deliverable completion is separate from independent understanding and delayed retention.\n")
+    text += reference_text
     enriched = copy.deepcopy(spec)
     enriched["context"] += text
     return enriched, context
@@ -189,6 +206,7 @@ def validate_report_context(obj, lesson):
 
 
 def next_actions(ws):
+    from .reference_solution import ready
     actions = []
     for tid, track in ws.state["tracks"].items():
         for aid, record in track.get("assignments", {}).items():
@@ -196,8 +214,10 @@ def next_actions(ws):
             if record["solution_choice"] is None:
                 actions.append({"action": "ask-assignment-solution-choice", **context,
                     "question": "Would you like me to generate and verify a reference solution before planning the assignment lessons?"})
+            elif record["solution_choice"]["generate"] and not ready(record):
+                actions.append({"action": "prepare-requested-reference", **context})
             elif not record["plans"]:
-                actions.append({"action": "prepare-requested-reference" if record["solution_choice"]["generate"] else "propose-assignment-plan", **context})
+                actions.append({"action": "propose-assignment-plan", **context})
             else:
                 for pid, plan in record["plans"].items():
                     if plan["status"] == "proposed":
