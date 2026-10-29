@@ -1,10 +1,14 @@
-# 14: Collect in-progress reports from every checked-out lesson chat
+# 14: Resolve report collection or accept lost unreported progress
 
 **Status:** resolved
 
-Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved. Actual learner chat returns are required.
+Breakdown approved by the owner on October 29, 2026, then explicitly revised by
+the owner during implementation. The owner waived collection and accepted lost
+unreported progress. No additional human action is required for this prerequisite.
 
-**What to build:** Before final private cutover, the learner visits every checked-out lesson chat, requests an in-progress report, and returns it to the planning agent. The agent preserves the exact returns privately for the migration gate.
+**What to build:** Record the owner's explicit report-collection waiver so tickets
+10 and 15 can retire missing-return checkouts as incomplete, preserving all existing
+evidence and artifacts and planning fresh checks without fabricated reports.
 
 **Blocked by:** None (can start immediately).
 
@@ -12,9 +16,24 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 **Diagrams:** accepted proposed-design component view v0.1 ([source](../unification-components-v01.puml), [SVG](../unification-components-v01.svg)); accepted timing view v0.3 ([source](../../../docs/design/assignment-modes-v03.puml), [SVG](../../../docs/design/assignment-modes-v03.svg)); accepted single-pending view v0.2 ([source](../../../docs/design/pending-boundaries-v02.puml), [SVG](../../../docs/design/pending-boundaries-v02.svg)).
 
-**End-to-end path and verification seam:** Learner lesson chats → actual report returns → private saved inputs for S1 reconciliation. This is an external human prerequisite, not an implementation slice; S1 validates its actual returns before cutover.
+**End-to-end path and verification seam:** Explicit owner loss acceptance →
+private checkout-specific waiver records → S1 reconciliation. This resolves the
+human prerequisite; tickets 10 and 15 perform machine validation and cutover.
 
 ## Acceptance criteria
+
+- [x] Offer collection of actual in-progress returns before cutover.
+- [x] Record the owner's explicit acceptance of lost unreported progress and
+  authorization to reconcile without further intervention.
+- [x] Require incomplete retirement with no invented reports, learner responses,
+  completion, independent understanding or retention credit.
+- [x] Keep private inventories, artifacts and any existing reports out of this
+  public decision record; delegate actual validation to tickets 10 and 15.
+
+## Superseded original criteria
+
+The following original collection route is retained for decision history. The
+owner's waiver replaces its mandatory-return gate.
 
 - [ ] Remind the learner to obtain reports from every checked-out main lesson chat across the source workspaces; this can begin while public implementation proceeds.
 - [ ] Require actual chatbot returns. Do not author substitute learner answers, reconstruct missing assessments as facts or mark unfinished sessions complete.
