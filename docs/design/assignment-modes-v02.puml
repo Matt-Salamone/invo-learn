@@ -1,0 +1,30 @@
+' Supporting decision record: unification-interview.md
+@startuml
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activityBackgroundColor #F3F6FA
+skinparam activityBorderColor #526172
+skinparam ArrowColor #526172
+title Proposed workflow v0.2 - two independent choices
+start
+:Save requirements and materials;
+if (Generate upfront solution?) then (Yes)
+  :Planner completes and verifies\na reference solution;
+else (No)
+  :Use requirements and materials\nwithout an upfront solution;
+endif
+:Plan lessons; teach and assess\nneeded concepts via handoffs;
+if (Guide final implementation?) then (Yes)
+  :Guided implementation\nResponsibility and help limits: Q1-Q2;
+else (No)
+  :Learner implements independently;
+endif
+:Preserve assignment progress and evidence;\nupdate shared course learning and reviews;
+stop
+legend bottom
+  Both implementation paths work with either upfront-solution choice.
+  Completing the assignment does not establish independent mastery.
+endlegend
+@enduml
