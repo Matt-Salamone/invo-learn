@@ -12,6 +12,15 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [04](issues/04-verified-reference-path.md#answer): an explicit reference
+  request requires saved verification before planning; selected solution context
+  retains immutable revision lineage and composes with implementation guidance.
+  Implementation `50a4782` / `c406bd3`; 81 targeted checks, post-08 smoke checks
+  and the worked example passed.
+- [08](issues/08-lossless-migration-rehearsal.md#answer): explicit rehearsal
+  preserves source snapshots and hashes, stages course-owned assignments and
+  leaves the destination inactive. Implementation `8681e35`; eight installed
+  migration checks and eight legacy-reader checks passed against ticket 05.
 - [05](issues/05-implementation-choice-and-guidance.md#answer): a fresh guidance
   decision at implementation supports guided handoffs and independent work;
   progress remains separate from mastery. Implementation `c8e3754`; five installed

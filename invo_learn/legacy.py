@@ -4,6 +4,7 @@ Readers preserve original identities. They do not project learning credit or
 authorize migration; those are separate operations on an explicit destination.
 """
 from pathlib import Path
+import json
 import subprocess
 
 from .contracts import require, report as validate_course_report, string, strings
@@ -129,6 +130,10 @@ class LegacySnapshot:
                         "original checksum changed")
                 require(ref["bytes"] is None or len(content) == ref["bytes"],
                         "original byte count changed")
+                if self.kind == "course" and ref["role"] == "raw-report":
+                    stem = path.stem
+                    if len(stem) == 64 and all(c in "0123456789abcdef" for c in stem):
+                        require(digest(content) == stem, "raw report checksum changed")
                 if ref["role"] == "packet-manifest":
                     manifest = read_json(path)
                     packet = next(p for p in self.packets.values() if p["path"] + "/manifest.json" == ref["path"])
@@ -143,6 +148,17 @@ class LegacySnapshot:
                             "snapshot context does not match original lesson")
             except (ValueError, TypeError, KeyError, OSError) as exc:
                 problems.append({"path": ref["path"], "reason": str(exc)})
+        if self.kind == "course":
+            for section in ("reports", "supplemental_reports"):
+                for record in self.state.get(section, {}).values():
+                    try:
+                        report = read_json(self.path(record["path"]))
+                        canonical = digest(json.dumps(report, sort_keys=True, ensure_ascii=False).encode())
+                        require(canonical == record["sha256"], "archived report canonical checksum changed")
+                        require("report" not in record or report == record["report"],
+                                "archived report differs from recorded original")
+                    except (ValueError, TypeError, KeyError, OSError) as exc:
+                        problems.append({"path": record.get("path"), "reason": str(exc)})
         return problems
 
     def inspect_report(self, returned, today=None):

@@ -31,6 +31,10 @@ def parser(workspace_default=None):
     legacy_report = sub.add_parser("legacy-report", help="inspect an older returned report against its exact issued packet")
     legacy_report.add_argument("source", type=Path)
     legacy_report.add_argument("file", type=Path)
+    migration = sub.add_parser("migration-rehearse", help="explicitly preserve and stage a combined private workspace; never activate")
+    migration.add_argument("file", type=Path)
+    migration_status = sub.add_parser("migration-status", help="verify a preserved rehearsal without activating it")
+    migration_status.add_argument("stage", type=Path)
     sub.add_parser("doctor", help="offline integrity, recovery queue and last operation outcomes")
     sub.add_parser("check-updates", help="read-only GitHub version check; never installs an update")
     su = sub.add_parser("study-update", help="automatically install a compatible trusted release unless opted out")
@@ -52,11 +56,16 @@ def parser(workspace_default=None):
         operation.add_argument("track_id")
         operation.add_argument("assignment_id")
         operation.add_argument("file", type=Path)
+    reference = sub.add_parser("record-reference", help="preserve an explicitly requested reference and actual requirement checks")
+    reference.add_argument("track_id")
+    reference.add_argument("assignment_id")
+    reference.add_argument("file", type=Path)
     choice = sub.add_parser("assignment-choice", help="record this assignment's explicit upfront-solution answer")
     choice.add_argument("track_id")
     choice.add_argument("assignment_id")
     choice.add_argument("--solution", choices=("yes", "no"), required=True)
     choice.add_argument("--reason", required=True)
+    choice.add_argument("--new-decision", action="store_true", help="record an explicit later solution choice while preserving earlier answers and references")
     begin = sub.add_parser("begin-implementation", help="record the actual transition to assignment implementation")
     begin.add_argument("track_id")
     begin.add_argument("assignment_id")
@@ -152,6 +161,12 @@ def parser(workspace_default=None):
 
 def execute(args):
     cmd = args.command
+    if cmd == "migration-rehearse":
+        from .migration import rehearse
+        return rehearse(read_json(args.file))
+    if cmd == "migration-status":
+        from .migration import verify_rehearsal
+        return verify_rehearsal(args.stage)
     if cmd == "legacy-status":
         from .legacy import read_snapshot
         return read_snapshot(args.source).status()
@@ -162,6 +177,8 @@ def execute(args):
         return bootstrap(args.source, args.destination, args.name, args.mailbox,
                          read_json(args.preferences) if args.preferences else None, not args.no_git)
     ws = Workspace(args.workspace)
+    if ws.state.get("migration", {}).get("status") == "rehearsed" and cmd not in ("status", "doctor"):
+        raise Invalid("staged migration is inactive; complete explicit checks and activation before study changes")
     if cmd == "check-updates":
         return check_updates(read_json(ws.root / ".invo-learn/active.json")["version"])
     if cmd == "study-update":
@@ -220,6 +237,9 @@ def execute(args):
             return {"status": "rendered"}
         if cmd == "add-course":
             return ws.add_track(args.track_id, args.title, read_json(args.preferences) if args.preferences else None)
+        if cmd == "record-reference":
+            from .reference_solution import save
+            return save(ws, args.track_id, args.assignment_id, read_json(args.file))
         if cmd in ("begin-implementation", "implementation-choice", "record-implementation"):
             from . import implementation
             if cmd == "begin-implementation":
@@ -234,7 +254,7 @@ def execute(args):
             if cmd == "add-assignment":
                 return assignments.add(ws, args.track_id, args.assignment_id, read_json(args.file))
             if cmd == "assignment-choice":
-                return assignments.choose_solution(ws, args.track_id, args.assignment_id, args.solution == "yes", args.reason)
+                return assignments.choose_solution(ws, args.track_id, args.assignment_id, args.solution == "yes", args.reason, args.new_decision)
             return assignments.propose_plan(ws, args.track_id, args.assignment_id, read_json(args.file))
         if cmd == "preferences":
             return ws.set_preferences(args.track, read_json(args.file))

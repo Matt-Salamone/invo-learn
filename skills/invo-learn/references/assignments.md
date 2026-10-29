@@ -38,8 +38,13 @@ python learn.py assignment-choice <course> <assignment> --solution no --reason "
 
 Run only the command matching the answer. Repeating that answer is harmless;
 a conflicting answer requires an explicit new decision preserving exposure
-history. If yes, complete and verify the requested reference before proposing
-a reference-led plan. If no, generate no task-specific completed solution and
+history. When the learner explicitly requests a later change, explain and ask the
+solution question again, wait for the actual answer, then pass `--new-decision`
+with that answer and reason. Prior choices, reference artifacts, issued packets
+and actual help remain in history; do not pretend earlier exposure never occurred.
+A new choice requires a newly proposed/accepted plan, even if its answer matches
+an earlier decision. If yes, read `reference-solutions.md`, complete and verify the requested reference,
+then propose a reference-led plan. If no, generate no task-specific completed solution and
 create no dummy solution revision or placeholder artifact.
 
 ## Requirements-led lessons
