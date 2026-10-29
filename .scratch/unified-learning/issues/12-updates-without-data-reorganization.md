@@ -67,3 +67,20 @@ transport/fault tests do not claim live account permissions or network behavior.
 Accepted S1/component v0.1 and complementary diagrams remain unchanged. Parent
 owns map pointers, final module completeness after ticket 11, release version,
 full integrated validation and the interaction push.
+
+### Windows CI path-alias follow-up
+
+CI run 40931751729 exposed a Windows Python 3.13 failure in scoped private backup:
+valid staged attribute paths were rejected as unsafe when TEMP used an alternate
+Windows path spelling. The installed S1 regression reproduced the exact failure
+using a real GetShortPathNameW alias (with a real junction fallback where needed).
+The ordinary temporary-path control passed. The cause was comparing a raw
+TemporaryDirectory parent against a resolved destination path. Canonicalizing the
+temporary root before constructing the tree fixes the mismatch; the strict
+resolved-destination containment guard is unchanged.
+
+A second installed S1 regression supplies an escaping external Git index path
+and confirms rejection before publication, with original archive bytes unchanged.
+The alias regression was observed red, then green with the one-line normalization
+fix. All 14 maintenance tests passed locally on Windows Python 3.14. The release
+verification owns the subsequent full CI rerun after integration.
