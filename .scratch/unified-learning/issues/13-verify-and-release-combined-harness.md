@@ -1,8 +1,8 @@
 # 13: Verify and release the complete combined public harness
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Run the integrated installed product through all four assignment modes, sequential multi-course study and migration/recovery; finish public documentation and publish a versioned combined distribution only when the full contract passes.
 

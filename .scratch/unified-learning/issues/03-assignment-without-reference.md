@@ -1,8 +1,8 @@
 # 03: Study a course-owned assignment without an upfront solution
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Add an assignment to a course or standalone track, explicitly decline an upfront solution, approve a requirements-grounded plan, take a lesson and ingest its report without any reference-solution record.
 

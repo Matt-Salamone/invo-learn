@@ -1,8 +1,8 @@
 # 05: Choose and complete guided or independent implementation
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** At the transition to implementation, ask a fresh guidance question and either prepare a guided implementation session or record independent implementation progress. The chatbot guides; the learner edits and runs the deliverable.
 

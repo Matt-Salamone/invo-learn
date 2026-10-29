@@ -1,8 +1,8 @@
 # 04: Study an assignment from an explicitly requested verified reference
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Answer yes to the upfront-solution question, save the planner's worked reference with requirement checks, and issue a reference-led lesson whose report retains exact context lineage.
 

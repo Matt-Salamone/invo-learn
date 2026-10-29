@@ -1,8 +1,8 @@
 # 08: Rehearse a lossless combined-workspace import
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Explicitly rehearse importing older course and assignment workspaces into a private staged destination, attaching assignments to their courses and preserving all original material and work without activating the destination.
 

@@ -1,8 +1,8 @@
 # 14: Collect in-progress reports from every checked-out lesson chat
 
-**Status:** needs-info
+**Status:** ready-for-human
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-human (actual learner chat returns are required).
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved. Actual learner chat returns are required.
 
 **What to build:** Before final private cutover, the learner visits every checked-out lesson chat, requests an in-progress report, and returns it to the planning agent. The agent preserves the exact returns privately for the migration gate.
 
@@ -20,4 +20,4 @@ Draft proposal: awaiting approval of the breakdown. Publish after approval as re
 - [ ] Require actual chatbot returns. Do not author substitute learner answers, reconstruct missing assessments as facts or mark unfinished sessions complete.
 - [ ] Save returned reports only in the verified private workspace; this public ticket contains no report contents, private inventory or materials.
 - [ ] Keep the prerequisite unresolved while any checked-out chat's required report is missing. Machine validation and reconciliation are performed by tickets 10 and 15.
-- [ ] After approval, publish this prerequisite as ready-for-human, not as an AFK code task; an implementation agent must wait rather than fabricate completion.
+- [ ] This prerequisite requires actual human chat returns, not an AFK code task; an implementation agent must wait rather than fabricate completion.

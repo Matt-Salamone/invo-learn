@@ -1,8 +1,8 @@
 # 07: Inspect older learning and assignment records through invo-learn
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Use canonical commands to inspect older course/assignment snapshots and returned reports, including solution-revision-based packet associations, without installing old entry points or converting the source workspace.
 

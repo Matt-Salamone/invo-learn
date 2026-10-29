@@ -1,8 +1,8 @@
 # 15: Migrate the private workspaces and retire superseded repositories
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Use the released combined harness to inventory and rehearse the owner's explicitly identified private workspaces, reconcile the actual reports, perform verified cutover into the existing private learning destination, and then retire the superseded repositories and entry points.
 

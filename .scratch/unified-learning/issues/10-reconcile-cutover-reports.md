@@ -1,8 +1,8 @@
 # 10: Gate migration on actual in-progress lesson reports
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Supply actual or synthetic in-progress returns for every checked-out source lesson, reconcile the old checkouts into preserved incomplete history, and report whether the staged destination is eligible for cutover.
 

@@ -1,8 +1,8 @@
 # 06: Turn assignment work into conservative course evidence and reviews
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Return assignment lesson and implementation evidence, then demonstrate the difference between assisted completion, fresh independent understanding and delayed retention in the shared course plan.
 

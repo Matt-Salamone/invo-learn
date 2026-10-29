@@ -1,8 +1,8 @@
 # 01: Install and use the single invo-learn entry point
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Set up a synthetic private learner workspace through the sole invo-learn entry point, then complete the existing course intake, lesson/report and status workflow through that installed interface. Consolidate the named skills and entry points without changing learner layout implicitly.
 

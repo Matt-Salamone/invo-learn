@@ -1,8 +1,8 @@
 # 09: Replace uncertain migration credit with fresh study automatically
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Evaluate rehearsed legacy learning records, retaining justified course evidence while turning ambiguous assignment/objective associations into automatic fresh assessment or relearning needs.
 

@@ -1,8 +1,8 @@
 # 11: Activate, retry and recover an explicitly migrated workspace
 
-**Status:** needs-info
+**Status:** ready-for-agent
 
-Draft proposal: awaiting approval of the breakdown. Publish after approval as ready-for-agent.
+Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
 **What to build:** Activate a rehearsed destination only after evidence projection, report reconciliation and preservation checks pass, then demonstrate safe retries and recovery from a representative interruption.
 
