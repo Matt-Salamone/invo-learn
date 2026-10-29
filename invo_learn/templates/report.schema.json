@@ -11,6 +11,7 @@
     "track_id": {"$ref": "#/$defs/id"},
     "completed_on": {"type": "string", "format": "date"},
     "assignment_context": {"type": "object"},
+    "implementation_progress": {"$ref": "#/$defs/implementation_progress"},
     "session_status": {"enum": ["completed", "in-progress"]},
     "objectives": {"type": "array", "items": {"$ref": "#/$defs/objective"}},
     "misconceptions": {"$ref": "#/$defs/strings"},
@@ -19,6 +20,25 @@
     "suspected_errors": {"type": "array", "items": {"$ref": "#/$defs/error"}}
   },
   "$defs": {
+    "implementation_progress": {
+      "type": "object", "additionalProperties": false,
+      "required": ["deliverables", "checks", "assistance", "limitations"],
+      "properties": {
+        "deliverables": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["deliverable", "status", "evidence"],
+          "properties": {"deliverable": {"type": "string", "minLength": 1}, "status": {"enum": ["not-started", "in-progress", "completed"]}, "evidence": {"type": "string", "minLength": 1}}
+        }},
+        "checks": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["criterion", "result", "method", "evidence"],
+          "properties": {"criterion": {"type": "string", "minLength": 1}, "result": {"enum": ["passed", "failed", "limited"]}, "method": {"type": "string", "minLength": 1}, "evidence": {"type": "string", "minLength": 1}}
+        }},
+        "assistance": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["question", "help", "timing", "objective_ids"],
+          "properties": {"question": {"type": "string", "minLength": 1}, "help": {"type": "string", "minLength": 1}, "timing": {"enum": ["before-answer", "after-answer", "unknown"]}, "objective_ids": {"$ref": "#/$defs/strings"}}
+        }},
+        "limitations": {"$ref": "#/$defs/strings"}
+      }
+    },
     "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"},
     "strings": {"type": "array", "items": {"type": "string", "minLength": 1}},
     "gap": {

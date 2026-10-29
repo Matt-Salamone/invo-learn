@@ -57,6 +57,20 @@ def parser(workspace_default=None):
     choice.add_argument("assignment_id")
     choice.add_argument("--solution", choices=("yes", "no"), required=True)
     choice.add_argument("--reason", required=True)
+    begin = sub.add_parser("begin-implementation", help="record the actual transition to assignment implementation")
+    begin.add_argument("track_id")
+    begin.add_argument("assignment_id")
+    begin.add_argument("--reason", required=True)
+    guidance = sub.add_parser("implementation-choice", help="record the guidance answer at implementation")
+    guidance.add_argument("track_id")
+    guidance.add_argument("assignment_id")
+    guidance.add_argument("--guidance", choices=("yes", "no"), required=True)
+    guidance.add_argument("--reason", required=True)
+    guidance.add_argument("--new-decision", action="store_true", help="explicitly change the answer while retaining earlier choices")
+    progress = sub.add_parser("record-implementation", help="record actual independent deliverable checks without a chatbot checkout")
+    progress.add_argument("track_id")
+    progress.add_argument("assignment_id")
+    progress.add_argument("file", type=Path)
     accept_assignment = sub.add_parser("accept-assignment-plan")
     accept_assignment.add_argument("track_id")
     accept_assignment.add_argument("assignment_id")
@@ -206,6 +220,13 @@ def execute(args):
             return {"status": "rendered"}
         if cmd == "add-course":
             return ws.add_track(args.track_id, args.title, read_json(args.preferences) if args.preferences else None)
+        if cmd in ("begin-implementation", "implementation-choice", "record-implementation"):
+            from . import implementation
+            if cmd == "begin-implementation":
+                return implementation.begin(ws, args.track_id, args.assignment_id, args.reason)
+            if cmd == "implementation-choice":
+                return implementation.choose(ws, args.track_id, args.assignment_id, args.guidance == "yes", args.reason, args.new_decision)
+            return implementation.record_independent(ws, args.track_id, args.assignment_id, read_json(args.file))
         if cmd in ("add-assignment", "assignment-choice", "propose-assignment-plan", "accept-assignment-plan"):
             from . import assignments
             if cmd == "accept-assignment-plan":
