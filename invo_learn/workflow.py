@@ -119,6 +119,8 @@ def plan_decision(ws, tid, spec):
 def work_queue(ws, today):
     from .revisions import context_ready
     queue = []
+    queue.extend(copy.deepcopy(need) for need in ws.state.get("migration", {}).get("reconciliation", {}).get("fresh_study", {}).values()
+                 if need.get("status") == "pending")
     for item in imports(ws):
         if item["outcome"] == "audit-unreadable":
             queue.append({"action": "inspect-import-audit", "import_id": item["import_id"], "reason": item["attempts"][-1]["reason"]})
@@ -156,6 +158,8 @@ def work_queue(ws, today):
         unaccounted = {mid for mid, material in track["materials"].items() if material["role"] == "primary"} - mapped - {g["material_id"] for g in gaps}
         if unaccounted and not any(p["status"] == "pending" for p in track["proposals"].values()):
             queue.append({"action": "propose-map", "track_id": tid, "material_ids": sorted(unaccounted)})
+    from .migration_projection import next_actions as legacy_study_actions
+    queue.extend(legacy_study_actions(ws))
     from .assignments import next_actions
     queue.extend(next_actions(ws))
     for name, outcome in last_outcomes(ws).items():

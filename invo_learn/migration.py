@@ -1,6 +1,8 @@
 """Explicit, private, lossless rehearsals. Activation is a separate operation."""
 import copy
+import contextlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -11,6 +13,24 @@ from .legacy import read_snapshot
 
 
 PRESENTATION = "Presentation override for newly issued lessons: self-contained teaching with no source commentary; retain provenance for explicit requests"
+
+
+@contextlib.contextmanager
+def stage_locked(stage):
+    """Serialize explicit stage mutations outside its workspace inventory."""
+    root = no_links(stage).resolve()
+    path = root / "migration.lock"
+    try:
+        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError as exc:
+        from .contracts import Invalid
+        raise Invalid("migration stage busy; verify no process is running before recovering a stale migration.lock") from exc
+    try:
+        os.write(fd, str(os.getpid()).encode())
+        yield root
+    finally:
+        os.close(fd)
+        path.unlink(missing_ok=True)
 
 
 def origin_key(snapshot):
@@ -153,9 +173,12 @@ def verify_rehearsal(stage, verify_sources=True, verify_workspace=True):
     if verify_workspace:
         require(inventory(stage_path(root, manifest["workspace"])) == manifest["workspace_inventory"],
                 "staged workspace inventory/hash mismatch; inspect staged changes")
+    from .migration_projection import projection_current
+    current_projection = (projection_current(Workspace(stage_path(root, manifest["workspace"])), manifest, root)
+                          if verify_workspace else False)
     return {"status": "verified", "migration_id": manifest["id"], "activated": False,
             "stage": str(root), "workspace": str(stage_path(root, manifest["workspace"])),
-            "destination": manifest["destination"], "manifest": manifest}
+            "destination": manifest["destination"], "manifest": manifest, "projection_current": current_projection}
 
 
 def save_rehearsal(stage, manifest):

@@ -107,14 +107,22 @@ def ingest(ws, obj, lesson, raw_path):
 def qualify(ws, lesson_id, item):
     """Project known/uncertain prior help without editing original assessments."""
     result = copy.deepcopy(item)
-    help_items = [h for r in ws.state.get('supplemental_reports', {}).values()
+    help_items = [(r['report']['report_id'], h) for r in ws.state.get('supplemental_reports', {}).values()
                   if r['lesson_id'] == lesson_id for h in r['report']['assessment_help']
                   if h['objective_id'] == item['objective_id'] and h['timing'] != 'after-answer']
+    qualifications = []
     for attempt in result['assessments']:
-        matches = [h for h in help_items if h['question'] == attempt['question']]
+        matches = [(rid, h) for rid, h in help_items if h['question'] == attempt['question']]
         if matches:
+            details = [attempt['assistance_details']] if attempt['assistance_details'].strip() else []
+            details.extend('Side-chat assistance: ' + h['help'] for _, h in matches)
             attempt.update(independent=False, assistance='answer-revealed',
-                           assistance_details='Side-chat assistance: ' + '; '.join(h['help'] for h in matches))
+                           assistance_details='; '.join(details))
+            qualifications.extend({'source': 'side-chat', 'report_id': rid,
+                'assessment_id': attempt['assessment_id'], 'question': h['question'],
+                'help': h['help'], 'timing': h['timing']} for rid, h in matches)
+    if qualifications:
+        result['assistance_qualifications'] = qualifications
     return result
 
 

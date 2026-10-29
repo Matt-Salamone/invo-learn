@@ -592,7 +592,8 @@ class Workspace:
                 item, dispositions = revisions.effective_item(self, record, original)
                 o["evidence"].append({"report_id": r["report_id"], "lesson_id": r["lesson_id"],
                     "completed_on": r["completed_on"], "mode": lesson["mode"], "invalidated": record["invalidated"],
-                    **copy.deepcopy(original), "dispositions": copy.deepcopy(dispositions)})
+                    **copy.deepcopy(original), "dispositions": copy.deepcopy(dispositions),
+                    "assistance_qualifications": copy.deepcopy(item.get("assistance_qualifications", [])) if item else []})
                 if record["invalidated"]:
                     o["uncertainties"].append(f"{r['report_id']}: withdrawn: {record['invalidation_reason']}")
                     continue
@@ -641,6 +642,8 @@ class Workspace:
         revisions.project_gaps(self, tid, reports)
         from .sidechat import project_coverage
         project_coverage(self, tid)
+        from .migration_projection import project_course_coverage
+        project_course_coverage(self, tid)
 
     def set_policy(self, intervals):
         require(isinstance(intervals, list) and intervals and all(type(x) is int and x > 0 for x in intervals)
@@ -658,6 +661,7 @@ class Workspace:
             tracks[tid] = {"title": t["title"], "active": t["active"], "preferences": self.effective_preferences(tid),
                            "materials": t["materials"], "objectives": t["objectives"], "source_gaps": t.get("source_gaps", []),
                            "assignments": copy.deepcopy(t.get("assignments", {})),
+                           "legacy_evidence": copy.deepcopy(t.get("legacy_evidence", [])),
                            "pending_maps": [pid for pid, p in t["proposals"].items() if p["status"] == "pending"],
                            "overrides": t["overrides"], "source_sections": t.get("source_sections", []),
                            "section_inventory": t.get("section_inventory", []), "unscoped_notes": t.get("unscoped_notes", []),

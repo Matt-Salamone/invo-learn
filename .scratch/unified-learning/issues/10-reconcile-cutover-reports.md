@@ -1,6 +1,6 @@
 # 10: Gate migration on actual in-progress lesson reports
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -16,10 +16,16 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] Inventory all checked-out sessions and offer collecting in-progress reports. Missing returns block final cutover unless an explicit recorded loss-acceptance waiver covers those checkouts. The owner supplied that waiver for their cutover on October 29, 2026 (ticket 14).
-- [ ] Save exact returned reports and verify original packet/context associations before resolving pending checkouts.
-- [ ] Retire reconciled legacy checkouts without pretending unfinished lessons are complete; retain their progress for later resumption through one pending slot.
-- [ ] Duplicate reports/reconciliation retries are idempotent. Valid late returns remain readable without reopening multiple pending sessions.
-- [ ] A malformed return or broken association cannot be replaced with fabricated evidence; report an actionable integrity problem and preserve sources.
-- [ ] Verify eligible, missing-report, invalid-association and retry journeys through installed S1 commands; use only synthetic returns in public tests.
-- [ ] Verify waiver-driven retirement with no synthetic learner evidence: preserve existing observations/artifacts, keep sessions incomplete, and schedule fresh checks/relearning for uncertain progress. An explicit waiver does not bypass altered-file or broken-report integrity failures.
+- [x] Inventory all checked-out sessions and offer collecting in-progress reports. Missing returns block final cutover unless an explicit recorded loss-acceptance waiver covers those checkouts. The owner supplied that waiver for their cutover on October 29, 2026 (ticket 14).
+- [x] Save exact returned reports and verify original packet/context associations before resolving pending checkouts.
+- [x] Retire reconciled legacy checkouts without pretending unfinished lessons are complete; retain their progress for later resumption through one pending slot.
+- [x] Duplicate reports/reconciliation retries are idempotent. Valid late returns remain readable without reopening multiple pending sessions.
+- [x] A malformed return or broken association cannot be replaced with fabricated evidence; report an actionable integrity problem and preserve sources.
+- [x] Verify eligible, missing-report, invalid-association and retry journeys through installed S1 commands; use only synthetic returns in public tests.
+- [x] Verify waiver-driven retirement with no synthetic learner evidence: preserve existing observations/artifacts, keep sessions incomplete, and schedule fresh checks/relearning for uncertain progress. An explicit waiver does not bypass altered-file or broken-report integrity failures.
+
+## Answer
+
+Implemented installed migration-checkouts and migration-reconcile operations with a shared stage lock outside the canonical workspace inventory. All original prepared/outstanding sessions are inventoried. Exact actual returns are archived privately, checked against immutable source contexts, and reconciled with conservative incomplete-session inference. Explicit per-checkout loss-acceptance waivers retire missing-return sessions incomplete, preserve prior observations, add no evidence, and schedule fresh checks/relearning. Invalid/malformed/canonically conflicting returns are retained and block waivers until an actual linked repair; valid late returns remain historical and never reopen checkouts. See docs/user/migration.md and invo_learn/migration_reconciliation.py.
+
+Validation: 9 installed reconciliation journeys and 8 legacy-reader regression tests pass against the merged integration tip. Cases include missing-return gates, exact partial reports, explicit empty partials without invented observations, duplicate retries, loss-acceptance preservation and fresh-study actions, late returns, separate supplements, malformed and wrong associations, evidence-backed repairs, canonical report conflicts and competing writer refusal. Reused accepted S1/component v0.1, timing v0.3 and pending v0.2 decisions. No actual learner inputs were used. Reconciliation eligibility satisfies only its report/waiver gate; projection, integrity and activation remain separate checks.

@@ -246,8 +246,11 @@ class LegacySnapshot:
         if self.kind == "course":
             validate_course_report(report, packet, today or report.get("completed_on"))
             return
-        require(isinstance(report.get("observations"), list) and report["observations"],
-                "legacy main report needs actual observations")
+        require(report.get("session_status", "in-progress") in ("in-progress", "completed"),
+                "invalid legacy session_status")
+        require(isinstance(report.get("observations"), list)
+                and (report["observations"] or report.get("session_status") == "in-progress"),
+                "legacy main report needs actual observations or an explicitly empty in-progress return")
         for observation in report["observations"]:
             require(isinstance(observation, dict), "observation must be an object")
             for field in ("criterion", "question", "learner_response", "assistance"):

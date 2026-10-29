@@ -12,6 +12,22 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [09](issues/09-conservative-legacy-evidence.md#answer): preserved legacy
+  observations earn no unsupported mastery; uncertain associations schedule fresh
+  demonstration or relearning, while compatible course progress stays intact.
+  Implementation `f3c14e3` / `7e40a2d`; projection, reconciliation, rehearsal and
+  evidence checks plus the worked example passed. Ticket 13 must link advisory
+  needs to planner-selected packets and close them only from actual fresh evidence.
+- [10](issues/10-reconcile-cutover-reports.md#answer): source checkouts require
+  exact actual returns or explicit lost-progress waivers; reconciliation preserves
+  incomplete history and does not itself authorize activation. Implementation
+  `f911426`; nine reconciliation and eight legacy checks passed. Shared stage
+  locking is `5d8ce83`; evidence projection remains ticket 09's separate gate.
+- [06](issues/06-shared-assignment-evidence.md#answer): shared course evidence
+  qualifies task-specific implementation and side-chat help using actual timing,
+  preserving raw attempts and separate fresh assessment/review outcomes.
+  Implementation `7cfc9f3`; five evidence and seven reference checks passed after
+  integration, alongside 28 related checks and the worked example.
 - [04](issues/04-verified-reference-path.md#answer): an explicit reference
   request requires saved verification before planning; selected solution context
   retains immutable revision lineage and composes with implementation guidance.
