@@ -31,6 +31,10 @@ def parser(workspace_default=None):
     legacy_report = sub.add_parser("legacy-report", help="inspect an older returned report against its exact issued packet")
     legacy_report.add_argument("source", type=Path)
     legacy_report.add_argument("file", type=Path)
+    migration = sub.add_parser("migration-rehearse", help="explicitly preserve and stage a combined private workspace; never activate")
+    migration.add_argument("file", type=Path)
+    migration_status = sub.add_parser("migration-status", help="verify a preserved rehearsal without activating it")
+    migration_status.add_argument("stage", type=Path)
     sub.add_parser("doctor", help="offline integrity, recovery queue and last operation outcomes")
     sub.add_parser("check-updates", help="read-only GitHub version check; never installs an update")
     su = sub.add_parser("study-update", help="automatically install a compatible trusted release unless opted out")
@@ -138,6 +142,12 @@ def parser(workspace_default=None):
 
 def execute(args):
     cmd = args.command
+    if cmd == "migration-rehearse":
+        from .migration import rehearse
+        return rehearse(read_json(args.file))
+    if cmd == "migration-status":
+        from .migration import verify_rehearsal
+        return verify_rehearsal(args.stage)
     if cmd == "legacy-status":
         from .legacy import read_snapshot
         return read_snapshot(args.source).status()
@@ -148,6 +158,8 @@ def execute(args):
         return bootstrap(args.source, args.destination, args.name, args.mailbox,
                          read_json(args.preferences) if args.preferences else None, not args.no_git)
     ws = Workspace(args.workspace)
+    if ws.state.get("migration", {}).get("status") == "rehearsed" and cmd not in ("status", "doctor"):
+        raise Invalid("staged migration is inactive; complete explicit checks and activation before study changes")
     if cmd == "check-updates":
         return check_updates(read_json(ws.root / ".invo-learn/active.json")["version"])
     if cmd == "study-update":
