@@ -12,6 +12,9 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [01](issues/01-canonical-entry-point.md): installed setup, intake, study and
+  maintenance share the sole invo-learn entry point. Implementation `a159d2c`;
+  all 106 tests and the worked example passed before integration.
 - Baseline: all 105 existing tests passed before implementation. Local PlantUML
   1.2024.8 regenerated the accepted component view and its preview was inspected.
 - [14](issues/14-collect-checked-out-chat-reports.md): owner reminded to obtain
