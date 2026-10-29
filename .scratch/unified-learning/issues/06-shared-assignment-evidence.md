@@ -43,3 +43,7 @@ Five implementation, six supplemental and seventeen quality/recovery regressions
 plus the worked example also passed. Accepted component v0.1, timing v0.3 and
 pending-boundary v0.2 continue to cover the seam. These tests validate conservative
 bookkeeping, not the honesty or quality of actual learner/chatbot judgments.
+
+After merging the reference-path and migration-rehearsal integration tip, all
+five evidence journeys and seven reference-solution journeys also passed,
+including reference-led guided and independent implementation.
