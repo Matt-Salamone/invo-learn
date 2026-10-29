@@ -236,3 +236,22 @@ Ordinary older course packets remain readable without that field. Assignment
 requirements, plan snapshots and deliverable completion remain separate from
 course objectives and their evidence/review projection. The canonical skill's
 internal assignments reference documents the command input shapes and decisions.
+
+## Verified assignment references
+
+`record-reference` saves a requested planner reference as an immutable revision,
+including artifact bytes/hashes, actual check methods/results and limitations.
+Checks identify the exact assignment requirements/deliverables/criteria they
+cover and map artifact IDs to checked hashes. Verification is derived from full
+coverage and passing results; missing/failed/not-run checks cannot qualify it.
+The helper preserves attestations; the agent must perform the actual checks.
+
+Reference-led plan lessons select `reference_sections` (exact named UTF-8 line
+excerpts), and each plan pins the reference ID/revision/hash. Packet preflight
+counts selected excerpts and limitations; complete solution artifacts are not
+automatically uploaded. assignment_context.reference additionally identifies
+the selected section hashes. A new reference produces a new plan lineage even
+for unchanged lesson specs. Original artifacts, issued packets and reports remain
+unchanged. Superseded first returns require existing objective-specific relevance
+review before adding credit. No-reference lessons retain their absent optional
+reference fields and continue to require no solution artifact or revision.

@@ -56,11 +56,16 @@ def parser(workspace_default=None):
         operation.add_argument("track_id")
         operation.add_argument("assignment_id")
         operation.add_argument("file", type=Path)
+    reference = sub.add_parser("record-reference", help="preserve an explicitly requested reference and actual requirement checks")
+    reference.add_argument("track_id")
+    reference.add_argument("assignment_id")
+    reference.add_argument("file", type=Path)
     choice = sub.add_parser("assignment-choice", help="record this assignment's explicit upfront-solution answer")
     choice.add_argument("track_id")
     choice.add_argument("assignment_id")
     choice.add_argument("--solution", choices=("yes", "no"), required=True)
     choice.add_argument("--reason", required=True)
+    choice.add_argument("--new-decision", action="store_true", help="record an explicit later solution choice while preserving earlier answers and references")
     begin = sub.add_parser("begin-implementation", help="record the actual transition to assignment implementation")
     begin.add_argument("track_id")
     begin.add_argument("assignment_id")
@@ -232,6 +237,9 @@ def execute(args):
             return {"status": "rendered"}
         if cmd == "add-course":
             return ws.add_track(args.track_id, args.title, read_json(args.preferences) if args.preferences else None)
+        if cmd == "record-reference":
+            from .reference_solution import save
+            return save(ws, args.track_id, args.assignment_id, read_json(args.file))
         if cmd in ("begin-implementation", "implementation-choice", "record-implementation"):
             from . import implementation
             if cmd == "begin-implementation":
@@ -246,7 +254,7 @@ def execute(args):
             if cmd == "add-assignment":
                 return assignments.add(ws, args.track_id, args.assignment_id, read_json(args.file))
             if cmd == "assignment-choice":
-                return assignments.choose_solution(ws, args.track_id, args.assignment_id, args.solution == "yes", args.reason)
+                return assignments.choose_solution(ws, args.track_id, args.assignment_id, args.solution == "yes", args.reason, args.new_decision)
             return assignments.propose_plan(ws, args.track_id, args.assignment_id, read_json(args.file))
         if cmd == "preferences":
             return ws.set_preferences(args.track, read_json(args.file))

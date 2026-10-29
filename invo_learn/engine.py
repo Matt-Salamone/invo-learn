@@ -413,7 +413,7 @@ class Workspace:
         if corrections:
             text += "\n\n## Verified teaching corrections (apply in revision order)\n\n" + corrections
         text += "\n\n## Packet quality and limitations\n\n" + json.dumps(preflight, indent=2, ensure_ascii=False)
-        (packet / "START-HERE.md").write_text(text + "\n", encoding="utf-8")
+        atomic_bytes(packet / "START-HERE.md", (text + "\n").encode("utf-8"))
         shutil.copyfile(Path(__file__).parent / "templates" / "report.schema.json", packet / "report.schema.json")
         atomic(packet / "report-template.json", quality.report_template(lesson))
         files = [{"name": p.name, "bytes": p.stat().st_size, "sha256": digest(p.read_bytes())} for p in sorted(packet.iterdir())]
