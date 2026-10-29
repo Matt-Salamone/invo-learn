@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.8.0
+
+One invo-learn entry point now covers course study and course-owned assignments.
+Ask separately about a verified reference before planning and implementation
+guidance at the implementation transition. Guided work uses the shared handoff;
+independent implementation uses no checkout. Partial main returns release the
+one workspace-wide slot while preserving incomplete work. Completion, actual
+assistance, understanding and delayed retention remain separate records.
+
+Explicit migration preserves older course and assignment histories, reconciles
+actual returns or recorded lost-progress waivers, projects only justified legacy
+coverage, and stages a recoverable activation. Normal ingest preserves late old
+returns without new credit or reopening a checkout. Planner-linked fresh study
+can complete migration needs; withdrawals and actual prior help can reopen them.
+Routine compatible updates preserve learner data and never perform this migration.
+
+New public package text uses canonical LF bytes across source archives and
+Windows checkouts. Existing installed releases, learner originals, report bytes
+and issued packets remain immutable. Required runtime modules are checked before
+installation. Portable synthetic verification covers the combined workflow;
+it does not establish chatbot teaching quality or actual learner independence.
+
 ## 0.7.0
 
 Coding lesson specs supply a neutral syntax reference, preserved under the exact

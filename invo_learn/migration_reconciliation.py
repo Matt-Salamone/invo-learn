@@ -59,7 +59,9 @@ def _summary(ledger):
         if record["status"] != "associated" and not record.get("repaired_by")]
     missing = [sid for sid, session in ledger["sessions"].items() if session["resolution"] is None]
     eligible = not missing and not ledger["integrity_problems"]
-    ledger.update(status="reconciled" if eligible else "blocked", eligible=eligible, missing=missing, reminder=REMINDER)
+    reminder = (REMINDER if missing else "Resolve the recorded integrity problems before activation."
+                if ledger["integrity_problems"] else "All inventoried checkouts are resolved. Continue with projection and activation; recorded waivers require fresh study.")
+    ledger.update(status="reconciled" if eligible else "blocked", eligible=eligible, missing=missing, reminder=reminder)
     return ledger
 
 

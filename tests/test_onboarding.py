@@ -53,7 +53,7 @@ class OnboardingTests(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in self.base.iterdir()),
                          ["Desktop", "learning", "preferences.json"])
         skill_file = self.root / ".agents/skills/invo-learn/SKILL.md"
-        self.assertEqual(skill_file.read_bytes(), (PUBLIC / "skills/invo-learn/SKILL.md").read_bytes())
+        self.assertEqual(skill_file.read_bytes(), (PUBLIC / "skills/invo-learn/SKILL.md").read_bytes().replace(b"\r\n", b"\n"))
         self.assertEqual(sorted(p.name for p in (self.root / ".agents/skills").iterdir()), ["invo-learn"])
         self.assertEqual(sorted(p.name for p in (self.root / ".invo-learn/releases" / active["version"] / "skills").iterdir()), ["invo-learn"])
         self.assertIn(str(mailbox), (self.root / "START-HERE.md").read_text())

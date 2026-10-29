@@ -1,6 +1,6 @@
 # 13: Verify and release the complete combined public harness
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 

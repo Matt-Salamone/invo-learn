@@ -333,13 +333,15 @@ class Workspace:
     def prepare(self, tid, spec, today, replace_lesson=None, decision=None):
         t = self.track(tid)
         date(today)
-        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"), ("quality_review", "coding", "syntax_cheatsheet", "assignment"))
+        fields(spec, ("objective_ids", "mode", "context", "attachments", "supplemental_context"), ("quality_review", "coding", "syntax_cheatsheet", "assignment", "legacy_study_links"))
+        from .migration_study import validate_links
         original_spec = copy.deepcopy(spec)
         from .assignments import prepare_context
         spec, assignment_context = prepare_context(self, tid, spec)
         strings(spec["objective_ids"], "objective_ids")
         require(spec["objective_ids"] and len(set(spec["objective_ids"])) == len(spec["objective_ids"]), "unique lesson objectives required")
         require(set(spec["objective_ids"]) <= t["objectives"].keys(), "lesson requires accepted map objectives")
+        study_links = validate_links(self, tid, spec)
         for oid in spec["objective_ids"]:
             require(all(t["materials"][r["material_id"]]["status"] == "usable" for r in t["objectives"][oid]["sources"]),
                     "assigned objective has unreadable sources; inspect or transform with permission first")
@@ -389,6 +391,8 @@ class Workspace:
                   "preferences": copy.deepcopy(self.effective_preferences(tid)),
                   "objective_snapshot": objectives, "staged_files": {}, "content_revision": t.get("content_revision", 0),
                   "preflight": preflight}
+        if study_links:
+            lesson["legacy_study_links"] = study_links
         if assignment_context is not None:
             lesson["assignment_context"] = assignment_context
         source_lines = []
@@ -427,6 +431,9 @@ class Workspace:
         if replace_lesson:
             self.state["lessons"][replace_lesson].update(status="abandoned", abandonment_reason=decision, replaced_by=lid)
         self.state["lessons"][lid] = lesson
+        if study_links:
+            from .migration_study import recompute as recompute_study
+            recompute_study(self, tid)
         self.state["active_lesson"] = lid
         self.save("lesson-prepared", {"lesson_id": lid})
         self.stage(lid, box)
@@ -649,6 +656,8 @@ class Workspace:
         project_coverage(self, tid)
         from .migration_projection import project_course_coverage
         project_course_coverage(self, tid)
+        from .migration_study import recompute as recompute_study
+        recompute_study(self, tid)
 
     def set_policy(self, intervals):
         require(isinstance(intervals, list) and intervals and all(type(x) is int and x > 0 for x in intervals)
@@ -681,7 +690,9 @@ class Workspace:
         queue = workflow.work_queue(self, today)
         next_action = queue[0] if queue else ({"action": "review-due-objective", **sorted(due, key=lambda r: r["due_on"])[0]}
                                             if due else {"action": "choose-next-lesson" if tracks else "add-course"})
-        return {"learner": self.state["profile"], "mailbox": self.state["mailbox"], "tracks": tracks, "due_reviews": sorted(due, key=lambda r: (r["due_on"], r["track_id"], r["objective_id"])),
+        from .migration_study import needs as migration_study_needs
+        return {"migration_study_needs": copy.deepcopy(migration_study_needs(self)),
+                "learner": self.state["profile"], "mailbox": self.state["mailbox"], "tracks": tracks, "due_reviews": sorted(due, key=lambda r: (r["due_on"], r["track_id"], r["objective_id"])),
                 "historical_reports": {rid: {key: saved.get(key) for key in ("path", "raw_path", "origin_key", "context", "credit_applied")}
                                        for rid, saved in self.state.get("historical_reports", {}).items()},
                 "active_lesson": self.state["active_lesson"],
