@@ -5,11 +5,11 @@ examples. Real learner data belongs in an independent private workspace, never
 in this checkout or a public fork.
 
 For a request to set up study using this repository, read
-`skills/invo-learn-setup/SKILL.md` and follow it. For implementation, read
+`skills/invo-learn/SKILL.md` and follow its setup reference. For implementation, read
 `docs/design/build-prompt.md` and `docs/design/requirements.md`.
 Setup gives learners one workspace using a temporary source download; it must
 explain choices, ask one question at a time, and wait for answers. Course setup
-and later uploads use the add-course and add-materials skills and the same mailbox
+and later uploads use the invo-learn course and material operations and the same mailbox
 as lesson handoffs. Requests to improve the harness are development, not learner setup.
 
 The runtime uses Python's standard library (3.10+). Verify changes with

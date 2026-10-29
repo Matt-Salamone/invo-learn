@@ -1,8 +1,3 @@
----
-name: invo-learn-setup
-description: Guide initial invo-learn setup with explained, one-question-at-a-time choices and install one learner workspace without a public source clone.
----
-
 # Set up one learning workspace
 
 Read the public README and docs/user/guide.md at
@@ -116,7 +111,7 @@ handles filing; the learner only exchanges files via the mailbox and reports via
 
 ## First course
 
-Continue with `.agents/skills/invo-learn-add-course/SKILL.md`. Reuse a supplied
+Continue with `.agents/skills/invo-learn/references/add-course.md`. Reuse a supplied
 course name/materials; otherwise ask only "What course or skill would you like to
 add first?" and wait. Do not leave the learner with only a list of CLI commands
 or upload instructions without an actual course/material destination.
@@ -124,7 +119,7 @@ or upload instructions without an actual course/material destination.
 ## End-of-interaction synchronization
 
 When this interaction changes learner-workspace files, follow its AGENTS.md and
-the active invo-learn skill's commit/push instructions before the final response.
+the active invo-learn commit/push instructions before the final response.
 This includes stopping to wait for an onboarding answer after saving records.
 Keep learner data in the verified private workspace and preserve explicit backup
 opt-outs; a missing remote leaves a local commit with an explained push limitation.

@@ -1,15 +1,10 @@
----
-name: invo-learn-add-materials
-description: Receive first or additional course resources through the invo-learn mailbox, preserve originals, and propose coverage changes for learner review without losing existing progress.
----
-
 # Receive course materials
 
 Work in the learner workspace. Read AGENTS.md, state.json, OVERVIEW.md, the selected
 course's plan.md and `python learn.py status`. If the course is ambiguous, ask
 which course these resources belong to and wait. Reuse the selected existing
 course; do not create another course or repeat its preference interview.
-For a new course, use `../invo-learn-add-course/SKILL.md` first.
+For a new course, use `add-course.md` first.
 
 Ask **one question per turn**, explain unfamiliar choices, and **stop and wait**
 where a learner answer is needed. Already supplied answers/files count; silence does not.
@@ -87,7 +82,7 @@ this same "add materials to <course>" → mailbox → "materials ready" process.
 ## End-of-interaction synchronization
 
 When this interaction changes learner-workspace files, follow its AGENTS.md and
-the active invo-learn skill's commit/push instructions before the final response.
+the active invo-learn commit/push instructions before the final response.
 This includes stopping to wait for an onboarding answer after saving records.
 Keep learner data in the verified private workspace and preserve explicit backup
 opt-outs; a missing remote leaves a local commit with an explained push limitation.

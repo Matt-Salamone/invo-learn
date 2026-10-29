@@ -38,7 +38,7 @@ def parser(workspace_default=None):
     bc.add_argument("--remote", default="origin")
     bc.add_argument("--repository", required=True, help="learner-owned OWNER/REPO, never the public harness")
     sub.add_parser("render", help="regenerate inspectable overview and coverage files")
-    t = sub.add_parser("add-course", aliases=["add-track"], help="add a course or other learning track")
+    t = sub.add_parser("add-course", help="add a course or other learning track")
     t.add_argument("track_id")
     t.add_argument("--title", required=True)
     t.add_argument("--preferences", type=Path)
@@ -176,7 +176,7 @@ def execute(args):
         if cmd == "render":
             ws.render()
             return {"status": "rendered"}
-        if cmd in ("add-course", "add-track"):
+        if cmd == "add-course":
             return ws.add_track(args.track_id, args.title, read_json(args.preferences) if args.preferences else None)
         if cmd == "preferences":
             return ws.set_preferences(args.track, read_json(args.file))

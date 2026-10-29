@@ -36,10 +36,9 @@ This repository holds private learner records and source materials. Never publis
 copy its data to the public harness repository, or add a public remote. A local Git
 repository is sufficient. Only create a hosted private remote on explicit request.
 
-Read `.agents/skills/invo-learn-add-course/SKILL.md` to add a course or skill.
-Read `.agents/skills/invo-learn-add-materials/SKILL.md` for first or later uploads.
-Read `.agents/skills/invo-learn/SKILL.md` for study work and pasted chatbot reports.
-Read `.agents/skills/invo-learn-update/SKILL.md` before lessons and for update recovery.
+Read `.agents/skills/invo-learn/SKILL.md` for setup, course and material intake,
+study work, pasted chatbot reports, and maintenance. It links internal operation
+instructions inside its references directory.
 The study skill automatically updates before lessons and backs up completed work
 unless preferences opt out. A private remote must be verified and explicitly bound.
 Any agent host can read those files directly; discovery does not depend on a plugin.
@@ -104,8 +103,8 @@ def package(source):
                      "invo_learn/contracts.py", "invo_learn/templates/chatbot.md",
                      "invo_learn/quality.py", "invo_learn/revisions.py", "invo_learn/workflow.py", "invo_learn/coverage.py",
                      "invo_learn/templates/report.schema.json", "skills/invo-learn/SKILL.md",
-                     "skills/invo-learn-setup/SKILL.md", "skills/invo-learn-update/SKILL.md",
-                     "skills/invo-learn-add-course/SKILL.md", "skills/invo-learn-add-materials/SKILL.md",
+                     "skills/invo-learn/references/setup.md", "skills/invo-learn/references/update.md",
+                     "skills/invo-learn/references/add-course.md", "skills/invo-learn/references/add-materials.md",
                      "docs/user/guide.md"):
         require(expected in files, f"incomplete harness package: {expected}")
     hashes = {name: digest(data) for name, data in files.items()}

@@ -1,9 +1,17 @@
 ---
 name: invo-learn
-description: Plan source-grounded learning tracks, stage manual chatbot lessons or spaced reviews, and ingest pasted invo-learn reports into a private learner workspace.
+description: Set up and maintain one private learning workspace, add courses and materials, plan lessons and assignments, stage chatbot handoffs, and ingest returned reports.
 ---
 
-# Plan, hand off, and record learning
+# invo-learn
+
+Use this single entry point for the whole learning workflow. For first setup,
+read `references/setup.md` before creating learner files. It explains defaults,
+asks one question per turn, and waits for each answer. For an existing workspace,
+continue below. For a new course read `references/add-course.md`; for first or
+later uploads read `references/add-materials.md`. For automatic updates, explicit
+upgrades or recovery read `references/update.md`. These are internal operation
+instructions, not separately invoked skills.
 
 Work from the private workspace root. Read AGENTS.md, state.json, OVERVIEW.md and
 all active tracks' plan.md files. `python learn.py status` lists inherited
@@ -22,8 +30,8 @@ its health result does not establish teaching quality or fresh remote status.
 
 ## New or changed tracks
 
-Use `../invo-learn-add-course/SKILL.md` for a new course or skill and
-`../invo-learn-add-materials/SKILL.md` for first or additional resources. Explain
+Use `references/add-course.md` for a new course or skill and
+`references/add-materials.md` for first or additional resources. Explain
 each unfamiliar choice, ask one question per turn, and stop and wait for an answer.
 Reuse existing courses and preferences when receiving later uploads. The mailbox
 is the shared interface for resources, lesson packets, and returned reports;
@@ -59,10 +67,10 @@ a standalone permitted syntax reference in the packet and mailbox.
 Before preparing a lesson/review, save and ingest every returned report FIRST,
 update its records and plan, then finish the report backup below. Inspect the
 mailbox for reports/resources before updating or staging. Read
-`../invo-learn-update/SKILL.md` and run `python learn.py study-update --track <id>`.
+`references/update.md` and run `python learn.py study-update --track <id>`.
 The default automatically installs a newer compatible trusted release without a
 separate request each time. Honor auto_update=false. After activation, reread the
-new active study/update skills and templates before writing or regenerating the
+new active invo-learn instructions and templates before writing or regenerating the
 lesson spec. prepare also checks automatically and runs newly active code in a
 fresh interpreter. Offline, incompatible or safely failed updates leave study
 available; explain the actual result and never call an unverified version current.
@@ -161,7 +169,7 @@ Hints cannot earn independence; retention requires cold delayed review. Keep
 footer text outside report JSON; the planning agent remains the durable authority.
 
 Before preparing/restaging, inspect the mailbox for new course resources and
-returned reports. Register new resources via the add-materials skill and ingest
+returned reports. Register new resources via the material-intake operation and ingest
 reports first. Ask about ambiguous files rather than silently archiving unprocessed
 uploads. Snapshots are recovery copies, not evidence that intake was completed.
 
