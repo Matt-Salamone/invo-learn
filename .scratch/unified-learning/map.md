@@ -12,6 +12,11 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [12](issues/12-updates-without-data-reorganization.md#answer): compatible
+  maintenance preserves records and portable Git bytes; layout changes require
+  explicit migration and managed guidance respects customization. Implementation
+  `60512ca`; 90 targeted checks, the worked example and an actual 0.7 upgrade /
+  autocrlf clone smoke check passed. Release packaging must include ticket 11.
 - [09](issues/09-conservative-legacy-evidence.md#answer): preserved legacy
   observations earn no unsupported mastery; uncertain associations schedule fresh
   demonstration or relearning, while compatible course progress stays intact.
