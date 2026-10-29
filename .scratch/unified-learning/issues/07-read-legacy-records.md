@@ -1,6 +1,6 @@
 # 07: Inspect older learning and assignment records through invo-learn
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -16,8 +16,15 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] Read the supported historical course and assignment record/report forms using synthetic fixtures representative of the existing formats.
-- [ ] Return useful status, original identifiers, context associations and provenance without rewriting source bytes or creating learner progress.
-- [ ] Resolve reports to exact original packets/revisions, retaining raw malformed or unresolved input for diagnosis; broken associations are never silently guessed.
-- [ ] Do not require compatibility wrappers or old skill/command names.
-- [ ] Verify read-only status/report inspection through S1 with before/after source hashes and installed commands.
+- [x] Read the supported historical course and assignment record/report forms using synthetic fixtures representative of the existing formats.
+- [x] Return useful status, original identifiers, context associations and provenance without rewriting source bytes or creating learner progress.
+- [x] Resolve reports to exact original packets/revisions, retaining raw malformed or unresolved input for diagnosis; broken associations are never silently guessed.
+- [x] Do not require compatibility wrappers or old skill/command names.
+- [x] Verify read-only status/report inspection through S1 with before/after source hashes and installed commands.
+
+
+## Answer
+
+Implemented original read-only readers in invo_learn/legacy.py and installed canonical legacy-status/legacy-report commands. They retain source identity and available origin commit, resolve exact historical packet/revision associations, validate known artifacts and hashes, and diagnose malformed, unresolved or invalid returns without modifying source records or adding progress. See docs/user/legacy-records.md.
+
+Validation: python -m unittest discover -s tests -p test_legacy.py -v — 8 installed S1 tests pass, including before/after filesystem hashes, course fenced main returns, both supplemental forms, old solution revisions, wrong identifiers, malformed returns and missing/damaged packet originals. Reused accepted component v0.1 / S1 and complementary timing v0.3 and pending v0.2 views. No legacy helper code copied; no learner data used.
