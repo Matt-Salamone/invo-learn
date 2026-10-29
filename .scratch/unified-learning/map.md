@@ -12,6 +12,11 @@ learner reports, inventories and migration results remain private.
 
 ## Decisions-so-far
 
+- [06](issues/06-shared-assignment-evidence.md#answer): shared course evidence
+  qualifies task-specific implementation and side-chat help using actual timing,
+  preserving raw attempts and separate fresh assessment/review outcomes.
+  Implementation `7cfc9f3`; five evidence and seven reference checks passed after
+  integration, alongside 28 related checks and the worked example.
 - [04](issues/04-verified-reference-path.md#answer): an explicit reference
   request requires saved verification before planning; selected solution context
   retains immutable revision lineage and composes with implementation guidance.
