@@ -362,22 +362,24 @@ class QualityRecoveryJourneys(unittest.TestCase):
             "sources": [{"material_id": material["id"], "locator": "line 1"}], "prerequisites": [], "scope": "included", "reason": ""}]}
         proposed = self.run_cli("propose-map", "other", self.write(mapping))
         self.run_cli("accept-map", "other", proposed["proposal_id"], "--approval", "Synthetic other-course approval")
-        other = self.run_cli("prepare", "other", self.write(self.lesson_spec(["other-objective"])))
-        other_packet = self.root / "lessons" / other["lesson_id"] / "packet/START-HERE.md"
-        other_original = other_packet.read_bytes()
+        self.run_cli("prepare", "other", self.write(self.lesson_spec(["other-objective"])), ok=False)
         queued = {q["lesson_id"] for q in self.status()["work_queue"] if q["action"] == "return-report"}
-        self.assertEqual(queued, {old["lesson_id"], other["lesson_id"]})
+        self.assertEqual(queued, {old["lesson_id"]})
         bad = self.lesson_spec()
         bad["objective_ids"] = ["missing"]
         self.run_cli("replace", old["lesson_id"], self.write(bad), "--reason", "Learner requests replacement", ok=False)
-        self.assertEqual(self.status()["active_lesson"], other["lesson_id"])
+        self.assertEqual(self.status()["active_lesson"], old["lesson_id"])
         replacement = self.run_cli("replace", old["lesson_id"], self.write(self.lesson_spec()), "--reason", "Learner explicitly requests a shorter packet")
         self.assertEqual(path.read_bytes(), original)
+        self.run_cli("abandon", replacement["lesson_id"], "--reason", "Learner explicitly switches to the other course")
+        other = self.run_cli("prepare", "other", self.write(self.lesson_spec(["other-objective"])))
+        other_packet = self.root / "lessons" / other["lesson_id"] / "packet/START-HERE.md"
+        other_original = other_packet.read_bytes()
         late = self.run_cli("ingest", self.write(self.report(old)))
         self.assertEqual(late["status"], "needs-review")
         choices = {oid: {"status": "retained", "reason": "Question and objective still applicable"} for oid in ("balance", "solve")}
         self.run_cli("review-import", late["import_id"], self.write(choices))
-        self.assertEqual(self.status()["active_lesson"], replacement["lesson_id"])
+        self.assertEqual(self.status()["active_lesson"], other["lesson_id"])
         self.assertEqual(self.status()["next_action"]["action"], "return-report")
         self.assertEqual(self.status()["pending_lessons"]["other"], [other["lesson_id"]])
         self.assertEqual(other_packet.read_bytes(), other_original)

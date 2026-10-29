@@ -203,3 +203,17 @@ omits that field. prepare stages `syntax-cheatsheet.md` under that exact name,
 accounts for its bytes in preflight and preserves/restages its digest with the
 packet. Legacy specs without the new fields retain their behavior. See
 [coding lesson syntax references](syntax-references.md) for authoring and assessment rules.
+
+## Interrupted main sessions
+
+New main reports may include `session_status`, either `completed` or `in-progress`.
+Omission preserves the older report meaning (`completed`). The existing
+`completed_on` field remains the actual local date of the report; it does not
+assert the whole lesson was finished. In-progress reports include every assigned
+objective, using unassessed/uncertain with empty assessments where no work was
+evaluated. They release the workspace pending slot and leave the lesson `paused`.
+Independent evaluated work may support understanding even in a partial session;
+completion and delayed retention remain separate. A future packet resumes study.
+One accepted main report per original packet remains the contract; repairs retain
+originals and use the existing import-repair audit. Late first returns for retired
+packets are archived and quarantined for relevance review before progress changes.

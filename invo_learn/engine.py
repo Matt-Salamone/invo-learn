@@ -348,8 +348,8 @@ class Workspace:
                     "replace must identify a pending lesson")
             require(self.state["lessons"][replace_lesson]["track_id"] == tid, "replacement must stay in the same track")
             string(decision, "explicit learner replacement decision")
-        require(not [lesson for lesson in self.pending_lessons(tid) if lesson["id"] != replace_lesson],
-                "this course handoff awaits report; ingest it or explicitly abandon before preparing another in this course")
+        require(not [lesson for lesson in self.pending_lessons() if lesson["id"] != replace_lesson],
+                "workspace handoff awaits report; ingest it or explicitly abandon before preparing another")
         box = self.mailbox()  # Preflight before writing any lesson artifacts.
         preflight = quality.preflight(self, tid, spec)
         require(spec.get("quality_review") is None or preflight["content_checked"],
@@ -518,7 +518,7 @@ class Workspace:
             return {"status": "duplicate", "report_id": report_id}
         for previous in self.state["reports"].values():
             require(previous["lesson_id"] != lid, "lesson already has a report; record a dispute instead of a second import")
-        require(lesson["status"] == "prepared" or lesson.get("replaced_by"), "cannot import abandoned/finalized lesson")
+        require(lesson["status"] in ("prepared", "abandoned"), "cannot import finalized lesson")
         reasons = revisions.stale_reasons(self, lesson)
         if reasons and relevance is None:
             return {"status": "needs-review", "report_id": report_id, "lesson_id": lid, "reasons": reasons}
@@ -530,7 +530,7 @@ class Workspace:
                 fields(choice, ("status", "reason"))
                 require(choice["status"] in ("retained", "withdrawn"), "invalid import relevance choice")
                 string(choice["reason"], "report relevance reason")
-        require(lesson["status"] == "prepared" or relevance is not None and lesson.get("replaced_by"),
+        require(lesson["status"] == "prepared" or relevance is not None and lesson["status"] == "abandoned",
                 "cannot import abandoned/finalized lesson")
         dest = self.root / "reports" / (report_id + ".json")
         atomic(dest, obj)
@@ -538,7 +538,8 @@ class Workspace:
             "path": dest.relative_to(self.root).as_posix(), "raw_path": path.relative_to(self.root).as_posix(),
             "report": obj, "invalidated": False}
         if lesson["status"] == "prepared":
-            lesson["status"] = "reported"
+            lesson["status"] = "paused" if obj.get("session_status") == "in-progress" else "reported"
+        lesson["session_status"] = obj.get("session_status", "completed")
         lesson["report_id"] = report_id
         for oid, choice in (relevance or {}).items():
             self.state.setdefault("evidence_reviews", []).append({"report_id": report_id, "objective_id": oid,
@@ -661,6 +662,9 @@ class Workspace:
                 "active_lesson": self.state["active_lesson"],
                 "pending_lessons": {tid: [lesson["id"] for lesson in self.pending_lessons(tid)]
                                     for tid in self.state["tracks"]},
+                "lesson_history": {lid: {key: lesson.get(key) for key in
+                    ("track_id", "status", "session_status", "report_id", "prepared_on", "replaced_by", "abandonment_reason")}
+                    for lid, lesson in self.state["lessons"].items()},
                 "review_policy": self.state["review_policy"],
                 "work_queue": queue, "next_action": next_action, "concerns": self.state.get("concerns", {}),
                 "corrections": self.state.get("corrections", {}),

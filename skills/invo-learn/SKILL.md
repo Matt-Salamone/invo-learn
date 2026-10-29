@@ -99,16 +99,16 @@ according to fidelity, context size and convenience; include source locators and
 relevant learner context. prepare archives the complete packet durably and
 replaces the dedicated mailbox, preserving its previous contents in snapshots.
 Never manually delete mailbox contents. Preserve/ingest a returned report before
-reuse. Check pending lessons for the requested course using status, not only
-active_lesson (the last staged packet). If that course has a pending lesson,
-request its report or record an explicitly requested abandonment before preparing
-another in the same course. Pending lessons in other courses do not block new
-lessons or reviews. Preserve their prepared status and immutable packets; guarded
-prepare snapshots the shared mailbox. restage can switch the mailbox to any
-prepared lesson by ID without abandoning other courses. Reports can arrive in
-any course order and are matched by lesson/track IDs. Never infer abandonment
-from a course switch. Inspect and ingest actual returned reports before switching;
-an absent report from a different course is not a blocker.
+reuse. Check status for any pending main handoff across the whole workspace,
+not only active_lesson (the last staged packet). Ingest its actual returned report
+or record an explicitly requested abandonment before preparing any new course,
+assignment, review or implementation session. A side report never releases this
+slot. To pause a lesson, request an in-progress main report with actual evaluated
+work; ingestion releases the slot while preserving incomplete history. Resume
+later with a new packet. Restage restores the current pending packet; explicit
+replacement requires a reason and preserves the previous issued archive. Never
+infer abandonment from switching courses. Late returns retain original identity
+and require objective-specific relevance review when a packet was retired.
 
 Inspect size and relevance using preflight, supply quality_review checks in new
 lesson specs, and compare retained critical details against sources. Reduce

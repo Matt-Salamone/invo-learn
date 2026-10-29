@@ -10,11 +10,10 @@ Before planning/preparing a lesson or review, run:
 python learn.py study-update --track <id>
 ```
 
-Pending sessions defer study-update only for the requested course; a workspace-wide
-check without --track defers while any session is pending. A pending lesson in
-another course does not block this course's update or preparation. Upgrades must
-preserve all pending records and archived packets unchanged. Ingest any reports
-actually returned in the mailbox or chat before updating.
+Any pending main handoff defers study-update across the whole workspace, with
+or without --track. Ingest its returned main report or explicitly retire it before
+preparing another lesson. Preserve all existing records and archived packet bytes.
+Inspect any reports actually returned in the mailbox or chat before updating.
 
 Missing auto_update defaults to true. This choice authorizes compatible trusted
 updates each time without a separate request. Honor global or track

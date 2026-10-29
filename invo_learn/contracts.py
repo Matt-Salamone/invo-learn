@@ -60,12 +60,13 @@ def preferences(prefs):
 
 def report(obj, lesson, today):
     fields(obj, ("schema_version", "report_id", "lesson_id", "track_id", "completed_on",
-                 "objectives", "misconceptions", "recommended_next_steps", "prerequisite_gaps"), ("suspected_errors",))
+                 "objectives", "misconceptions", "recommended_next_steps", "prerequisite_gaps"), ("suspected_errors", "session_status"))
     require(type(obj["schema_version"]) is int and obj["schema_version"] == 1, "unsupported report schema")
     for key in ("report_id", "lesson_id", "track_id"):
         identifier(obj[key])
     require(obj["lesson_id"] == lesson["id"] and obj["track_id"] == lesson["track_id"],
             "report does not match lesson/track")
+    require(obj.get("session_status", "completed") in ("completed", "in-progress"), "invalid session_status")
     completed = date(obj["completed_on"])
     require(date(lesson["prepared_on"]) <= completed <= date(today),
             "report date is before the lesson or in the future")
