@@ -26,11 +26,6 @@ def validate_links(ws, tid, spec):
         require(link["objective_ids"] and len(set(link["objective_ids"])) == len(link["objective_ids"])
                 and set(link["objective_ids"]) <= set(spec["objective_ids"]), "study targets must be unique assigned objectives")
         string(link["reason"], "planner justification from governing requirements")
-        # A retry can extend the target scope, but cannot silently narrow earlier obligations.
-        prior = {oid for lesson in ws.state["lessons"].values()
-                 for old in lesson.get("legacy_study_links", []) if old["study_need_id"] == nid
-                 for oid in old["objective_ids"]}
-        require(prior <= set(link["objective_ids"]), "fresh-study retry must retain all previously linked target objectives")
     return copy.deepcopy(links)
 
 
@@ -41,7 +36,8 @@ def recompute(ws, tid):
             continue
         linked = {lid: link for lid, lesson in ws.state["lessons"].items()
                   for link in lesson.get("legacy_study_links", []) if link["study_need_id"] == nid}
-        targets = sorted({oid for link in linked.values() for oid in link["objective_ids"]})
+        targets = sorted(set(need.get("objective_ids", []))
+                         | {oid for link in linked.values() for oid in link["objective_ids"]})
         if not targets:
             continue
         progress = {}
@@ -56,8 +52,14 @@ def recompute(ws, tid):
                 if oid not in linked[lesson["id"]]["objective_ids"]:
                     continue
                 item, _ = effective_item(ws, record, original)
-                success, conflict, _ = evidence_outcome(item["assessments"], KINDS[ws.track(tid)["objectives"][oid]["kind"]]) if item else (False, False, False)
-                qualified = bool(item and success and not conflict and item["coverage"] == "covered" and item["judgment"] == "demonstrated")
+                if item is None or (item["coverage"] == "unassessed" and not item["assessments"]):
+                    continue
+                success, conflict, _ = evidence_outcome(item["assessments"], KINDS[ws.track(tid)["objectives"][oid]["kind"]])
+                qualified = success and not conflict and item["coverage"] == "covered" and item["judgment"] == "demonstrated"
+                # No-work placeholders or helped practice do not withdraw an earlier proof.
+                # Rebuilding still removes a proof whose own report/help is invalidated.
+                if not qualified and not conflict and oid in progress:
+                    continue
                 progress[oid] = {"objective_id": oid, "report_id": record["report"]["report_id"],
                                  "lesson_id": lesson["id"], "demonstrated": qualified}
         passed = sorted(oid for oid, item in progress.items() if item["demonstrated"])

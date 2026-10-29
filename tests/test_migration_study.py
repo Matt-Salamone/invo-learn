@@ -95,3 +95,61 @@ class MigrationStudyJourneys(unittest.TestCase):
         status = self.cli("status")
         self.assertEqual(status["tracks"]["other"]["objectives"]["solve"]["understanding"], "demonstrated")
         self.assertTrue(all(n["status"] == "pending" for n in self.needs().values()))
+
+    def activate_study(self, waived_course=False):
+        self.evidence()
+        proposal = self.cli("propose-map", "math", self.write(map_spec(self.material["id"], [
+            ("solve", "Solve equations", "skill", "whole file", []),
+            ("explain", "Explain equality", "concept", "whole file", [])])))
+        self.cli("accept-map", "math", proposal["proposal_id"], "--approval", "Synthetic approval")
+        if waived_course:
+            self.cli("prepare", "math", self.write(spec(["solve", "explain"])))
+        self.cli("migration-rehearse", self.write(self.plan()))
+        inventory = self.cli("migration-checkouts", self.stage)
+        waivers = [{"origin_key": s["origin_key"], "packet_id": s["packet_id"], "accept_lost_progress": True,
+                    "reason": "Actual synthetic acceptance of missing progress"} for s in inventory["sessions"].values()]
+        self.cli("migration-reconcile", self.stage, self.write({"reports": [], "waivers": waivers}))
+        self.cli("migration-project", self.stage)
+        self.cli("migration-activate", self.stage, "--source", self.future())
+        return next(key for key, need in self.needs().items() if bool(need.get("packet_id")) == waived_course)
+
+    def linked_report(self, need, targets, items, rid):
+        prepared_spec = spec(targets)
+        prepared_spec["legacy_study_links"] = [{"study_need_id": need, "objective_ids": targets,
+            "reason": "Planner compared governing equality requirements with these accepted objectives"}]
+        prepared = self.cli("prepare", "math", self.write(prepared_spec))
+        report = make_report({"id": prepared["lesson_id"], "track_id": "math"}, "2026-10-29", items, rid)
+        self.cli("ingest", self.write(report))
+        return report
+
+    def test_known_required_targets_can_be_demonstrated_across_separate_new_handoffs(self):
+        need = self.activate_study(waived_course=True)
+        self.assertEqual(self.needs()[need]["objective_ids"], ["solve", "explain"])
+        self.linked_report(need, ["solve"], [item("solve")], "only-first-target")
+        partial = self.needs()[need]
+        self.assertEqual(partial["status"], "pending")
+        self.assertEqual(partial["study_progress"]["target_objective_ids"], ["explain", "solve"])
+        self.assertEqual(partial["study_progress"]["demonstrated_objective_ids"], ["solve"])
+        self.linked_report(need, ["explain"], [item("explain", assessment("explain-only", "explain-back"))], "second-target")
+        self.assertEqual(self.needs()[need]["status"], "completed")
+
+    def test_no_work_or_withdrawn_later_items_preserve_earlier_fresh_proof(self):
+        need = self.activate_study()
+        original = self.linked_report(need, ["solve", "explain"], [
+            item("solve"), item("explain", assessment("explain-first", "explain-back"))], "fresh-original-proof")
+        self.assertEqual(self.needs()[need]["status"], "completed")
+        later = self.linked_report(need, ["solve", "explain"], [
+            {"objective_id": "solve", "coverage": "unassessed", "judgment": "uncertain", "assessments": []},
+            item("explain", assessment("explain-assisted", "explain-back", "light"), "needs-practice")], "later-limited-work")
+        self.assertEqual(self.needs()[need]["status"], "completed")
+        self.cli("review-evidence", self.write({"report_id": later["report_id"], "objective_id": "explain", "assessment_ids": [],
+            "status": "withdrawn", "reason": "Later explanation did not assess the objective independently"}))
+        self.assertEqual(self.needs()[need]["status"], "completed")
+        failure = self.linked_report(need, ["solve"], [item("solve", assessment("later-failure", result="fail"), "needs-practice")], "actual-later-failure")
+        self.assertEqual(self.needs()[need]["status"], "pending")
+        self.cli("dispute", failure["report_id"], "--reason", "Actual later task was invalid")
+        self.assertEqual(self.needs()[need]["status"], "completed")
+        self.cli("dispute", original["report_id"], "--reason", "Withdraw the only actual fresh proof")
+        self.assertEqual(self.needs()[need]["status"], "pending")
+        self.assertEqual(self.needs()[need]["study_progress"]["demonstrated_objective_ids"], [])
+        self.assertGreaterEqual(len(self.needs()[need]["study_history"]), 3)

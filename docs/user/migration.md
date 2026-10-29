@@ -275,14 +275,17 @@ one or more needs using this optional private prepare-spec field:
 ```
 
 The need and lesson must belong to the same course in an active migrated
-workspace. The packet freezes these links. A retry retains earlier linked target
-scope and can extend it. The planner makes this association from actual scope;
+workspace. The packet freezes these links. The need retains every already-known target
+and every target from earlier links. Separate new handoffs may assess subsets
+of that scope; later links cannot erase the remaining obligations. The planner makes this association from actual scope;
 the learner need not review a technical mapping queue.
 
 A linked need closes only when all its target objectives have actual fresh,
 independent, valid and consistent effective report evidence. Prior/imported
 mastery alone, a lesson completion label or an unlinked report leaves it pending.
-Study progress and history remain inspectable. Later assistance, invalidation or
+Status exposes `migration_study_needs`, including study progress and history.
+An empty unassessed placeholder, withdrawn later item or assisted practice does
+not erase an earlier valid fresh proof. A valid later failure can contradict it. Later assistance, invalidation or
 withdrawal can reopen the need without changing original reports. These actions
 are advisory study choices, not a lock on unrelated learning, and closing one
 does not establish delayed retention without the ordinary cold-review evidence.

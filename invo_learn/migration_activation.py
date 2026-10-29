@@ -189,10 +189,25 @@ def _installed(destination, version, today):
     protect(Workspace(destination), today)
 
 
+def _unchanged_originals(destination, plan):
+    """Check preserved baseline entries while allowing unrelated new learner work."""
+    changed = {row["path"] for row in plan["changes"]}
+    baseline = _ordinary(plan["baseline"])
+    for name, metadata in baseline["files"].items():
+        if name not in changed and "__pycache__" not in Path(name).parts:
+            require(_current(_file(destination, name)) == metadata,
+                    "unchanged original file is missing or altered during cutover: " + name)
+    removed = set(plan.get("removed_directories", []))
+    for name in baseline["directories"]:
+        if name not in removed and "__pycache__" not in Path(name).parts:
+            require(_file(destination, name).is_dir(), "unchanged original directory is missing during cutover: " + name)
+
+
 def _apply(root, manifest, plan, progress, today, interrupt_after=None):
     destination = no_links(plan["destination"]).resolve()
     ws = Workspace(destination)
     with ws.locked():
+        _unchanged_originals(destination, plan)
         for name in plan["new_directories"]:
             directory = _file(destination, name)
             require(not directory.exists() or directory.is_dir(), "new migrated directory conflicts with learner work")
@@ -225,6 +240,7 @@ def _apply(root, manifest, plan, progress, today, interrupt_after=None):
                 directory.rmdir()
         _installed(destination, plan["source_version"], today)
         _independent_inputs(root, manifest)
+        _unchanged_originals(destination, plan)
         for row in plan["changes"]:
             require(_current(_file(destination, row["path"])) == row["after"], "destination activation verification failed")
         data = stage_path(root, plan["active_state"]).read_bytes()
@@ -279,6 +295,7 @@ def activate(stage, source=None, today=None, interrupt_after=None):
                     "activation plan does not identify this destination")
             if current.state.get("migration", {}).get("id") == manifest["id"] and current.state["migration"]["status"] == "active":
                 _installed(destination, plan["source_version"], today)
+                _unchanged_originals(destination, plan)
                 _mark_active(root, manifest, plan, progress)
                 return _existing(root, manifest, current, today)
             _validate_gate(root, manifest, Workspace(stage_path(root, manifest["workspace"])), today)
