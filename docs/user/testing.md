@@ -10,9 +10,26 @@ python examples/packet_evaluation.py
 
 ## 0.8.0 release verification
 
-Final integrated 0.8.0 verification and publication are pending. Record the final
-commit, unittest result, examples and CI results here after release validation;
-intermediate checkpoints do not establish the final distribution result.
+The integrated 0.8.0 candidate `b1c2dbd` passed **197 tests, none skipped**, on
+Windows/Python 3.14 on October 29, 2026 (635.782 seconds). This final run follows
+all review fixes. Targeted checks also passed: 14 activation/recovery journeys,
+six side-chat regressions, and four migration-to-fresh-study journeys.
+
+Both required examples passed on the same code. `worked_example.py` verified
+two courses, exact original/report/packet preservation, assisted versus independent
+performance, delayed retention, duplicate ingestion and a synthetic 0.8.1 update.
+`packet_evaluation.py` produced four synthetic cases: three prepared and one
+correctly refused, with `teaching_evaluated=false`.
+
+The candidate includes all four assignment modes, sequential global handoffs,
+actual-return/waiver migration, recoverable activation, late-return handling and
+planner-linked fresh-study completion/reopening. Public LF/CRLF package equivalence
+and refusal of every missing runtime module are covered at the installed command
+boundary. Review regressions cover unchanged-original integrity during resume and
+finalization, retained known study targets, preservation of earlier fresh proof,
+and late side-help qualification of an actually reconciled course main report.
+The immutable release tag/remote SHA and final release CI require separate
+publication verification; these local results do not claim publication.
 
 Verified development checkpoints include 175 tests on Windows/Python 3.14 at
 `b67dc7e`, followed by the Windows temporary-path alias correction and a passing
@@ -67,7 +84,7 @@ and faster pacing for a prepared learner; it did not measure learning outcomes.
 
 The GitHub Actions workflow is configured for Windows and Ubuntu on Python 3.10
 and 3.13; the verified development checkpoint is recorded above.
-No live archive download of this unreleased version, real chatbot, external conversion service, calendar connector, or hosted
+No live release-archive download, real chatbot, external conversion service, calendar connector, or hosted
 private-remote creation was exercised. Assertions validate the workflow and
 evidence contract, not real-world learning efficacy or a model's grading accuracy.
 

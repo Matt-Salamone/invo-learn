@@ -16,13 +16,13 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] Exercise reference/no-reference × guided/independent implementation with explicit question timing and unchanged historical exposure.
-- [ ] Run a two-track installed journey covering sequential handoffs, main/side reports, independent checks, delayed review, legacy rehearsal, report gates, activation and next study.
-- [ ] Run the required unittest suite, worked example and targeted installed-command journeys; teaching packet evaluations retain their documented limits.
-- [ ] Confirm only invo-learn is delivered as the learner entry point and all supported older records remain readable.
-- [ ] Review code/assets transferred from the public assignment product for license/attribution obligations; exclude all real learner data and credentials.
+- [x] Exercise reference/no-reference × guided/independent implementation with explicit question timing and unchanged historical exposure.
+- [x] Run a two-track installed journey covering sequential handoffs, main/side reports, independent checks, delayed review, legacy rehearsal, report gates, activation and next study.
+- [x] Run the required unittest suite, worked example and targeted installed-command journeys; teaching packet evaluations retain their documented limits.
+- [x] Confirm only invo-learn is delivered as the learner entry point and all supported older records remain readable.
+- [x] Review code/assets transferred from the public assignment product for license/attribution obligations; exclude all real learner data and credentials.
 - [ ] Keep VERSION and changelog aligned; publish a new immutable version rather than changing an already distributed version. Document setup, both choices, partial reporting, single checkout, migration and recovery.
-- [ ] Carry the accepted S1/component and complementary diagram references into the verification evidence; do not claim synthetic tests prove live account setup or learner independence.
+- [x] Carry the accepted S1/component and complementary diagram references into the verification evidence; do not claim synthetic tests prove live account setup or learner independence.
 
 
 ## Answer
@@ -73,3 +73,20 @@ checks, so prior/unknown help qualifies the credited original and after-answer
 explanations preserve independence. Exact reconciled main duplicates stay normal
 duplicates. Waived course and legacy assignment returns remain historical with no
 new credit or reopened slot. The original main archive/raw bytes remain unchanged.
+
+
+## Final verification — ready for publication
+
+Candidate `b1c2dbd` passed `python -m unittest discover -s tests -v`:
+**197 tests, none skipped, 635.782 seconds**, Windows/Python 3.14. Targeted
+activation/recovery tests passed 14/14 (143.272 seconds), side-chat 6/6
+(3.649 seconds), and migration fresh-study 4/4 (49.466 seconds). The latter
+projection code is unchanged in the final candidate and all four are included
+in the full run. Both `python examples/worked_example.py` and
+`python examples/packet_evaluation.py` passed on the final code.
+
+The parent verified separate standards/spec reviews; the identified issues were
+reproduced through installed S1 commands and repaired before this final run.
+VERSION and CHANGELOG.md agree on 0.8.0. The parent owns verified publication,
+release CI and marking this ticket resolved after publication. No learner data,
+map edit, remote change, push, release tag or publication was made by this worker.
