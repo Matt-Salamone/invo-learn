@@ -21,3 +21,10 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 - [ ] Save returned reports only in the verified private workspace; this public ticket contains no report contents, private inventory or materials.
 - [ ] Keep the prerequisite unresolved while any checked-out chat's required report is missing. Machine validation and reconciliation are performed by tickets 10 and 15.
 - [ ] This prerequisite requires actual human chat returns, not an AFK code task; an implementation agent must wait rather than fabricate completion.
+
+## Comments
+
+October 29, 2026 implementation run: reminded the owner to obtain actual
+in-progress reports from every checked-out main lesson chat and retain the
+returns privately. This public ticket remains unresolved; no private reports or
+inventory have been supplied to this implementation run.
