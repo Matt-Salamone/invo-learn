@@ -1,6 +1,6 @@
 ---
 name: invo-learn
-description: Set up and maintain one private learning workspace, add courses and materials, plan lessons and assignments, stage chatbot handoffs, and ingest returned reports.
+description: Set up and maintain a private learning workspace, add courses and materials, plan assignments with optional reference solutions and implementation guidance, exchange lesson reports, inspect older records, migrate workspaces, recover interrupted activation, and ingest historical late returns.
 ---
 
 # invo-learn
@@ -13,7 +13,13 @@ later uploads read `references/add-materials.md`. For automatic updates, explici
 upgrades or recovery read `references/update.md`. These are internal operation
 instructions, not separately invoked skills. For assignments, read
 `references/assignments.md` before intake, solution decisions, assignment planning
-or assignment packet/report work.
+or assignment packet/report work. That reference keeps the upfront solution choice
+separate from the later implementation-guidance choice; both require actual answers.
+For older records, read the active release's `docs/user/legacy-records.md`.
+For consolidating workspaces, report-or-waiver reconciliation, conservative evidence
+projection, activation, interrupted activation recovery or post-cutover late returns,
+read its `docs/user/migration.md` before acting. An ordinary update preserves the
+existing data layout; migration is a separate explicit operation.
 
 Work from the private workspace root. Read AGENTS.md, state.json, OVERVIEW.md and
 all active tracks' plan.md files. `python learn.py status` lists inherited
@@ -27,7 +33,10 @@ For packet size/relevance checks, verified context reduction, structured gaps,
 report repairs, content concerns, stale-report/evidence review, explicit packet
 replacement, or pacing decisions, read the active release's
 `docs/user/quality-and-recovery.md`. Use status's next_action/work_queue to resume
-unfinished bookkeeping. Use doctor for offline integrity/recovery diagnostics;
+unfinished bookkeeping. For fresh study needs from activated migrations, read
+`docs/user/migration.md` in the active release before linking a new lesson to
+those needs; use governing scope and actual new evidence. Use doctor for offline
+integrity/recovery diagnostics;
 its health result does not establish teaching quality or fresh remote status.
 
 ## New or changed tracks

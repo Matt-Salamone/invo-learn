@@ -60,10 +60,16 @@ You review changes before they become the accepted plan.
 
 Tell your agent which course owns the assignment, or ask for a standalone project
 track. The invo-learn skill records its requirements and deliverables, then asks
-whether you want an upfront verified reference solution. An explicit no plans
-lessons directly from your materials. Review the proposed lessons before they
-are prepared. Assignment completion, independent understanding and delayed
-retention remain separate. The same mailbox and report workflow applies.
+whether you want an upfront verified reference solution **before planning**.
+An explicit no plans lessons directly from your requirements and materials.
+Review the proposed lessons before they are prepared. **At implementation**, the
+agent separately asks whether you want guidance while you edit and run your work.
+Reference or no reference can each be combined with guided or independent
+implementation: all four combinations use the same workspace and evidence rules.
+Neither answer defaults from the other choice or from silence. Resume the recorded
+answers; explicitly requested changes preserve earlier decisions and exposure.
+Assignment completion, independent understanding and delayed retention remain
+separate. The same mailbox and report workflow applies.
 
 ## Take a lesson
 
@@ -133,7 +139,15 @@ to a verified private learner remote. Setup creates no remote; without one, work
 stays local and the agent explains the missing backup setup. Opt out using
 `auto_update=false` or `auto_backup=false` preferences. Existing installs need one
 authorized upgrade; stored preferences (including legacy teaching styles) survive.
-See [workflow, migration and backup recovery](docs/user/guide.md#automatic-updates-and-migration).
+See [update and backup behavior](docs/user/guide.md#automatic-updates-and-migration).
+To inspect older workspaces, use [legacy record inspection](docs/user/legacy-records.md).
+To combine them, follow [explicit migration](docs/user/migration.md), including
+actual-report or explicit loss-waiver reconciliation, conservative evidence,
+[activation and recovery](docs/user/migration.md#activate-and-recover), and
+[late historical returns](docs/user/migration.md#late-returns-after-activation).
+Ordinary maintenance preserves the data layout and existing records. A successful
+synthetic rehearsal does not establish that a learner's private cutover or backup
+has happened.
 
 Report validation cannot independently verify the chatbot's judgments or unaided
 work. Complex materials require appropriate reading/conversion tools and permission

@@ -8,13 +8,23 @@ python examples/worked_example.py
 python examples/packet_evaluation.py
 ```
 
-The current local run used Windows and Python 3.14: **95 tests passed, none
-skipped**. Both symlink preservation and Windows directory junction rejection were
-exercised successfully. Junction rejection uses Windows lstat reparse tags so it
-also works with Python 3.10/3.11. The ordinary default temp directory was restricted
-here, so TEMP and TMP were pointed at an allowed scratch directory outside the
-public checkout. The 0.5.0 suite passed through the normal execution sandbox with
-that scratch location. Normal local runs use the system temp directory.
+## 0.8.0 release verification
+
+Final integrated 0.8.0 verification and publication are pending. Record the final
+commit, unittest result, examples and CI results here after release validation;
+intermediate checkpoints do not establish the final distribution result.
+
+Verified development checkpoints include 175 tests on Windows/Python 3.14 at
+`b67dc7e`, followed by the Windows temporary-path alias correction and a passing
+four-job CI matrix at `429a01d`. The matrix covers Windows/Ubuntu with Python
+3.10/3.13. Activation and recovery also passed 33 targeted regression tests before
+final integration. Later changes require a new integrated run; these counts are
+historical checkpoints, not the final 0.8.0 count.
+
+Tests use public code and synthetic temporary learner workspaces. Some local
+restricted execution environments require a writable external temporary directory
+or permission to run local Git transport; these are development environment
+constraints, not learner setup requirements.
 
 The suite covers independent setup (including a real new Git repository with no
 remote), external/dedicated mailbox checks, preservation of originals and durable
@@ -36,7 +46,8 @@ and unchanged private state. Status remains offline. The standalone worked
 example also exercises diagnostic failure -> guided practice -> fresh repair.
 
 Onboarding tests also cover temporary-archive installation with no source clone,
-a working installed CLI and exported course/material skills, explicit preferences,
+a working installed CLI and the single exported invo-learn skill, explicit
+preferences,
 external mailbox ownership, refusal to overwrite existing files, archive traversal
 rejection, durable mailbox intake, repeat-intake idempotence, and later uploads
 without overwriting a pending lesson or changing an accepted map before approval.
@@ -48,13 +59,14 @@ the mailbox and runs the installed CLI
 for report ingestion, coordinates two tracks, preserves a downloaded report during
 mailbox reuse, distinguishes assisted understanding from independent work and
 delayed retention, tests a synthetic newer release, and prepares subsequent repair.
-The five portable skills retain name/description frontmatter. Whitespace
-checks passed. No real learner records, credentials or source materials were used.
+The single portable invo-learn skill retains name/description frontmatter and
+routes to internal operation references. No real learner records, credentials
+or source materials were used.
 An independent synthetic forward-test checked novice repair, review relearning,
 and faster pacing for a prepared learner; it did not measure learning outcomes.
 
 The GitHub Actions workflow is configured for Windows and Ubuntu on Python 3.10
-and 3.13. Those CI jobs have not been run from this local implementation session.
+and 3.13; the verified development checkpoint is recorded above.
 No live archive download of this unreleased version, real chatbot, external conversion service, calendar connector, or hosted
 private-remote creation was exercised. Assertions validate the workflow and
 evidence contract, not real-world learning efficacy or a model's grading accuracy.
@@ -130,3 +142,35 @@ rules, and refuses to rehash corrupt archives. A scoped installed backup uses a
 controlled private-metadata response and local bare transport, verifies the remote
 SHA, and confirms the committed policy protects cloned records. These controlled
 boundaries do not establish live account permissions or real network availability.
+
+## Combined assignments and migration
+
+Installed-command journeys use accepted seam S1/component v0.1: fresh processes
+operate on temporary workspaces and assertions inspect returned results plus
+preserved artifacts. Assignment journeys cover upfront reference yes/no crossed
+with later guided/independent implementation, unanswered decisions, resumed
+answers, explicit later decisions and retained historical exposure. Multi-course
+journeys exercise the global pending slot, partial main reports, separate side
+reports, actual independent checks and delayed reviews.
+
+Legacy journeys exercise read-only inspection, complete rehearsal snapshots,
+conservative evidence projection, actual report association or explicit loss
+waivers, activation, interrupted resume/rollback, immutable older bundles and
+historical late returns after stage paths are unavailable. Exact raw bytes remain
+separate from derived evidence and views. Synthetic controlled boundaries cover
+private backup metadata and local Git transport; they do not establish live
+private account permissions, a completed private cutover or retirement.
+
+The complementary accepted views are the [component view v0.1](../../.scratch/unified-learning/unification-components-v01.svg),
+[assignment timing v0.3](../design/assignment-modes-v03.svg) and
+[pending boundaries v0.2](../design/pending-boundaries-v02.svg). In an installed
+bundle, use the corresponding public source design files; development diagrams
+are not required runtime assets. These views explain the contract exercised by
+S1; tests do not verify a real chatbot's judgments or learner independence.
+
+New public package text is canonicalized when packaged, making LF archives and
+CRLF source checkouts produce the same distribution payload and hashes. Tests
+must distinguish that source packaging policy from exact preservation of actual
+learner originals, reports, issued packets and prior installed bundles. The
+historical public 0.7.0 ZIP is frozen from own source commit `214178c`, includes
+the MIT license, and is never rewritten to match the new distribution.
