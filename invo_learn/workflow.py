@@ -30,7 +30,7 @@ def ingest(ws, raw, today, repair_of=None, repair_note=None, relevance=None):
         else:
             require(repair_note is None, "repair note requires repair_of")
         result = ws._ingest(raw, today, relevance)
-        if (result["status"] == "duplicate" and ledger.get("outcome") in ("imported", "supplemental-recorded", "duplicate")
+        if (result["status"] == "duplicate" and ledger.get("outcome") in ("imported", "supplemental-recorded", "duplicate", "historical")
                 and repair_of is None and relevance is None):
             return result | {"import_id": rid}
         attempt.update(outcome=result["status"], result=result)
@@ -233,6 +233,9 @@ def doctor(ws, today):
             raw = ws.path(record["raw_path"])
             require(digest(raw.read_bytes()) == raw.stem, "supplemental raw checksum mismatch")
             count += 1
+        from .migration_late import verify as verify_historical_returns
+        verify_historical_returns(ws)
+        count += len(ws.state.get("historical_reports", {}))
         return {"verified_artifacts": count}
     check("durable-artifacts", verify_artifacts)
     def verify_audit():

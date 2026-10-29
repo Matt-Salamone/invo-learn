@@ -510,6 +510,11 @@ class Workspace:
         finally:
             parsed.unlink(missing_ok=True)
         require(isinstance(obj, dict), "report must be an object")
+        if self.state.get("migration", {}).get("status") == "active":
+            from .migration_late import ingest as preserve_late_return
+            historical = preserve_late_return(self, obj, path, today)
+            if historical is not None:
+                return historical
         lid = obj.get("lesson_id")
         require(isinstance(lid, str) and lid in self.state["lessons"], "unknown lesson; raw report preserved in inbox")
         lesson = self.state["lessons"][lid]
@@ -677,6 +682,8 @@ class Workspace:
         next_action = queue[0] if queue else ({"action": "review-due-objective", **sorted(due, key=lambda r: r["due_on"])[0]}
                                             if due else {"action": "choose-next-lesson" if tracks else "add-course"})
         return {"learner": self.state["profile"], "mailbox": self.state["mailbox"], "tracks": tracks, "due_reviews": sorted(due, key=lambda r: (r["due_on"], r["track_id"], r["objective_id"])),
+                "historical_reports": {rid: {key: saved.get(key) for key in ("path", "raw_path", "origin_key", "context", "credit_applied")}
+                                       for rid, saved in self.state.get("historical_reports", {}).items()},
                 "active_lesson": self.state["active_lesson"],
                 "pending_lessons": {tid: [lesson["id"] for lesson in self.pending_lessons(tid)]
                                     for tid in self.state["tracks"]},
