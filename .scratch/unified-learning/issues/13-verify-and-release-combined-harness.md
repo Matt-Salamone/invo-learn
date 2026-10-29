@@ -1,6 +1,6 @@
 # 13: Verify and release the complete combined public harness
 
-**Status:** claimed
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -21,15 +21,20 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 - [x] Run the required unittest suite, worked example and targeted installed-command journeys; teaching packet evaluations retain their documented limits.
 - [x] Confirm only invo-learn is delivered as the learner entry point and all supported older records remain readable.
 - [x] Review code/assets transferred from the public assignment product for license/attribution obligations; exclude all real learner data and credentials.
-- [ ] Keep VERSION and changelog aligned; publish a new immutable version rather than changing an already distributed version. Document setup, both choices, partial reporting, single checkout, migration and recovery.
+- [x] Keep VERSION and changelog aligned; publish a new immutable version rather than changing an already distributed version. Document setup, both choices, partial reporting, single checkout, migration and recovery.
 - [x] Carry the accepted S1/component and complementary diagram references into the verification evidence; do not claim synthetic tests prove live account setup or learner independence.
 
 
 ## Answer
 
-0.8.0 is prepared for publication review. This ticket remains claimed until the
-parent verifies and publishes the immutable distribution; no push or publication
-was performed by this implementer.
+0.8.0 is published at [the immutable versioned release](https://github.com/Matt-Salamone/invo-learn/releases/tag/v0.8.0).
+The parent verified all four Windows/Linux Python 3.10/3.13 CI jobs in
+[run 40944655679](https://github.com/Matt-Salamone/invo-learn/actions/runs/40944655679),
+fast-forwarded the existing main upstream, and verified its remote SHA and the
+annotated tag's peeled target as `ad78efde560dfd595057b6e38a57b49ecb9e50d8`.
+The release is published, neither draft nor prerelease. The 47-file canonical
+payload exposes exactly one skill entry point. No distributed payload is changed
+by this publication record.
 
 The installed S1 workflow now closes both projected legacy-study actions and
 reconciliation waiver needs through justified frozen links in new packets.

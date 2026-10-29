@@ -88,6 +88,12 @@ learner reports, inventories and migration results remain private.
   explicit October 29 loss-acceptance waiver. Preserve existing evidence and
   retire missing-return checkouts incomplete; schedule fresh checks/relearning.
 
+- [13](issues/13-verify-and-release-combined-harness.md#answer): resolved after
+  publishing [v0.8.0](https://github.com/Matt-Salamone/invo-learn/releases/tag/v0.8.0).
+  All four CI jobs passed; main and the annotated tag target were verified at
+  `ad78efde560dfd595057b6e38a57b49ecb9e50d8`. Ticket 15 is now unblocked by the
+  release and the owner's recorded missing-report waiver.
+
 ## Fog
 
 - Final private cutover (15) requires actual-return reconciliation or recorded
