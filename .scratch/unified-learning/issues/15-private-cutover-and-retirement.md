@@ -17,7 +17,7 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 ## Acceptance criteria
 
 - [ ] Execute with owner-identified source/destination repositories and verified existing private remote bindings; retain concrete paths, inventories, origin commits and results in private migration notes only.
-- [ ] Rehearse on private copies and verify preservation, conservative evidence, report associations and recovery before touching the active destination. Recheck that every required actual report has been returned and reconciled.
+- [ ] Rehearse on private copies and verify preservation, conservative evidence, report associations and recovery before touching the active destination. Reconcile available actual reports and record the owner's October 29 waiver for missing-return checkouts (ticket 14); retire those incomplete and plan fresh checks/relearning without invented progress.
 - [ ] Preserve all sources, issued artifacts, reports, existing reference solutions, tracked/untracked learner work and complete source Git histories; apply the agreed presentation default to migrated settings.
 - [ ] Activate only after all checks pass, verify normal installed study and the single pending slot, and commit/push reviewed related private changes using ordinary pushes with remote SHA verification.
 - [ ] On integrity, visibility, backup or association problems, retain the usable originals and report the concrete limitation; do not erase work or claim a verified cutover that did not happen.
