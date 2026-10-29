@@ -2,6 +2,14 @@
 
 Status: ready-for-agent
 
+Owner revision, October 29, 2026: collecting every checked-out chat report is
+waived for the owner's cutover. The owner accepts loss of unreported progress
+and authorizes autonomous reconciliation. Preserve all existing records and
+artifacts; retire missing-return checkouts as incomplete, record the waiver and
+schedule fresh checks/relearning for uncertain progress. Never manufacture a
+report or learner evidence. The explicit waiver path below supersedes the
+original mandatory-report gate; original integrity checks remain required.
+
 Product decisions, testing seam S1 and component view v0.1 were confirmed by the
 owner on October 29, 2026. This is a reusable public specification; private learner
 inventories are excluded. Ticket decomposition is a separate approval step.
@@ -99,7 +107,7 @@ review task for the learner.
 50. As a learner, I want workspace migration to be explicit, so that routine updates never silently reorganize my data.
 51. As a learner, I want migration rehearsed on private copies first, so that preservation and recovery are demonstrated before cutover.
 52. As a learner, I want a reminder to obtain in-progress reports from every checked-out lesson chat before final cutover, so that all outstanding work can be reconciled.
-53. As a learner, I want cutover to wait for those actual reports, so that no missing evidence is invented to resolve pending sessions.
+53. As a learner, I want cutover to reconcile actual reports or my explicit acceptance of lost unreported progress, so that missing evidence is never invented.
 54. As a learner, I want all original materials, packets, reports and untracked work preserved, so that consolidation does not lose files outside normal tracking.
 55. As a learner, I want originating identifiers and commits retained, so that migrated records can be traced to their source.
 56. As a learner, I want the original repositories and full Git histories recoverable, so that migration does not rewrite history.
@@ -208,10 +216,13 @@ review task for the learner.
 - Import files and records with explicit destination migration commits. Keep
   source repositories and their complete histories recoverable; do not splice
   unrelated commit graphs or rewrite either repository's history.
-- Before actual private cutover, remind the learner to obtain an in-progress
-  report from every checked-out lesson chat. Wait for the actual returns, preserve
-  and reconcile them, and retire old pending handoffs while preserving incomplete
-  progress. Public implementation and synthetic tests may proceed meanwhile.
+- Before actual private cutover, offer collection of in-progress reports from
+  checked-out lesson chats. Reconcile actual returns, or record explicit learner
+  acceptance of lost unreported progress for identified missing-return checkouts.
+  Retire those checkouts as incomplete without fabricated reports or progress;
+  preserve existing records and plan fresh checks/relearning for uncertainty.
+  Without actual returns or an explicit waiver, missing returns still block
+  cutover. The owner supplied this waiver for their cutover on October 29, 2026.
 - Missing files, altered original bytes or broken report associations are
   integrity failures that stop cutover. Uncertain pedagogical mappings instead
   retain history without credit and generate new study needs automatically.
@@ -287,7 +298,9 @@ backup and final cutover; synthetic tests do not prove the live account setup.
   outstanding sessions, and ambiguous objective mappings. Assert inventory/hash
   preservation, continued legacy readability, idempotence, no manual mapping queue,
   conservative credit, and automatically planned assessment/relearning.
-- Show that absent in-progress reports prevent private cutover. Show that missing
+- Show that absent in-progress reports prevent private cutover unless covered by
+  explicit loss acceptance; waived checkouts remain incomplete with no invented
+  evidence and can lead to fresh study. Show that missing
   or damaged originals and broken report links prevent activation. Exercise a
   representative interrupted migration and recover usable sources/destination
   without discarding original history or claiming success.
