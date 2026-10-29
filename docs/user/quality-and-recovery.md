@@ -229,9 +229,10 @@ with `status: needs-review` and no new evidence. Run
 All original identifiers and evidence rules still apply. An invalid review decision
 leaves the valid report awaiting review. An old report never closes a different
 current handoff. Ordinary harness updates alone do not invalidate content/evidence.
-Pending packets are per course. The work queue includes all courses, and replacing
-a named pending packet can switch the shared mailbox without abandoning a different
-course's packet. Last-staged context remains identified by active_lesson.
+There is one pending main packet across the workspace. The work queue includes all
+courses, and explicit replacement preserves the named packet's issued archive.
+Last-staged context remains identified by active_lesson; status also retains paused
+and retired lesson history.
 
 Use `replace <pending-lesson-id> <lesson-spec.json> --reason "<explicit learner decision>"`
 to create a replacement with a new ID. Invalid specs preserve the pending lesson;

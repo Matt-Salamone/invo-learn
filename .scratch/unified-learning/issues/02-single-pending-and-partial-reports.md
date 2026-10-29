@@ -1,6 +1,6 @@
 # 02: Reconcile partial lessons through one workspace-wide pending slot
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -16,9 +16,43 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] Preparing in a second course is blocked while any main handoff is pending, including competing writers; validation failure leaves the existing mailbox and archive unchanged.
-- [ ] In-progress returns are saved exactly and record only actual evaluated progress. Resolving or retiring the checkout does not mark unfinished objectives or the lesson complete.
-- [ ] Restaging and explicit replacement preserve issued originals; paused work can resume later through a fresh handoff.
-- [ ] Main and supplemental reports retain their distinct effects: a supplement does not create another checkout or independently close the main one.
-- [ ] Malformed, repaired, duplicate and late returns retain conservative evidence behavior without reopening retired checkouts or duplicating progress.
-- [ ] An installed two-course journey verifies the whole cycle at S1; update superseded per-course concurrency expectations rather than preserving contradictory behavior.
+- [x] Preparing in a second course is blocked while any main handoff is pending, including competing writers; validation failure leaves the existing mailbox and archive unchanged.
+- [x] In-progress returns are saved exactly and record only actual evaluated progress. Resolving or retiring the checkout does not mark unfinished objectives or the lesson complete.
+- [x] Restaging and explicit replacement preserve issued originals; paused work can resume later through a fresh handoff.
+- [x] Main and supplemental reports retain their distinct effects: a supplement does not create another checkout or independently close the main one.
+- [x] Malformed, repaired, duplicate and late returns retain conservative evidence behavior without reopening retired checkouts or duplicating progress.
+- [x] An installed two-course journey verifies the whole cycle at S1; update superseded per-course concurrency expectations rather than preserving contradictory behavior.
+
+## Answer
+
+The serialized prepare operation now checks every prepared main handoff in the
+workspace before creating packet artifacts or touching the mailbox. The existing
+operation lock also prevents competing installed-command writers from issuing two
+packets. Study updates defer for any pending main handoff, including when a course
+argument is supplied. Explicit replacement retains its original archive.
+
+Main v1 reports accept optional `session_status` (`completed` or `in-progress`);
+legacy omission preserves the earlier completed-report meaning. New empty report
+templates start in-progress. A partial return releases the pending slot with
+`paused` lesson history while projecting only its actual evaluated evidence.
+Status exposes lesson history separately from current course understanding and
+retention. Fresh packets resume study; archived returns and issued bytes remain
+unchanged. Side reports retain their separate coverage/help effect and never
+release the main slot. Late first returns for retired packets are preserved and
+quarantined through existing objective-specific import relevance review; accepted
+late evidence does not reopen or close another checkout. Duplicate protection and
+linked formatting repairs remain intact.
+
+`tests/test_single_pending.py` verifies six installed S1 journeys: cross-course
+refusal with unchanged mailbox/archive bytes, evaluated partial progress without
+completion/retention claims, reviewed late returns, competing subprocess writers,
+malformed/repaired partial returns without invented progress, and separate side
+reports. Updated superseded concurrency expectations in workflow, automation and
+replacement tests. Updated canonical instructions, generated workspace guidance,
+report template/schema and user documentation.
+
+Validation: 6 installed S1 tests, 54 workflow tests, 14 automation tests, 6 side-chat
+tests, the targeted installed replacement/relevance journey, and
+`python examples/worked_example.py` passed. Accepted seam S1/component v0.1 and
+complementary timing v0.3/pending-boundary v0.2 remain unchanged. The parent owns
+the map resolution pointer and the final integrated full-suite run.

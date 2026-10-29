@@ -158,7 +158,7 @@ def objective_context(obj):
 
 def report_template(lesson):
     return {"schema_version": 1, "report_id": "report-" + uuid.uuid4().hex[:12],
-            "lesson_id": lesson["id"], "track_id": lesson["track_id"], "completed_on": None,
+            "lesson_id": lesson["id"], "track_id": lesson["track_id"], "completed_on": None, "session_status": "in-progress",
             "objectives": [{"objective_id": oid, "coverage": "unassessed", "judgment": "uncertain",
                             "assessments": [], "gaps": [], "resolved_gaps": []} for oid in lesson["objective_ids"]],
             "misconceptions": [], "prerequisite_gaps": [], "recommended_next_steps": [], "suspected_errors": []}

@@ -75,7 +75,7 @@ changed objective meaning needs a new ID. Legacy maps remain readable without
 inventing criteria or section associations retrospectively.
 Ask the learner to approve or revise it, then **stop and wait**. Only use
 accept-map after actual approval; an upload alone is not map approval. Update the
-adaptive plan after acceptance, retaining the pending lesson/report barrier within that same course.
+adaptive plan after acceptance, retaining the workspace-wide pending handoff/report barrier.
 Explain the next step: ask for the next lesson when ready; later resources use
 this same "add materials to <course>" → mailbox → "materials ready" process.
 

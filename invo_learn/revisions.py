@@ -120,6 +120,8 @@ def stale_reasons(ws, lesson):
             reasons.append("Report uses earlier teaching content: " + correction["id"])
     if lesson.get("replaced_by"):
         reasons.append("Report belongs to a replaced packet")
+    elif lesson["status"] == "abandoned":
+        reasons.append("Late report belongs to an explicitly retired packet")
     return reasons
 
 

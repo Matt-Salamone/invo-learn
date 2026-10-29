@@ -43,8 +43,8 @@ def study_update(ws, tid=None):
         prefs = ws.effective_preferences(tid)
     if not prefs.get("auto_update", True):
         return {"status": "disabled"}
-    if ws.pending_lessons(tid):
-        return {"status": "deferred", "reason": "Pending handoff in the requested course (or workspace-wide check): ingest its returned report or explicitly abandon it before updating. Other courses can still prepare lessons; restage preserves archived packets."}
+    if ws.pending_lessons():
+        return {"status": "deferred", "reason": "Workspace handoff pending: ingest its returned report or explicitly abandon it before updating or preparing another lesson. Restage preserves the archived packet."}
     installed = read_json(ws.root / ".invo-learn/active.json")["version"]
     result = check_updates(installed)
     if result["status"] != "available":

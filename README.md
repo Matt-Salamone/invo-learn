@@ -80,11 +80,12 @@ The mailbox is the interface in both directions: you drop off resources and pick
 up lesson files there. Originals and lessons are archived elsewhere in your one
 workspace before the agent reuses it. Add new files alongside an unfinished
 lesson without overwriting its files; the agent preserves the pending session.
-Each course can have its own pending lesson. Switching courses preserves prior
-packets and snapshots the shared mailbox; another course's missing report never
-blocks new work. status lists pending IDs per course and restage restores any
-prepared packet by ID. A new lesson in the same course still needs its report or
-explicit abandonment.
+There is one pending main handoff across all courses and assignments. Return
+its report or explicitly retire it before starting another. An in-progress report
+preserves evaluated work and incomplete history, releasing the slot for later
+study. Resume with a new packet; restage recovers the current pending packet.
+Side reports do not close the main handoff. Issued packets and mailbox snapshots
+remain preserved.
 Do not manually clear the mailbox.
 
 Read the [usage guide](docs/user/guide.md), [contracts](docs/user/contracts.md),

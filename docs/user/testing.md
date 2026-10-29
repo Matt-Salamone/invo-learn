@@ -81,11 +81,14 @@ Git's shell transport needed execution outside the restricted sandbox for local
 bare-repository tests. The normal temp path was restricted; tests used an allowed
 external scratch path. This is an environment constraint, not a learner requirement.
 
-Course isolation tests prepare two synthetic courses without reporting the first,
-check same-course duplicate prevention while the other is visible, restore either
-packet, import reports across course switches, and abandon only a named pending
-lesson. A corrupt hidden packet cannot replace the visible packet or its pointer.
-Course-specific updates preserve another course's pending record and packet bytes.
+Global handoff tests use installed commands on two synthetic courses. A pending
+main packet blocks preparation anywhere else; competing subprocess writers can
+issue only one packet. Partial returns release the slot while retaining paused
+history and evaluated work. Malformed partial returns remain preserved and can be
+linked to repairs. Late retired-packet reports require relevance review without
+reopening the checkout. Side reports do not release it. Regression checks retain
+packet/snapshot integrity, explicit retirement, global update deferral and separate
+course progress. See tests/test_single_pending.py (accepted seam S1/component v0.1).
 
 ## 0.5.0 quality and recovery checks
 
@@ -100,8 +103,8 @@ plan decisions with optional workload mismatch; offline doctor/recorded failures
 corrupt import audits and raw-report integrity; legacy unextended v1 inputs; and
 setup refusal under Git directories, worktree markers or inherited Git overrides.
 Withdrawing guided practice cannot manufacture cold-review retention.
-The integrated per-course workflow also verifies recovery queues for every
-pending course and hidden-packet replacement without disturbing another course.
+The integrated workflow also verifies recovery queues across courses and explicit
+pending-packet replacement with preserved original bytes.
 
 The packet evaluation generator also passed, constructing three synthetic packets
 and refusing one explicitly incomplete candidate through the installed CLI. It

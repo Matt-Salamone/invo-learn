@@ -115,17 +115,23 @@ resources alongside a pending lesson without overwriting its files; intake does
 not abandon that lesson. Ambiguous files/course destinations get one clarification
 at a time. Originals are copied to `tracks/<id>/materials/originals/`; mailbox
 copies remain until guarded lesson staging snapshots them. A lesson remains durably
-archived in lessons/. Each course may have one pending lesson at a time. Preparing
-another in that same course requires its report or explicit abandonment; a pending
-lesson in another course does not block preparation. Switching courses snapshots
-the shared mailbox and keeps other lessons prepared, with their archives intact.
-Use status to list pending lesson IDs by course; active_lesson identifies only the
-last staged packet. restage <lesson-id> restores any prepared packet to the mailbox,
-and abandon <lesson-id> explicitly abandons only that prepared lesson. Reports can
-arrive in any course order and are matched by lesson/track IDs. A course switch
-never abandons a lesson. Inspect/ingest actual returned reports before switching.
-Course-specific study-update defers only for that course's pending lesson; without
---track it defers for any pending lesson. Updates preserve archived packets. All
+archived in lessons/. One main handoff may be pending across the whole workspace.
+Return its main report or explicitly abandon it before preparing another course,
+assignment, review or implementation session. The status pending IDs are grouped
+by course for inspection; active_lesson is only the last staged packet. restage
+restores the current pending packet. Explicit replacement preserves its original
+archive and requires a learner decision. Switching courses never implies retirement.
+
+For an interrupted lesson request a report with session_status="in-progress".
+Its completed_on field is the actual local report date, not a claim of lesson
+completion. Ingestion releases the slot and records paused history while projecting
+only actual evaluated evidence. Unattempted objectives remain unassessed. Resume
+later through a new packet. Late returns from explicitly retired packets are
+preserved and require objective-by-objective relevance review; they never reopen
+a checkout. A supplemental side report does not release the main pending slot.
+Any pending main handoff also defers study-update, including with --track.
+Inspect/ingest actual returned reports before switching. Updates preserve archived
+packets. All
 old mailbox files (including unexpected downloaded reports) are copied into
 inbox/mailbox-snapshots before any clearing. Snapshots are preserved but do not
 automatically become learning evidence; the agent inspects/ingests returned reports.

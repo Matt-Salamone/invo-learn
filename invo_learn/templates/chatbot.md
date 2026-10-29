@@ -174,7 +174,12 @@ json block, conforming to the attached report.schema.json. This is the single th
 the learner copies/downloads and pastes back to the planning agent. No transcript
 or learner-authored summary is needed. Use unique lowercase IDs (letters, digits,
 hyphens), copy lesson_id and track_id exactly, and use the learner's actual local
-completion date (ask only if unknown). Never backdate a review. Record objectives
+report date in completed_on (ask only if unknown). Set session_status="in-progress"
+when interrupted or stopped before finishing, or "completed" only when the planned
+session is finished. The template starts in-progress; change it only when warranted.
+Include every assigned objective, leaving unattempted objectives unassessed with
+empty assessments. An in-progress return records actual work and allows a later
+fresh packet to resume; it does not claim completion. Never backdate a review. Record objectives
 attempted, assessment questions and actual answers/work, hint details, grading
 rubrics/rationale, misconceptions, prerequisite gaps and recommended next steps.
 For no answer use learner_answer="", result=ungradable, independent=false.
