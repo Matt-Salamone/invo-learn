@@ -95,3 +95,24 @@ reproduced through installed S1 commands and repaired before this final run.
 VERSION and CHANGELOG.md agree on 0.8.0. The parent owns verified publication,
 release CI and marking this ticket resolved after publication. No learner data,
 map edit, remote change, push, release tag or publication was made by this worker.
+
+## Published patch verification — October 30, 2026
+
+Cutover verification found that the generated overview retained the temporary
+activation candidate's mailbox even though final state had the correct live
+mailbox. The installed-command regression reproduced the defect before repair.
+The final-state overview and coverage views now enter the checked candidate
+before its journal inventory is frozen, retaining journal recovery and state-last
+completion. Direct activation, interruption/resume, external mailboxes and
+already-active retries are covered.
+
+Published immutable [v0.8.1](https://github.com/Matt-Salamone/invo-learn/releases/tag/v0.8.1)
+at `d82cbfc454742aca9bee529b5e223e303c85e64f`; main and the annotated tag's peeled
+target were verified. VERSION and CHANGELOG agree. All four Windows/Linux
+Python 3.10/3.13 jobs passed in
+[CI 41040858839](https://github.com/Matt-Salamone/invo-learn/actions/runs/41040858839).
+Local full suite: **197 tests, none skipped, 624.101 seconds**; all 14 targeted
+activation checks and both examples passed. Separate standards and specification
+reviews each reported zero findings. The downloaded public archive's 47 packaged
+hashes match the reviewed manifest; only VERSION and the activation module differ
+from 0.8.0. The published 0.8.0 payload is unchanged.

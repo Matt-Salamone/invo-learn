@@ -93,6 +93,11 @@ learner reports, inventories and migration results remain private.
   All four CI jobs passed; main and the annotated tag target were verified at
   `ad78efde560dfd595057b6e38a57b49ecb9e50d8`. Ticket 15 is now unblocked by the
   release and the owner's recorded missing-report waiver.
+- [13 patch](issues/13-verify-and-release-combined-harness.md#published-patch-verification--october-30-2026):
+  [v0.8.1](https://github.com/Matt-Salamone/invo-learn/releases/tag/v0.8.1) fixes
+  the generated overview's temporary mailbox path within the activation journal.
+  All 197 local tests, four CI jobs and both examples passed; standards/spec
+  reviews found no issues. The original 0.8.0 distribution remains immutable.
 
 ## Fog
 
