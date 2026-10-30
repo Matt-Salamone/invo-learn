@@ -1,6 +1,6 @@
 # 15: Migrate the private workspaces and retire superseded repositories
 
-**Status:** claimed
+**Status:** resolved
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -21,13 +21,13 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 - [x] Preserve all sources, issued artifacts, reports, existing reference solutions, tracked/untracked learner work and complete source Git histories; apply the agreed presentation default to migrated settings.
 - [x] Activate only after all checks pass, verify normal installed study and the single pending slot, and commit/push reviewed related private changes using ordinary pushes with remote SHA verification.
 - [x] On integrity, visibility, backup or association problems, retain the usable originals and report the concrete limitation; do not erase work or claim a verified cutover that did not happen.
-- [ ] Only after verified success, add relocation notes and archive the superseded public assignment and private assignment repositories read-only. Public relocation notes must not expose private learner details.
-- [ ] Remove obsolete entry points from managed installations after verifying the destination, preserving frozen original snapshots and unrelated user tools. Report completion without publishing private migration evidence.
+- [x] Only after verified success, add relocation notes and archive the superseded public assignment and private assignment repositories read-only. Public relocation notes must not expose private learner details.
+- [x] Remove obsolete entry points from managed installations after verifying the destination, preserving frozen original snapshots and unrelated user tools. Report completion without publishing private migration evidence.
 
-## Answer — private cutover verified; retirement pending
+## Answer — private cutover and retirement verified
 
-The actual private cutover and its scoped ordinary private backup push are
-verified. Source/destination bindings, private nonfork visibility and remote
+The actual private cutover, retirement and final scoped ordinary private backup
+push are verified. Source/destination bindings, private nonfork visibility and remote
 branch SHAs were checked. Full raw source trees, ignored/untracked work, issued
 artifacts and complete Git histories are preserved with inventories, exact-byte
 archives and independently checked ordinary Git backup blobs. Concrete evidence
@@ -47,10 +47,27 @@ Both releases' payload hashes and the actual mailbox were independently checked.
 Staged byte attributes and preservation-artifact hashes passed before the ordinary
 private push; preserved original whitespace was verified as data, not rewritten.
 
-The remaining retirement operation was rejected by automatic approval review
-before execution because repository archival and removal of the global entry
-point were judged costly to reverse without direct explicit authorization.
-Exact relocation drafts, hashes, diffs, repository targets and the preserved-skill
-move are prepared privately for review. No superseded repository was archived,
-and the old global skill remains in place. This ticket stays claimed until that
-approval, retirement and final private completion backup are verified.
+After inspecting the concrete retirement proposal, the owner explicitly approved
+all prepared actions. Exact approved relocation bytes were written and scoped
+ordinary pushes verified before both superseded repositories were archived
+read-only. The active private destination remains private and writable. The exact
+obsolete global entry-point tree was preserved and retired; unrelated tools and
+the original untracked learner work remain intact. Public relocation additions
+contain only the canonical public project URL and reusable guidance.
+
+The final private completion backup retains approval, proposal, relocation,
+retirement and patch verification evidence as ordinary Git blobs. Staged artifact
+hashes and byte counts, portable byte attributes and the remote branch SHA were
+verified. Installed status/doctor passed after retirement, the main pending slot
+is empty, and the destination working tree is clean. Concrete evidence remains
+private; all acceptance criteria are complete.
+
+## Comments
+
+October 30, 2026: automatic approval review initially rejected the retirement
+operation before execution because repository archival and global entry-point
+retirement lacked direct explicit authorization for their reversal cost. Exact
+drafts, hashes, diffs and targets were then prepared privately. The owner explicitly
+approved all prepared retirement actions before execution resumed. The earlier
+blocker is retained as decision history and is now superseded by the verified
+approved completion above.
