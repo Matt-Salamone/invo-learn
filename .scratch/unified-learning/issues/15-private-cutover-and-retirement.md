@@ -1,6 +1,6 @@
 # 15: Migrate the private workspaces and retire superseded repositories
 
-**Status:** ready-for-agent
+**Status:** claimed
 
 Breakdown approved by the owner on October 29, 2026. Work only when the listed blockers are resolved.
 
@@ -16,10 +16,41 @@ Breakdown approved by the owner on October 29, 2026. Work only when the listed b
 
 ## Acceptance criteria
 
-- [ ] Execute with owner-identified source/destination repositories and verified existing private remote bindings; retain concrete paths, inventories, origin commits and results in private migration notes only.
-- [ ] Rehearse on private copies and verify preservation, conservative evidence, report associations and recovery before touching the active destination. Reconcile available actual reports and record the owner's October 29 waiver for missing-return checkouts (ticket 14); retire those incomplete and plan fresh checks/relearning without invented progress.
-- [ ] Preserve all sources, issued artifacts, reports, existing reference solutions, tracked/untracked learner work and complete source Git histories; apply the agreed presentation default to migrated settings.
-- [ ] Activate only after all checks pass, verify normal installed study and the single pending slot, and commit/push reviewed related private changes using ordinary pushes with remote SHA verification.
-- [ ] On integrity, visibility, backup or association problems, retain the usable originals and report the concrete limitation; do not erase work or claim a verified cutover that did not happen.
+- [x] Execute with owner-identified source/destination repositories and verified existing private remote bindings; retain concrete paths, inventories, origin commits and results in private migration notes only.
+- [x] Rehearse on private copies and verify preservation, conservative evidence, report associations and recovery before touching the active destination. Reconcile available actual reports and record the owner's October 29 waiver for missing-return checkouts (ticket 14); retire those incomplete and plan fresh checks/relearning without invented progress.
+- [x] Preserve all sources, issued artifacts, reports, existing reference solutions, tracked/untracked learner work and complete source Git histories; apply the agreed presentation default to migrated settings.
+- [x] Activate only after all checks pass, verify normal installed study and the single pending slot, and commit/push reviewed related private changes using ordinary pushes with remote SHA verification.
+- [x] On integrity, visibility, backup or association problems, retain the usable originals and report the concrete limitation; do not erase work or claim a verified cutover that did not happen.
 - [ ] Only after verified success, add relocation notes and archive the superseded public assignment and private assignment repositories read-only. Public relocation notes must not expose private learner details.
 - [ ] Remove obsolete entry points from managed installations after verifying the destination, preserving frozen original snapshots and unrelated user tools. Report completion without publishing private migration evidence.
+
+## Answer — private cutover verified; retirement pending
+
+The actual private cutover and its scoped ordinary private backup push are
+verified. Source/destination bindings, private nonfork visibility and remote
+branch SHAs were checked. Full raw source trees, ignored/untracked work, issued
+artifacts and complete Git histories are preserved with inventories, exact-byte
+archives and independently checked ordinary Git backup blobs. Concrete evidence
+and paths remain private.
+
+Rehearsal verified interruption/resume recovery, normal installed status/doctor,
+the workspace-wide pending-slot refusal and preservation of existing reports,
+objective/review state, preferences and custom synchronization guidance. The
+owner's October 29 waiver was recorded separately for each missing-return
+checkout. Those sessions retired incomplete; conservative fresh-study needs
+remain, without invented reports, answers or assessment credit.
+
+The active destination now uses published 0.8.1. Its standard maintenance upgrade
+corrected the generated overview's temporary mailbox reference while preserving
+the immutable 0.8.0 bundle and all learner state except the maintenance event.
+Both releases' payload hashes and the actual mailbox were independently checked.
+Staged byte attributes and preservation-artifact hashes passed before the ordinary
+private push; preserved original whitespace was verified as data, not rewritten.
+
+The remaining retirement operation was rejected by automatic approval review
+before execution because repository archival and removal of the global entry
+point were judged costly to reverse without direct explicit authorization.
+Exact relocation drafts, hashes, diffs, repository targets and the preserved-skill
+move are prepared privately for review. No superseded repository was archived,
+and the old global skill remains in place. This ticket stays claimed until that
+approval, retirement and final private completion backup are verified.
