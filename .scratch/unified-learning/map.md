@@ -98,16 +98,16 @@ learner reports, inventories and migration results remain private.
   the generated overview's temporary mailbox path within the activation journal.
   All 197 local tests, four CI jobs and both examples passed; standards/spec
   reviews found no issues. The original 0.8.0 distribution remains immutable.
-- [15 partial](issues/15-private-cutover-and-retirement.md#answer--private-cutover-verified-retirement-pending):
-  actual private cutover to published 0.8.1 and the ordinary private backup push
-  are verified. Existing evidence and preferences remain preserved; waived
-  checkouts retired incomplete. Retirement remains pending explicit approval
-  after automatic approval review rejected the prepared operation. The ticket
-  remains claimed; concrete preservation and backup evidence stays private.
+- [15](issues/15-private-cutover-and-retirement.md#answer--private-cutover-and-retirement-verified):
+  actual private cutover to published 0.8.1, approved retirement and the final
+  ordinary private backup push are verified. Existing evidence and preferences
+  remain preserved; waived checkouts retired incomplete. The owner's direct
+  approval of the prepared actions superseded the earlier automatic approval
+  blocker. Both superseded repositories are read-only and the exact obsolete
+  entry-point tree is preserved. The ticket is resolved; concrete preservation,
+  approval and backup evidence stays private.
 
 ## Fog
 
-- Ticket 15 still requires explicit retirement approval, execution of the prepared
-  relocation/archive and obsolete-entry-point retirement, and verification of the
-  final private completion backup. Cutover, missing-report waivers, publication
-  and the initial private backup have passed their gates.
+- No implementation tickets remain open. Final integration metadata review and
+  worktree cleanup remain before the implementation run closes.
