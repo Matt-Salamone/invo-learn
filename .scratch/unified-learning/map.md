@@ -106,8 +106,12 @@ learner reports, inventories and migration results remain private.
   blocker. Both superseded repositories are read-only and the exact obsolete
   entry-point tree is preserved. The ticket is resolved; concrete preservation,
   approval and backup evidence stays private.
+- Final integration review of `d82cbfc...2bfa83a` reported zero Standards
+  findings and zero Spec findings. This final delta contains public status
+  records only; the 47-file payload still exactly matches published 0.8.1.
+  All implementer worktrees were verified clean and removed after merging.
 
 ## Fog
 
-- No implementation tickets remain open. Final integration metadata review and
-  worktree cleanup remain before the implementation run closes.
+- None. All tickets are resolved, final reviews passed and worktree cleanup is
+  complete. Synthetic checks establish workflow behavior, not teaching efficacy.
