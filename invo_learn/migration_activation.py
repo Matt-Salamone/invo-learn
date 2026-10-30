@@ -128,6 +128,10 @@ def _prepare(root, manifest, source, today):
                       for key, value in manifest["sources"].items()})
     final_state["events"].append({"action": "migration-activated", "details": {"migration_id": manifest["id"]},
                                    "recorded_at": dt.datetime.now(dt.timezone.utc).isoformat()})
+    # Render destination-facing views into the checked candidate, so their exact
+    # bytes participate in the same journal as the final mailbox binding.
+    candidate_ws.state = final_state
+    candidate_ws.render()
     payloads = "activation/payloads-" + uuid.uuid4().hex
     atomic(stage_path(root, payloads + "/state.active.json"), final_state)
     applying_state = copy.deepcopy(final_state)

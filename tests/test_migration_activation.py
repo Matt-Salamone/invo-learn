@@ -92,6 +92,10 @@ class ActivationJourneys(unittest.TestCase):
         status = self.cli("status")
         self.assertEqual(len(status["tracks"]["math"]["assignments"]), 1)
         self.assertEqual(status["pending_lessons"]["math"], [])
+        overview = (self.root / "OVERVIEW.md").read_text(encoding="utf-8")
+        self.assertIn(f"Mailbox (drop off materials and pick up lessons): {self.root / 'mailbox'}\n", overview)
+        self.assertIn("Pending lessons: none", overview)
+        self.assertNotIn("activation/candidate-", overview.replace("\\", "/"))
         self.cli("add-course", "other", "--title", "Another synthetic course")
         material = self.cli("add-material", "other", self.base / "notes.txt")
         proposed = self.cli("propose-map", "other", self.write(map_spec(material["id"], [("solve", "Solve equations", "skill", "whole file", [])])))
@@ -99,8 +103,10 @@ class ActivationJourneys(unittest.TestCase):
         self.cli("prepare", "math", self.write(spec(["solve"])))
         blocked = self.cli("prepare", "other", self.write(spec(["solve"])), ok=False)
         self.assertIn("awaits report", blocked["error"])
+        current_overview = (self.root / "OVERVIEW.md").read_bytes()
         already = self.cli("migration-activate", self.stage, "--source", future)
         self.assertEqual(already["status"], "already-active")
+        self.assertEqual((self.root / "OVERVIEW.md").read_bytes(), current_overview)
 
     def test_interruption_resumes_without_duplicate_progress_or_overwriting_new_untracked_work(self):
         self.ready()
@@ -117,6 +123,10 @@ class ActivationJourneys(unittest.TestCase):
         state = json.loads((self.root / "state.json").read_text())
         self.assertEqual(len(state["tracks"]["math"]["assignments"]), 1)
         self.assertEqual(len([event for event in state["events"] if event["action"] == "migration-activated"]), 1)
+        overview = (self.root / "OVERVIEW.md").read_text(encoding="utf-8")
+        self.assertIn(f"Mailbox (drop off materials and pick up lessons): {self.root / 'mailbox'}\n", overview)
+        self.assertIn("Pending lessons: none", overview)
+        self.assertNotIn("activation/candidate-", overview.replace("\\", "/"))
         self.assertEqual(self.cli("migration-recover", self.stage, "--action", "resume")["status"], "already-active")
 
     def test_changed_source_blocks_cutover_without_replacing_any_newer_work(self):
@@ -197,6 +207,8 @@ class ActivationJourneys(unittest.TestCase):
         before = hashes(external)
         self.cli("migration-activate", self.stage, "--source", self.future())
         self.assertEqual(self.cli("status")["mailbox"], str(external))
+        self.assertIn(f"Mailbox (drop off materials and pick up lessons): {external}\n",
+                      (self.root / "OVERVIEW.md").read_text(encoding="utf-8"))
         self.assertEqual(hashes(external), before)
         self.assertEqual((self.root / "mailbox/unrelated.txt").read_bytes(), b"Keep unrelated former mailbox contents")
         self.assertFalse(any(self.root.glob("migration-mailbox-*")))

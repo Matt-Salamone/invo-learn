@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.1
+
+Migration activation renders the learner overview from the final destination
+state before freezing the activation journal. Direct activation and interrupted
+resume now show the real internal or external mailbox instead of a temporary
+candidate path. The checked derived views use ordinary journal recovery; issued
+packets, reports and frozen installed releases remain unchanged.
+
 ## 0.8.0
 
 One invo-learn entry point now covers course study and course-owned assignments.
